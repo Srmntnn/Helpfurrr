@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { handleError, handleSuccess } from '../Utils/utils';
+import { handleError, handleSuccess } from '../../Utils/utils';
 import { ToastContainer } from 'react-toastify';
 
 function Home() {
@@ -22,7 +22,7 @@ function Home() {
 
     const fetchProducts = async () => {
         try {
-            const url = "http://localhost:8080/dogs";
+            const url = "https://deploy-mern-app-1-api.vercel.app/products";
             const headers = {
                 headers: {
                     'Authorization': localStorage.getItem('token')
@@ -44,15 +44,15 @@ function Home() {
         <div>
             <h1>Welcome {loggedInUser}</h1>
             <button onClick={handleLogout}>Logout</button>
-            <div>
+            {/* <div>
                 {
                     products && products?.map((item, index) => (
                         <ul key={index}>
-                            <span>{item.name} : {item.age}</span>
+                            <span>{item.name} : {item.price}</span>
                         </ul>
                     ))
                 }
-            </div>
+            </div> */}
             <ToastContainer />
         </div>
     )

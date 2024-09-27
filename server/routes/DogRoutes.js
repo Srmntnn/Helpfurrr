@@ -1,19 +1,9 @@
-const ensureAuthenticated = require('../middlewares/Auth');
+const express = require("express");
+const router = express.Router();
+const Dog = require("../models/Dogs");
 
-const router = require('express').Router();
+const dogController = require('../controllers/dogsController');
 
-router.get('/', ensureAuthenticated, (req, res) => {
-    console.log('---- logged in user detail ---', req.user);
-    res.status(200).json([
-        {
-            name: "Arnold",
-            age: 2
-        },
-        {
-            name: "Franz",
-            age: 3
-        }
-    ])
-});
+router.get('/', dogController.getAllDogs);
 
-module.exports = router;
+module.exports = router; 

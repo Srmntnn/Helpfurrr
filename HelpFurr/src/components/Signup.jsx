@@ -1,54 +1,45 @@
-import React, { useState } from "react";
-import {ToastContainer} from "react-toastify";
+import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { handleError, handleSuccess } from "../Utils/utils";
+import { useRegisterUserMutation } from "../redux/features/auth/authApi";
+import { useDispatch, useSelector } from "react-redux";
+import { setCredentials } from "../redux/features/auth/authSlice";
 
 function Signup() {
-  const [signupInfo, setSignupInfo] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    const copySignupInfo = { ...signupInfo };
-    copySignupInfo[name] = value;
-    setSignupInfo(copySignupInfo);
-  };
+
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
+
+  const { userInfo } = useSelector((state) => state.auth);
+  console.log(userInfo);
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [navigate, userInfo]);
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    const { name, email, password } = signupInfo;
-    if (!name || !email || !password) {
-      return handleError("name, email and password are required");
-    }
-    try {
-      const url = "http://localhost:8080/auth/signup";
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(signupInfo),
-      });
-      const result = await response.json();
-      const { success, message, error } = result;
-      if (success) {
-        handleSuccess(message);
-        setTimeout(() => {
-          navigate("/login");
-        }, 1000);
-      } else if (error) {
-        const details = error?.details[0].message;
-        handleError(details);
-      } else if (!success) {
-        handleError(message);
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+    } else {
+      try {
+        const res = await registerUser({ name, email, password }).unwrap();
+        dispatch(setCredentials({ ...res }));
+        toast.success('Signup Successfully')
+        navigate("/login");
+      } catch (err) {
+        toast.error(err?.data?.message || err.error);
       }
-      console.log(result);
-    } catch (err) {
-      handleError(err);
     }
   };
 
@@ -64,32 +55,37 @@ function Signup() {
             <div>
               <label htmlFor="name">Name</label>
               <input
-                onChange={handleChange}
-                type="text"
-                name="name"
-                autoFocus
-                placeholder="Enter your name..."
-                value={signupInfo.name}
+                type="name"
+                placeholder="Enter name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="email">Email</label>
               <input
-                onChange={handleChange}
                 type="email"
-                name="email"
-                placeholder="Enter your email..."
-                value={signupInfo.email}
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="password">Password</label>
               <input
-                onChange={handleChange}
                 type="password"
-                name="password"
-                placeholder="Enter your password..."
-                value={signupInfo.password}
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="password">Confirm password</label>
+              <input
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                type="password"
+                placeholder="Confirm password"
+                value={confirmPassword}
               />
             </div>
             <button type="submit">Signup</button>
@@ -97,7 +93,7 @@ function Signup() {
               Already have an account ?<Link to="/login">Login</Link>
             </span>
           </form>
-          <ToastContainer/>
+          <ToastContainer />
         </div>
 
         <div>

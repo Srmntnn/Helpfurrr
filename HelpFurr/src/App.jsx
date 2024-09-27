@@ -1,11 +1,12 @@
 import { useState } from "react";
 import "./App.css";
-import { Navigate, Routes, Route } from "react-router-dom";
+import { Navigate, Outlet, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-import Home from "./components/Home";
+import Home from "./pages/homepage/Home.jsx";
 import Navbar from "./components/Navbar";
 import RefreshHandler from "./RefreshHandler";
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -14,15 +15,20 @@ function App() {
     return isAuthenticated ? element : <Navigate to="/login" />;
   };
   return (
-    <div className="container mt-32">
+    <div className="mt-32">
       <Navbar />
-      <RefreshHandler setIsAuthenticated={setIsAuthenticated} />
+      {/* <RefreshHandler setIsAuthenticated={setIsAuthenticated} />
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />}></Route>
         <Route path="/signup" element={<Signup />}></Route>
-        <Route path='/home' element={<PrivateRoute element={<Home />} />} />
-      </Routes>
+        <Route path="/home" element={<PrivateRoute element={<Home />} />} />
+
+
+        
+        <Route path="/dashboard" element={<Dashboard/>}></Route>
+      </Routes> */}
+      <Outlet/>
     </div>
   );
 }

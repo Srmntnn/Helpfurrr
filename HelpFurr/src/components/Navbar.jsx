@@ -1,17 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { styles } from "../styles";
 import menuIcon from "../assets/menu.svg";
 import closeIcon from "../assets/close.svg";
+import { handleError, handleSuccess } from "../Utils/utils";
+import { ToastContainer } from "react-toastify";
+import { useSelector, useDispatch } from "react-redux";
+import { useLogoutUserMutation } from "../redux/features/auth/authApi";
+import { logout } from "../redux/features/auth/authSlice";
 
 function Navbar() {
+  const { userInfo } = useSelector((state) => state.auth);
+
   const [toggle, setToggle] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
-      if (scrollTop > 100) {
+      if (scrollTop > 50) {
         setScrolled(true);
       } else {
         setScrolled(false);
@@ -20,6 +27,26 @@ function Navbar() {
 
     window.addEventListener("scroll", handleScroll);
   }, []);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [logoutApiCall] = useLogoutUserMutation();
+
+  const logoutHandler = async () => {
+    try {
+      await logoutApiCall().unwrap();
+      dispatch(logout());
+      handleSuccess('Logged Out Succesfull');
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
+    } catch (error) {
+      handleError("Logout Unsuccessful");
+    }
+  };
+
+  
   return (
     <nav
       className={`${
@@ -43,7 +70,7 @@ function Navbar() {
         <ul className="list-none hidden sm:flex flex-row gap-8 items-center">
           <li className="hover:text-[#F69946] text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
             <Link
-              to="/Adoption"
+              to="/adoption"
               onClick={() => {
                 setActive("");
                 window.scrollTo(0, 0);
@@ -76,7 +103,7 @@ function Navbar() {
           </li>
           <li className="hover:text-[#F69946] text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
             <Link
-              to="/educationresources"
+              to="/educresources"
               onClick={() => {
                 setActive("");
                 window.scrollTo(0, 0);
@@ -87,16 +114,24 @@ function Navbar() {
           </li>
 
           <div className="sm:ml-4 border-2 border-main-brown border-solid rounded-[8px] w-[165px] h-[64px] flex items-center justify-center drop-shadow-drop">
-            <Link
-              to="/signup"
-              onClick={() => {
-                setActive("");
-                window.scrollTo(0, 0);
-              }}
-              className=" text-[#F69946] uppercase sm:text-[21px] text-[18px] "
-            >
-              Sign-up
-            </Link>
+            {userInfo ? (
+              <>
+                <div onClick={logoutHandler}>Logout</div>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/signup"
+                  onClick={() => {
+                    setActive("");
+                    window.scrollTo(0, 0);
+                  }}
+                  className=" text-[#F69946] uppercase sm:text-[21px] text-[18px] "
+                >
+                  Sign-up
+                </Link>
+              </>
+            )}
           </div>
         </ul>
 
@@ -146,6 +181,7 @@ function Navbar() {
           </ul>
         </div>
       </div>
+      <ToastContainer />
     </nav>
   );
 }
