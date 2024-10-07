@@ -1,7 +1,10 @@
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
 import { RiDashboardFill } from "react-icons/ri";
+import { GiSittingDog } from "react-icons/gi";
 import { ImUsers } from "react-icons/im";
+import { FaDog } from "react-icons/fa";
+import { SiGoogleforms } from "react-icons/si";
 
 function dashboardLayout() {
   return (
@@ -39,6 +42,30 @@ function dashboardLayout() {
               <Link to="/dashboard/users">
                 <ImUsers />
                 All Users
+              </Link>
+            </li>
+            <li>
+              <Link to="/dashboard/postingdogs">
+                <FaDog />
+                Requests
+              </Link>
+            </li>
+            <li>
+              <Link to="/dashboard/approvedDogs">
+                <GiSittingDog />
+                Approved Dogs
+              </Link>
+            </li>
+            <li>
+              <Link to="/dashboard/adoptionrequest">
+                <SiGoogleforms />
+                Adoption Request
+              </Link>
+            </li>
+            <li>
+              <Link to="/dashboard/adoptedhistory">
+                <SiGoogleforms />
+                Adoption History
               </Link>
             </li>
           </ul>

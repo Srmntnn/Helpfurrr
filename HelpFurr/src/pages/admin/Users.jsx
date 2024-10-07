@@ -1,30 +1,23 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FaTrash } from "react-icons/fa";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 function Users() {
-  const {
-    refetch,
-    data: users = [],
-    isLoading,
-    isError,
-  } = useQuery({
+  const axiosSecure = useAxiosSecure();
+  const { refetch, data: users = [] } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:8080/auth/users`);
-      if (!res.ok) {
-        throw new Error("Failed to fetch users");
-      }
-      return res.json();
+      const res = await axiosSecure.get("/users");
+      return res.data;
     },
   });
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
-
-  if (isError) {
-    return <p>Error fetching users</p>;
+  const handleDeleteUser = user => {
+    axiosSecure.delete(`/users/${user._id}`).then(res => {
+      alert(`${user.name} is removed from database`);
+      refetch();
+    })
   }
 
   return (
@@ -58,7 +51,7 @@ function Users() {
                   <td>{user.email}</td>
                   <td>{user.role}</td>
                   <td>
-                    <button>
+                    <button onClick={() => handleDeleteUser(user)}>
                       <FaTrash />
                     </button>
                   </td>

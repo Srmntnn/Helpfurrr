@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
 //create new Schema object for Dogs
 const dogsSchema = new Schema({
@@ -9,15 +9,27 @@ const dogsSchema = new Schema({
         required: true,
         minLength: 3,
     },
-    dogName: String,
     age: Number,
-    image: String,
     color: String,
-    rescueDate: Number,
     condition: String,
     shelter: String,
-    dogImage: String,
-})
+    status: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    phone: {
+        type: String,
+        required: true
+    },
+    filename: {
+        type: String,
+        required: true
+    },
+}, { timestamps: true })
 
 const Dogs = mongoose.model('Dogs', dogsSchema);
 module.exports = Dogs;

@@ -37,7 +37,7 @@ function Navbar() {
     try {
       await logoutApiCall().unwrap();
       dispatch(logout());
-      handleSuccess('Logged Out Succesfull');
+      handleSuccess("Logged Out Succesfull");
       setTimeout(() => {
         navigate("/login");
       }, 1000);
@@ -46,7 +46,6 @@ function Navbar() {
     }
   };
 
-  
   return (
     <nav
       className={`${
@@ -68,17 +67,42 @@ function Navbar() {
         </Link>
 
         <ul className="list-none hidden sm:flex flex-row gap-8 items-center">
-          <li className="hover:text-[#F69946] text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
-            <Link
-              to="/adoption"
-              onClick={() => {
-                setActive("");
-                window.scrollTo(0, 0);
-              }}
+          <div className="dropdown dropdown-end">
+            <div
+              tabIndex={0}
+              role="button"
+              className="hover:text-[#F69946] text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer"
             >
               Adoption
-            </Link>
-          </li>
+            </div>
+            <ul
+              tabIndex={0}
+              className="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-52 p-2 shadow"
+            >
+              <li className="hover:text-[#F69946] text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
+                <Link
+                  to="/adoption"
+                  onClick={() => {
+                    setActive("");
+                    window.scrollTo(0, 0);
+                  }}
+                >
+                  Dogs
+                </Link>
+              </li>
+              <li className="hover:text-[#F69946] text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
+                <Link
+                  to="/postadoption"
+                  onClick={() => {
+                    setActive("");
+                    window.scrollTo(0, 0);
+                  }}
+                >
+                  Post a dog for Adoption
+                </Link>
+              </li>
+            </ul>
+          </div>
           <li className="hover:text-[#F69946] text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
             <Link
               to="/donation"

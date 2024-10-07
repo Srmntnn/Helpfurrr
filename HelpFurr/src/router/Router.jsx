@@ -8,6 +8,12 @@ import Login from "../components/Login";
 import Signup from "../components/Signup";
 import Dashboard from "../pages/admin/Dashboard";
 import Users from "../pages/admin/Users";
+import Adoptionpage from "../pages/Adoption/AdoptionPage";
+import PostForAdoption from "../pages/PostForAdoptionPage/PostForAdoption";
+import PostingDogs from "../pages/admin/PostingDogs";
+import ApprovedDogs from "../pages/admin/ApprovedDogs";
+import AdoptionRequest from "../pages/admin/AdoptionRequest";
+import AdoptedHistory from "../pages/admin/AdoptedHistory";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +34,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/adoption",
+        element: <Adoptionpage />,
+      },
+      {
+        path: "/postadoption",
+        element: <PostForAdoption />,
       },
       {
         path: "/donation",
@@ -42,21 +53,35 @@ const router = createBrowserRouter([
   },
 
   {
-    path: 'dashboard',
-    element: <DashboardLayout/>,
+    path: "dashboard",
+    element: <DashboardLayout />,
     children: [
       {
-        path: '',
-        element: <Dashboard/>,
+        path: "",
+        element: <Dashboard />,
       },
       {
-        path: 'users',
-        element: <Users/>
-      }
-    ]
-  }
+        path: "users",
+        element: <Users />,
+      },
+      {
+        path: "postingdogs",
+        element: <PostingDogs />,
+      },
+      {
+        path: "approvedDogs",
+        element: <ApprovedDogs />,
+      },
+      {
+        path: "adoptionrequest",
+        element: <AdoptionRequest />,
+      },
+      {
+        path: "adoptedhistory",
+        element: <AdoptedHistory />,
+      },
+    ],
+  },
 ]);
-
-
 
 export default router;
