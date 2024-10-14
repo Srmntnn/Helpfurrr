@@ -1,1 +1,8 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+input[type="email"]:focus ~ .input-text,
+input[type="email"]:not(:placeholder-shown) ~ .input-text{
+  @apply text-main-orange transform -translate-y-10 -translate-x-2 scale-75;
+}  */

@@ -1,30 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { Loader } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import { handleError, handleSuccess } from "../Utils/utils";
-import { useRegisterUserMutation } from "../redux/features/auth/authApi";
-import { useDispatch, useSelector } from "react-redux";
-import { setCredentials } from "../redux/features/auth/authSlice";
+import { useAuthStore } from "../store/authStore";
+import { motion } from "framer-motion";
+import PasswordStrengthMeter from "./passwordStrenghtMeter";
 
 function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [registerUser, { isLoading }] = useRegisterUserMutation();
-
-  const { userInfo } = useSelector((state) => state.auth);
-  console.log(userInfo);
-
-  useEffect(() => {
-    if (userInfo) {
-      navigate("/");
-    }
-  }, [navigate, userInfo]);
+  const { signup, error, isLoading } = useAuthStore();
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -33,10 +22,8 @@ function Signup() {
       toast.error("Passwords do not match");
     } else {
       try {
-        const res = await registerUser({ name, email, password }).unwrap();
-        dispatch(setCredentials({ ...res }));
-        toast.success('Signup Successfully')
-        navigate("/login");
+        await signup(email, password, name);
+        navigate("/email-verification");
       } catch (err) {
         toast.error(err?.data?.message || err.error);
       }
@@ -44,8 +31,14 @@ function Signup() {
   };
 
   return (
-    <section className="container mt-32">
-      <div>
+    <section className="flex justify-center items-center">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-md w-full bg-gray- p-6 shadow-xl 
+			overflow-hidden"
+      >
         <div>
           <div>
             <h1>Sign Up</h1>
@@ -88,7 +81,27 @@ function Signup() {
                 value={confirmPassword}
               />
             </div>
-            <button type="submit">Signup</button>
+            {error && (
+              <p className="text-red-500 font-semibold mt-2">{error}</p>
+            )}
+            <PasswordStrengthMeter password={password} />
+
+            <motion.button
+              className="mt-5 w-full py-3 px-4 bg-gradient-to-r from-main-orange to-secondary-orange text-white 
+						font-bold rounded-lg shadow-lg hover:from-main-orange
+						hover:to-secondary-orange focus:outline-none focus:ring-2 focus:ring-main-orange focus:ring-offset-2
+						 focus:ring-offset-main-brown transition duration-200"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader className=" animate-spin mx-auto" size={24} />
+              ) : (
+                "Sign Up"
+              )}
+            </motion.button>
             <span>
               Already have an account ?<Link to="/login">Login</Link>
             </span>
@@ -99,7 +112,7 @@ function Signup() {
         <div>
           <img src="" alt="" />
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

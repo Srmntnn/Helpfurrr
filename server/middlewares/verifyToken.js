@@ -1,26 +1,21 @@
-const { json } = require('body-parser');
-const jwt = require('jsonwebtoken');
-
-const JWT_SECRET = process.env.JWT_SECRET;
+const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
-    try {
-        const token = req.cookies.token;
+	const token = req.cookies.token;
+	if (!token) return res.status(401).json({ success: false, message: "Unauthorized - no token provided" });
+	try {
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        if (!token) {
-            return res.status(401).send({ message: 'Invalid Token' })
-        }
-        const decoded = jwt.verify(token, JWT_SECRET);
-        if (!decoded) {
-            return res.status(401).send({ message: 'Invalid to Decode Token' })
-        }
-        req.userId = decoded.userId;
-        req.role = decoded.role;
-        next(); 
-    } catch (error) {
-        console.error("Error while verifying token", error);
-        res.status(401).send({ message: 'Error while verifying token' })
-    }
-}
+		if (!decoded) return res.status(401).json({ success: false, message: "Unauthorized - invalid token" });
 
+		req.userId = decoded.userId;
+		req.role = decoded.role
+		req.email = decoded.email
+		req.decoded = decoded
+		next();
+	} catch (error) {
+		console.log("Error in verifyToken ", error);
+		return res.status(500).json({ success: false, message: "Server error" });
+	}
+};
 module.exports = verifyToken

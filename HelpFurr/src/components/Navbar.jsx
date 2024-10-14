@@ -1,17 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { styles } from "../styles";
-import menuIcon from "../assets/menu.svg";
-import closeIcon from "../assets/close.svg";
+import menuIcon from "../assets/menu.png";
+import closeIcon from "../assets/close (1).png";
+import appLogo from "../assets/Helpfurrlogo.png"
+
 import { handleError, handleSuccess } from "../Utils/utils";
 import { ToastContainer } from "react-toastify";
-import { useSelector, useDispatch } from "react-redux";
-import { useLogoutUserMutation } from "../redux/features/auth/authApi";
-import { logout } from "../redux/features/auth/authSlice";
+
+import { IoIosNotifications } from "react-icons/io";
+
+import { useAuthStore } from "../store/authStore";
 
 function Navbar() {
-  const { userInfo } = useSelector((state) => state.auth);
-
+  const {  user, logout } =useAuthStore();
   const [toggle, setToggle] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -28,15 +30,9 @@ function Navbar() {
     window.addEventListener("scroll", handleScroll);
   }, []);
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const [logoutApiCall] = useLogoutUserMutation();
-
-  const logoutHandler = async () => {
+  const logoutHandler = () => {
     try {
-      await logoutApiCall().unwrap();
-      dispatch(logout());
+      logout();
       handleSuccess("Logged Out Succesfull");
       setTimeout(() => {
         navigate("/login");
@@ -50,8 +46,8 @@ function Navbar() {
     <nav
       className={`${
         styles.paddingX
-      } w-full flex items-center py-5 fixed top-0 z-20 ${
-        scrolled ? "bg-[#03000C]" : "bg-transparent"
+      } w-full flex items-center py-3 fixed top-0 z-20 ${
+        scrolled ? "bg-light-orange" : "bg-white"
       }`}
     >
       <div className="w-full flex justify-between max-w-screen-2xl mx-auto items-center">
@@ -63,7 +59,7 @@ function Navbar() {
             window.scrollTo(0, 0);
           }}
         >
-          <h1 className="font-bold text-[46px]">LOGO</h1>
+          <img src={appLogo} alt="" />
         </Link>
 
         <ul className="list-none hidden sm:flex flex-row gap-8 items-center">
@@ -137,10 +133,18 @@ function Navbar() {
             </Link>
           </li>
 
+          <div>
+            <Link to="/notification">
+              <IoIosNotifications />
+            </Link>
+          </div>
+
           <div className="sm:ml-4 border-2 border-main-brown border-solid rounded-[8px] w-[165px] h-[64px] flex items-center justify-center drop-shadow-drop">
-            {userInfo ? (
+            {user ? (
               <>
-                <div onClick={logoutHandler}>Logout</div>
+                <div>
+                  <button onClick={logoutHandler}>Logout</button>
+                </div>
               </>
             ) : (
               <>
@@ -158,7 +162,6 @@ function Navbar() {
             )}
           </div>
         </ul>
-
         <div className="sm:hidden flex item-center">
           <img
             src={toggle ? closeIcon : menuIcon}

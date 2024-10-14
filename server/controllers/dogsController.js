@@ -5,18 +5,18 @@ const path = require('path');
 
 const PostDogRequest = async (req, res) => {
   try {
-    const { name, age, shelter, condition, email, phone, } = req.body;
+    const { name, age, area, justification, email, phone, } = req.body;
     const { filename } = req.file;
 
     const dog = await Dogs.create({
       name,
       age,
-      shelter,
-      condition,
+      area,
+      justification,
       email,
       phone,
+      // type,
       filename,
-      // color,
       status: 'Pending'
     });
 

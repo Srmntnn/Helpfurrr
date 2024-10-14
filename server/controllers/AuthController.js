@@ -1,24 +1,48 @@
 const UserModel = require("../models/user");
-const generateToken = require('../middlewares/generateToken');
+const generateToken = require('../middlewares/generateToken.js');
 const router = require("../routes/AuthRouter");
 const { query } = require("express");
+const { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail } = require("../mailtrap/emails.js");
+const crypto = require("crypto");
 
-const signup = async (req, res) => {
+const signup = async (req, res, next) => {
+    const { name, email, password } = req.body;
     try {
-        const { name, email, password } = req.body;
-        const user = await UserModel.findOne({ email });
-        if (user) {
+        const userAlreadyExists = await UserModel.findOne({ email });
+
+        if (!(name || email || password)) {
+            return next("Provide Input Fields.")
+        }
+
+        if (userAlreadyExists) {
             return res.status(409)
                 .json({ message: 'User is already exist, you can login', success: false });
         }
-        const userModel = new UserModel({ name, email, password });
         // userModel.password = await bcrypt.hash(password, 10);
-        await userModel.save();
-        res.status(201)
-            .json({
-                message: "Signup successfully",
-                success: true
-            })
+        const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
+        const user = new UserModel({
+            email,
+            name,
+            password,
+            verificationToken,
+            verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+        });
+
+        await user.save();
+
+        const token = await generateToken(res, user._id);
+
+        await sendVerificationEmail(user.email, verificationToken);
+
+        res.status(201).json({
+            success: true,
+            message: "User created successfully",
+            user: {
+                ...user._doc,
+                password: undefined,
+            },
+            token
+        });
     } catch (err) {
         res.status(500)
             .json({
@@ -28,10 +52,47 @@ const signup = async (req, res) => {
     }
 }
 
+const verifyEmail = async (req, res) => {
+    const { code } = req.body;
+    try {
+        // Find the user with verification code and valid expiration
+        const user = await UserModel.findOne({
+            verificationToken: code,
+            verificationTokenExpiresAt: { $gt: Date.now() },
+        });
+
+        if (!user) {
+            return res.status(400).json({ success: false, message: "Invalid or expired verification code" });
+        }
+
+        // Update user properties
+        user.emailVerified = true;
+        user.verificationToken = undefined;
+        user.verificationTokenExpiresAt = undefined;
+
+        // Save the updated user document
+        await user.save();
+
+        await sendWelcomeEmail(user.email, user.name);
+
+        res.status(200).json({
+            success: true,
+            message: "Email verified successfully",
+            user: {
+                ...user._doc,
+                password: undefined,
+            },
+        });
+    } catch (error) {
+        console.log("error in verifyEmail ", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
 
 const login = async (req, res) => {
+    const { email, password } = req.body;
     try {
-        const { email, password } = req.body;
+
         const user = await UserModel.findOne({ email });
         const errorMsg = 'Email or Password is wrong';
         const errorPass = 'Password is not Matched.';
@@ -46,24 +107,20 @@ const login = async (req, res) => {
                 .json({ message: errorPass, success: false });
         }
 
-        const token = await generateToken(user._id);
+        const token = await generateToken(res, user._id);
 
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: true,
-        })
+        user.lastLogin = new Date();
+        await user.save();
 
-        res.status(200).send({
-            message: "Login Success", token, user: {
-                _id: user._id,
-                email: user.email,
-                name: user.name,
-                role: user.role,
-                profilePicture: user.profilePicture,
-                profession: user.profession
-            }
-        })
+        res.status(200).json({
+            success: true,
+            message: "Logged in successfully",
+            token,
+            user: {
+                ...user._doc,
+                password: undefined,
+            },
+        });
 
 
         // const jwtToken = jwt.sign(
@@ -94,6 +151,74 @@ const logout = (req, res) => {
     res.status(200).send({ message: "Logged out Succesfully" });
 }
 
+const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+    try {
+        const user = await UserModel.findOne({ email })
+        if (!user) {
+            return res.status(404).send({ message: 'User not Found' });
+        }
+        const resetToken = crypto.randomBytes(20).toString("hex")
+        const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1hour
+
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpiresAt = resetTokenExpiresAt
+
+        await user.save();
+
+        await sendPasswordResetEmail(user.email, `${process.env.CLIENT_URL}/reset-password/${resetToken}`)
+        res.status(200).json({ success: true, message: "Password reset link sent to your email" });
+    } catch (error) {
+        console.log("Error in forgot Password ", error);
+        res.status(400).json({ success: false, message: error.message });
+    }
+
+}
+
+const resetPassword = async (req, res) => {
+    try {
+        const { token } = req.params
+        const { password } = req.body
+
+        const user = await UserModel.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpiresAt: { $gt: Date.now() }
+        })
+
+        if (!user) {
+            res.status(400).json({ success: false, message: "Invalid or Expired reset token " });
+        }
+
+
+        user.password = password
+        user.resetPasswordToken = undefined
+        user.resetPasswordExpiresAt = undefined
+        await user.save();
+
+        await sendResetSuccessEmail(user.email)
+
+        res.status(200).json({ success: true, message: "Password reset successful" });
+
+    } catch (error) {
+        console.log("Error in resetPassword ", error);
+        res.status(400).json({ success: false, message: error.message });
+    }
+}
+
+const checkAuth = async (req, res) => {
+    try {
+        const user = await UserModel.findById(req.userId).select("-password");
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User not found" });
+        }
+
+        res.status(200).json({ success: true, user });
+    } catch (error) {
+        console.log("Error in checkAuth ", error);
+        res.status(400).json({ success: false, message: error.message });
+    }
+}
+
 const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
@@ -113,7 +238,7 @@ const getUsers = async (req, res) => {
         const users = await UserModel.find({}, 'id name email role').sort({ createdAt: -1 })
         res.status(200).send(users)
     } catch (error) {
-        onsole.error("Error Fetching User", error);
+        console.error("Error Fetching User", error);
         res.status(500).send({ message: "Error Fetching User", });
     }
 }
@@ -166,30 +291,31 @@ const updateUsers = async (req, res) => {
 
 const getAdmin = async (req, res) => {
     const email = req.params.email;
-    const query = { email: email }
+    const query = { email: email };
     try {
         const user = await UserModel.findOne(query);
-        console.log(user);
+        console.log(user)
         if (email !== req.decoded.email) {
-            return res.status(403).send({ messages: "Forbidden Access" })
+            return res.status(403).send({ message: "Forbidden access" })
         }
         let admin = false;
         if (user) {
             admin = user?.role === "admin";
         }
-        res.status(200).json({ admin });
+        res.status(200).json({ admin })
+
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({ message: error.message });
     }
-}
+};
 
 const makeAdmin = async (req, res) => {
     const userId = req.params.id;
-    const {name, email, role, profession, profilePicture} = req.body;
+    const { name, email, role, profession, profilePicture } = req.body;
     try {
         const updatedUser = UserModel.findByIdAndUpdate(userId,
-            {role: "admin"},
-            {new: true, runValidators: true}
+            { role: "admin" },
+            { new: true, runValidators: true }
         );
         if (!updatedUser) {
             return res.status(403).send({ messages: "User not Found" })
@@ -197,7 +323,7 @@ const makeAdmin = async (req, res) => {
         res.status(200).json({ updatedUser });
     } catch (error) {
         res.status(500).json({ message: error.message })
-        
+
     }
 }
 
@@ -210,5 +336,9 @@ module.exports = {
     updateRole,
     updateUsers,
     getAdmin,
-    makeAdmin
+    makeAdmin,
+    verifyEmail,
+    forgotPassword,
+    resetPassword,
+    checkAuth
 }

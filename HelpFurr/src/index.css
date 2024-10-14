@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+
+input[type="email"]:focus ~ .input-email,
+input[type="email"]:not(:placeholder-shown) ~ .input-email{
+  @apply text-main-orange bg-white transform -translate-y-6 -translate-x-2 scale-75;
+} 
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

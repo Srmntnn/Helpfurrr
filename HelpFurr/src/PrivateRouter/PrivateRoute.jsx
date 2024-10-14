@@ -1,17 +1,17 @@
 import React, {  useContext } from 'react'
 import { AuthContext } from '../context/AuthProvider'
 import { Navigate, useLocation } from 'react-router-dom'
+import { useAuthStore } from '../store/authStore';
 
-function PrivateRoute() {
-    const { user, loading } = useContext(AuthContext)
+function PrivateRoute({children}) {
+    const {isAuthenticated, user, loading } = useAuthStore();
     const location = useLocation();
-
     if(loading) {
         return(
             <loadingSpinner/>
         )
     }
-    if(user) {
+    if(isAuthenticated && user.emailVerified) {
         return children;
     }
   return (

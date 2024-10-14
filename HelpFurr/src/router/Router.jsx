@@ -14,8 +14,40 @@ import PostingDogs from "../pages/admin/PostingDogs";
 import ApprovedDogs from "../pages/admin/ApprovedDogs";
 import AdoptionRequest from "../pages/admin/AdoptionRequest";
 import AdoptedHistory from "../pages/admin/AdoptedHistory";
+import EmailVerificationPage from "../pages/EmailVerificationPage";
+import { Toaster } from "react-hot-toast";
+import { useAuthStore } from "../store/authStore";
+import { Navigate } from "react-router-dom";
+
+
+// protect routes that require authentication
+const ProtectedRoute = ({ children }) => {
+	const { isAuthenticated, user } = useAuthStore();
+
+	if (!isAuthenticated) {
+		return <Navigate to='/login' replace />;
+	}
+
+	if (!user.isVerified) {
+		return <Navigate to='/email-verification' replace />;
+	}
+
+	return children;
+};
+
+// redirect authenticated users to the home page
+const RedirectAuthenticatedUser = ({ children }) => {
+	const { isAuthenticated, user } = useAuthStore();
+
+	if (isAuthenticated && user.emailVerified) {
+		return <Navigate to='/' replace />;
+	}
+
+	return children;
+};
 
 const router = createBrowserRouter([
+  
   {
     path: "/",
     element: <Main />,
@@ -26,11 +58,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <Login />,
+        element: <RedirectAuthenticatedUser><Login /></RedirectAuthenticatedUser>,
       },
       {
         path: "/signup",
-        element: <Signup />,
+        element: <RedirectAuthenticatedUser><Signup /></RedirectAuthenticatedUser>,
       },
       {
         path: "/adoption",
@@ -49,6 +81,10 @@ const router = createBrowserRouter([
       {
         path: "/educresources",
       },
+      {
+        path: 'email-verification',
+        element: <EmailVerificationPage/>
+      }
     ],
   },
 

@@ -6,6 +6,7 @@ const UserSchema = new Schema({
     name: {
         type: String,
         required: true,
+        trim: true
     },
     email: {
         type: String,
@@ -16,25 +17,31 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
-
     role: {
         type: String,
-        enum: ['user', 'admin'],
         default: 'user'
     },
-    profession:  String,
+    profession: String,
     profilePicture: String,
     createdAt: {
         type: Date,
         default: Date.now,
     },
+    emailVerified: {
+        type: Boolean,
+        default: false,
+    },
+    resetPasswordToken: String,
+    resetPasswordExpiresAt: Date,
+    verificationToken: String,
+    verificationTokenExpiresAt: Date,
 });
 
 
 //Hashed Passwords
-UserSchema.pre('save', async function(next){
+UserSchema.pre('save', async function (next) {
     const user = this;
-    if(!user.isModified('password')) return next();
+    if (!user.isModified('password')) return next();
     const hashedPassword = await bcrypt.hash(user.password, 10);
     user.password = hashedPassword;
     next();

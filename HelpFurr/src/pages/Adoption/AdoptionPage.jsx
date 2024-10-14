@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Dogviewer from "./Dogviewer";
 
 const AdoptionPage = () => {
-  const [filter, setFilter] = useState("all");
   const [dogsData, setDogsData] = useState([]);
   const [loading, setLoading] = useState(true);
 
