@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import postPet from "./images/postPet.png";
+import { styles } from "../../styles";
+import "../../index.css";
 
 function PostForAdoption() {
   const [name, setName] = useState("");
@@ -38,8 +40,7 @@ function PostForAdoption() {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setPicture(selectedFile);
-      setFileName(selectedFile.name); 
-  
+      setFileName(selectedFile.name);
     }
   };
   const handleSubmit = async (e) => {
@@ -109,106 +110,162 @@ function PostForAdoption() {
   };
 
   return (
-    <section className="post-pet-section">
-      <h2>Post a Pet for Adoption</h2>
-      <img src={postPet} alt="Pet Looking for a Home" />
-
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div className="input-box">
-          <label>Name:</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+    <section className={`${styles.paddingX} flex justify-center `}>
+      <div className="mt-52 flex gap-4 flex-col">
+        <h2 className={`${styles.heroHeadText} text-[#564941] `}>
+          Post a Pet for Adoption
+        </h2>
+        <div className="flex justify-center gap-4 bg-light-orange py-6 rounded-2xl shadow-sm mb-8 ">
+          <img
+            src={postPet}
+            className="object-contain h-[128px] "
+            alt="Pet Looking for a Home"
           />
         </div>
 
-        <div className="input-box">
-          <label>Pet Age:</label>
-          <input
-            type="text"
-            value={age}
-            onChange={(e) => {
-              setAge(e.target.value);
-            }}
-          />
-        </div>
-
-        <div className="input-box">
-          <label>Picture:</label>
-          <label className="file-input-label">
-            <span className="file-input-text">
-              {fileName || "Choose a Picture"}
-            </span>
-            <input
-              className="file-input"
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
-          </label>
-        </div>
-
-        <div className="input-box">
-          <label>Location:</label>
-          <input
-            type="text"
-            value={shelter}
-            onChange={(e) => setShelter(e.target.value)}
-          />
-        </div>
-
-        <div className="input-box">
-          <h3>Condition:</h3>
-          <textarea
-            rows="4"
-            value={condition}
-            onChange={(e) => setCondition(e.target.value)}
-          ></textarea>
-        </div>
-
-        <h3>Contact Information</h3>
-
-        <div className="input-box">
-          <label>Email:</label>
-          <input
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        <div className="input-box">
-          <label>Ph.No:</label>
-          <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-        </div>
-
-        {emailError && (
-          <p className="error-message">Please provide a valid email address.</p>
-        )}
-        {formError && (
-          <p className="error-message">Please fill out all fields correctly.</p>
-        )}
-
-        <button type="submit" className="cta-button" disabled={isSubmitting}>
-          {isSubmitting ? "Submitting..." : "Submit Your Pet"}
-        </button>
-
-        {showPopup && (
-          <div className="popup">
-            <div className="popup-content">
-              <h4>Application Submitted; we'll get in touch with you soon.</h4>
-            </div>
-            <button onClick={togglePopup} className="close-btn">
-              Close <i className="fa fa-times"></i>
-            </button>
+        <form
+          onSubmit={handleSubmit}
+          encType="multipart/form-data"
+          className="flex flex-col gap-4"
+        >
+          <div className="flex justify-center gap-4 ">
+            <label className="relative w-full">
+              <input
+                type="text"
+                value={name}
+                placeholder="Dog Name"
+                onChange={(e) => setName(e.target.value)}
+                className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4 "
+              />
+              <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-text">
+                Dog name
+              </span>
+            </label>
           </div>
-        )}
-      </form>
+
+          <div className="flex justify-center">
+            <label className="relative w-full">
+              <input
+                type="text"
+                value={age}
+                placeholder="Pet Age"
+                onChange={(e) => {
+                  setAge(e.target.value);
+                }}
+                className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4 "
+              />
+              <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-text">
+                Pet Age
+              </span>
+            </label>
+          </div>
+
+          <div className="flex flex-col">
+            <label>Picture:</label>
+            <label className="file-input-label">
+              <span className="file-input-text">
+                {fileName || "Choose a Picture"}
+              </span>
+              <input
+                className="file-input"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+            </label>
+          </div>
+
+          <div className="flex justify-center">
+            <label className="relative w-full">
+              <input
+                type="text"
+                value={shelter}
+                placeholder="Location"
+                onChange={(e) => setShelter(e.target.value)}
+                className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4 "
+              />
+              <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-text">
+                Location
+              </span>
+            </label>
+          </div>
+
+          <div className="flex justify-center">
+            <label className="relative w-full">
+              <input
+                type="text"
+                value={condition}
+                placeholder="Condition"
+                onChange={(e) => setCondition(e.target.value)}
+                className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4 "
+              />
+              <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-text">
+                Condition
+              </span>
+            </label>
+          </div>
+
+          <h3 className="mt-4 text-[24px] font-bold">Contact Information</h3>
+
+          <div className="flex justify-center">
+            <label className="relative w-full">
+              <input
+                type="email"
+                value={email}
+                placeholder="Email"
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4 "
+              />
+              <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-email">
+                Email
+              </span>
+            </label>
+          </div>
+
+          <div className="flex justify-center">
+            <label className="relative w-full">
+              <input
+                type="text"
+                value={phone}
+                placeholder="Email"
+                onChange={(e) => setPhone(e.target.value)}
+                className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4 "
+              />
+              <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-text">
+                Phone Number
+              </span>
+            </label>
+          </div>
+
+          {emailError && (
+            <p className="error-message">
+              Please provide a valid email address.
+            </p>
+          )}
+          {formError && (
+            <p className="error-message">
+              Please fill out all fields correctly.
+            </p>
+          )}
+
+          <button type="submit" className="w-full py-3 px-4 bg-gradient-to-r from-secondary-orange to-main-orange text-white rounded-lg shadow-lg hover:from-main-orange hover:to-secondary-orange focus:outline-none focus:ring-2 focus:ring-main-orange focus:ring-offset-2 focus:ring-offset-main-brown transition duration-200" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit Your Pet"}
+          </button>
+
+          {showPopup && (
+            <div className="popup">
+              <div className="popup-content">
+                <h4>
+                  Application Submitted; we'll get in touch with you soon.
+                </h4>
+              </div>
+              <button onClick={togglePopup} className="close-btn">
+                Close <i className="fa fa-times"></i>
+              </button>
+            </div>
+          )}
+        </form>
+      </div>
     </section>
   );
 }

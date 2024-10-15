@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Dogviewer from "./Dogviewer";
+import { styles } from "../../styles";
 
 const AdoptionPage = () => {
   const [dogsData, setDogsData] = useState([]);
@@ -47,7 +48,7 @@ const AdoptionPage = () => {
           <option value="Other">Other</option>
         </select>
       </div> */}
-      <div className="pet-container">
+      <div className={`${styles.paddingX} flex flex-wrap mx-auto justify-center gap-4 items-center mt-40`}>
         {loading ?
           <p>Loading</p> : ((dogsData.length > 0 ) ? (
             dogsData.map((dogDetail, index) => (

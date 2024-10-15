@@ -29,6 +29,10 @@ const dogsSchema = new Schema({
         type: String,
         required: true
     },
+    status: {
+        type: String,
+        required: true
+    }
 }, { timestamps: true })
 
 const Dogs = mongoose.model('Dogs', dogsSchema);

@@ -18,6 +18,7 @@ import EmailVerificationPage from "../pages/EmailVerificationPage";
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "../store/authStore";
 import { Navigate } from "react-router-dom";
+import AdoptionFormPage from '../components/AdoptForm'
 
 
 // protect routes that require authentication
@@ -84,6 +85,10 @@ const router = createBrowserRouter([
       {
         path: 'email-verification',
         element: <EmailVerificationPage/>
+      },
+      {
+        path: 'adoption-form',
+        element: <AdoptionFormPage/>
       }
     ],
   },

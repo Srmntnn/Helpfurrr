@@ -6,6 +6,10 @@ import { useAuthStore } from "../store/authStore";
 import { motion } from "framer-motion";
 import { Loader } from "lucide-react";
 import "../index.css";
+import { FaFacebook } from "react-icons/fa";
+import Gmail from "../assets/pngwing 1.png";
+import dogVisual from "../assets/dogshit.png";
+import { styles } from "../styles";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -76,41 +80,95 @@ function Login() {
     // }
   };
 
+
   return (
-    <section className="flex justify-center items-center">
+    <section
+      className={`${styles.paddingX} flex justify-center items-center h-svh`}
+    >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className=""
+        className="flex shadow-xl rounded-lg w-full max-w-[1183px] mt-20"
       >
-        <h1>Login</h1>
-        <form onSubmit={handleLogin}>
-          <div className="flex justify-center ">
-            <label htmlFor="email" className="relative w-full">
-              <input
-                required
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                name="email"
-                placeholder="Email"
-                className="h-12 max-w-[500px] w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4"
-                value={email}
-              />
-              <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-email">
-                Email
-              </span>
-            </label>
+        <div className="flex flex-col justify-between gap-8 w-full sm:max-w-[418px] max-w-[600px] p-6 sm:p-10 shadow-sm bg-white overflow-hidden  h-[660px]  rounded-lg">
+          <div className="flex flex-col">
+            <h1 className="text-xl font-bold text-main-brown">Welcome Back!</h1>
+            <p className="text-gray-400">Enter your credentials to sign in.</p>
           </div>
-          <div>
-            <label htmlFor="password">Password</label>
-            <input
-              onChange={(e) => setPassword(e.target.value)}
-              type="password"
-              name="password"
-              placeholder="Enter your password..."
-              value={password}
-            />
+          <form onSubmit={handleLogin} className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-4">
+                <div className="flex justify-center ">
+                  <label htmlFor="email" className="relative w-full">
+                    <input
+                      required
+                      onChange={(e) => setEmail(e.target.value)}
+                      type="email"
+                      name="email"
+                      placeholder="Email"
+                      className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4 "
+                      value={email}
+                    />
+                    <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-email">
+                      Email
+                    </span>
+                  </label>
+                </div>
+                <div className="flex justify-center">
+                  <label htmlFor="password" className="relative w-full">
+                    <input
+                      required
+                      onChange={(e) => setPassword(e.target.value)}
+                      type="password"
+                      name="password"
+                      placeholder="Password"
+                      value={password}
+                      className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4"
+                    />
+                    <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-password">
+                      Password
+                    </span>
+                  </label>
+                </div>
+              </div>
+              {error && (
+                <p className="text-red-500 font-semibold mb-2">{error}</p>
+              )}
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-3 px-4 bg-gradient-to-r from-secondary-orange to-main-orange text-white rounded-lg shadow-lg hover:from-main-orange hover:to-secondary-orange focus:outline-none focus:ring-2 focus:ring-main-orange focus:ring-offset-2 focus:ring-offset-main-brown transition duration-200"
+                type="submit"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader className="w-6 h-6 animate-spin  mx-auto" />
+                ) : (
+                  "LOGIN"
+                )}
+              </motion.button>
+            </div>
+
+            <div className="flex flex-row justify-center items-center gap-2 px-6">
+              <span className="h-[1px] w-full bg-gray-400 flex"></span>
+              <p className="whitespace-nowrap text-gray-400 text-sm">
+                or signin with
+              </p>
+              <span className="h-[1px] w-full bg-gray-400 flex"></span>
+            </div>
+
+            <div className="flex gap-4 w-full justify-between">
+              <div className="bg-[#1877F2] flex py-2 rounded-full w-full justify-center shadow-xl overflow-hidden">
+                <FaFacebook className="text-white text-[24px]" />
+              </div>
+              <div className="flex w-full bg-white py-2 shadow-xl overflow-hidden rounded-full justify-center">
+                <img src={Gmail} className="" alt="" />
+              </div>
+            </div>
+          </form>
+          <div className="flex flex-col items-center">
             <div className="flex items-center">
               <Link
                 to="/forgot-password"
@@ -119,27 +177,23 @@ function Login() {
                 Forgot password?
               </Link>
             </div>
+            <span className="flex gap-1">
+              <p>Does't have an account?</p>
+              <Link to="/signup" className="text-main-orange hover:underline">
+                Signup
+              </Link>
+            </span>
           </div>
-          {error && <p className="text-red-500 font-semibold mb-2">{error}</p>}
-
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-full py-3 px-4 bg-gradient-to-r from-secondary-orange to-main-orange text-white rounded-lg shadow-lg hover:from-main-orange hover:to-secondary-orange focus:outline-none focus:ring-2 focus:ring-main-orange focus:ring-offset-2 focus:ring-offset-main-brown transition duration-200"
-            type="submit"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <Loader className="w-6 h-6 animate-spin  mx-auto" />
-            ) : (
-              "LOGIN"
-            )}
-          </motion.button>
-          <span>
-            Does't have an account ?<Link to="/signup">Signup</Link>
-          </span>
-        </form>
+        </div>
+        <div className="flex">
+          <img
+            className="hidden sm:flex object-cover w-full max-w-[765px] z-[-99px] rounded-r-lg"
+            src={dogVisual}
+            alt=""
+          />
+        </div>
       </motion.div>
+
       <ToastContainer />
     </section>
   );

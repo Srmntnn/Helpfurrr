@@ -7,6 +7,42 @@ input[type="email"]:focus ~ .input-email,
 input[type="email"]:not(:placeholder-shown) ~ .input-email{
   @apply text-main-orange bg-white transform -translate-y-6 -translate-x-2 scale-75;
 } 
+
+input[type="password"]:focus ~ .input-password,
+input[type="password"]:not(:placeholder-shown) ~ .input-password{
+  @apply text-main-orange bg-white transform -translate-y-6 -translate-x-2 scale-75;
+}
+
+input[type="text"]:focus ~ .input-text,
+input[type="text"]:not(:placeholder-shown) ~ .input-text{
+  @apply text-main-orange bg-white transform -translate-y-6 -translate-x-2 scale-75;
+}
+
+.object-fit-custom {
+  width: 100%;
+  object-fit: cover;
+}
+
+.autogrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.customgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 550px));
+}
+
+.autogridTwo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+}
+
+.projectgrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
