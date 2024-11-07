@@ -5,19 +5,21 @@ const path = require('path');
 
 const PostDogRequest = async (req, res) => {
   try {
-    const { name, age, area, justification, email, phone, } = req.body;
+    const { name, age, shelter, condition, email, phone, postedBy } = req.body;
     const { filename } = req.file;
 
     const dog = await Dogs.create({
       name,
+      postedBy,
       age,
-      area,
-      justification,
+      shelter,
+      condition,
       email,
       phone,
       // type,
       filename,
-      status: 'Pending'
+      status: 'Pending',
+
     });
 
     res.status(200).json(dog);
@@ -34,6 +36,20 @@ const getAllDogs = async (reqStatus, req, res) => {
     } else {
       res.status(404).json({ error: 'No data found' });
     }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const getDogsById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const dog = await Dogs.findById(id);
+    if (!dog) {
+      return res.status(404).json({ message: 'Dog not Found' });
+    }
+    res.status(200).json(dog);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -78,5 +94,6 @@ module.exports = {
   getAllDogs,
   PostDogRequest,
   deletePost,
-  approveRequest
+  approveRequest,
+  getDogsById
 }

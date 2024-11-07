@@ -9,7 +9,12 @@ const dogsSchema = new Schema({
         required: true,
         minLength: 3,
     },
-    age: Number,
+    postedBy: {
+        // type: mongoose.Schema.Types.ObjectId,
+        // ref: "users",
+       
+    },
+    age: String,
     color: String,
     condition: String,
     shelter: String,
@@ -29,9 +34,17 @@ const dogsSchema = new Schema({
         type: String,
         required: true
     },
-    status: {
-        type: String,
-        required: true
+    vaccinated: {
+        type: Boolean,
+        default: false
+    },
+    Neutered: {
+        type: Boolean,
+        default: false
+    },
+    urgent: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true })
 

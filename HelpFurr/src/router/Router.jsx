@@ -18,7 +18,11 @@ import EmailVerificationPage from "../pages/EmailVerificationPage";
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "../store/authStore";
 import { Navigate } from "react-router-dom";
-import AdoptionFormPage from '../components/AdoptForm'
+import AdoptForm from '../components/AdoptForm'
+import DogDetails from "../pages/Adoption/DogDetails";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
+import ForgotPasswordPage from "../pages/ForgotPasswordPage";
+import AdoptionFormPage from "../pages/AdoptionFormPage.jsx/AdoptionFormPage";
 
 
 // protect routes that require authentication
@@ -54,7 +58,7 @@ const router = createBrowserRouter([
     element: <Main />,
     children: [
       {
-        path: "/home",
+        path: "/",
         element: <Home />,
       },
       {
@@ -83,13 +87,25 @@ const router = createBrowserRouter([
         path: "/educresources",
       },
       {
-        path: 'email-verification',
+        path: '/email-verification',
         element: <EmailVerificationPage/>
       },
       {
-        path: 'adoption-form',
+        path: '/adoption-form/:dogId',
         element: <AdoptionFormPage/>
-      }
+      },
+      {
+        path: '/dogdetails/:dogId',
+        element: <DogDetails/>
+      },
+      {
+        path: '/reset-password/:token',
+        element: <ResetPasswordPage/>
+      },
+      {
+        path: '/forgot-password',
+        element: <ForgotPasswordPage/>
+      },
     ],
   },
 

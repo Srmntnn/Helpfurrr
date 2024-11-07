@@ -26,24 +26,26 @@ const Dogviewer = (props) => {
 
   return (
     <section className="">
-      <div className="card bg-base-100  w-full max-w-screen-2xl mx-auto shadow-xl flex h-full">
-        <figure>
+      <div className="card bg-base-100 md:w-72 w-full max-w-screen-2xl mx-auto shadow-xl flex h-full">
+        <figure className="w-full">
           <img
-            className="  object-contain w-96 h-96"
+            className="  object-cover md:w-96 w-full sm:max-h-56 h-full"
             src={`http://localhost:8080/images/${props.dog.filename}`}
             alt={props.dog.name}
           />
         </figure>
-        <div className="card-body">
+        <div className="card-body p-3 md:p-4">
           <h2 className="text-main-brown text-2xl font-bold">
             {props.dog.name}
           </h2>
           <p>{formatTimeAgo(props.dog.updatedAt)}</p>
-          <div className="bg-light-orange text-center py-4 px-6 rounded-lg text-main-orange hover:bg-main-orange hover:text-light-orange transition duration-200 shadow-sm">
+          <div className="bg-light-orange text-center md:py-4 md:px-6 py-3 px-4 rounded-lg text-main-orange hover:bg-main-orange hover:text-light-orange transition duration-200 shadow-sm">
             <button onClick={togglePopup} className=" whitespace-nowrap ">
               Adopt Now <i className="fa fa-paw"></i>
             </button>
+            
           </div>
+          <Link to={`/dogdetails/${props.dog._id}`}>Details</Link>
         </div>
       </div>
 

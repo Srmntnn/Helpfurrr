@@ -110,11 +110,15 @@ const DogCards = (props) => {
             <b>Location:</b> {props.dog.shelter}
           </p>
           <p>
+            <b>Owner Name:</b> {props.dog.prevOwnername}
+          </p>
+          <p>
             <b>Owner Email:</b> {props.dog.email}
           </p>
           <p>
             <b>Owner Phone:</b> {props.dog.phone}
           </p>
+          
           <p>
             <b>Condition:</b>
             <span>

@@ -4,7 +4,7 @@ import { styles } from "../styles";
 function Footer() {
   return (
     <div
-      className={`${styles.paddingX}  bg-secondary-orange text-neutral-content p-10 mt-32`}
+      className={`${styles.paddingX}  bg-main-brown text-neutral-content p-10 mt-32`}
     >
       <footer className="  gap-4  items-center  w-full">
         <div className="flex justify-center mb-5">

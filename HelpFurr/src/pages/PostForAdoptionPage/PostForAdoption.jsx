@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import postPet from "./images/postPet.png";
 import { styles } from "../../styles";
 import "../../index.css";
+import { useAuthStore } from "../../store/authStore";
 
 function PostForAdoption() {
+  const { user } = useAuthStore();
   const [name, setName] = useState("");
+  const [postedBy, setPostedBy] = useState("");
   const [age, setAge] = useState("");
   const [shelter, setShelter] = useState("");
   const [condition, setCondition] = useState("");
@@ -15,6 +18,9 @@ function PostForAdoption() {
   const [ageError, setAgeError] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   //   const [type, setType] = useState("None");
+  const [urgent, setUrgent] = useState(false);
+  const [vaccinated, setVaccinated] = useState(false);
+  const [neutered, setNeutered] = useState(false);
   const [picture, setPicture] = useState(null);
   const [fileName, setFileName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,6 +59,7 @@ function PostForAdoption() {
       !condition ||
       !email ||
       !phone ||
+      !postedBy ||
       !fileName ||
       ageError
     ) {
@@ -74,6 +81,7 @@ function PostForAdoption() {
     formData.append("condition", condition);
     formData.append("email", email);
     formData.append("phone", phone);
+    formData.append("postedBy", postedBy);
 
     if (picture) {
       formData.append("picture", picture);
@@ -101,6 +109,7 @@ function PostForAdoption() {
       setPhone("");
       setPicture(null);
       setFileName("");
+      setPpostedBy("");
       togglePopup();
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -206,6 +215,20 @@ function PostForAdoption() {
           </div>
 
           <h3 className="mt-4 text-[24px] font-bold">Contact Information</h3>
+          <div className="flex justify-center">
+            <label className="relative w-full">
+              <input
+                type="text"
+                value={postedBy}
+                placeholder="Name"
+                onChange={(e) => setPostedBy(e.target.value)}
+                className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4 "
+              />
+              <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-text">
+                Name
+              </span>
+            </label>
+          </div>
 
           <div className="flex justify-center">
             <label className="relative w-full">
@@ -248,7 +271,11 @@ function PostForAdoption() {
             </p>
           )}
 
-          <button type="submit" className="w-full py-3 px-4 bg-gradient-to-r from-secondary-orange to-main-orange text-white rounded-lg shadow-lg hover:from-main-orange hover:to-secondary-orange focus:outline-none focus:ring-2 focus:ring-main-orange focus:ring-offset-2 focus:ring-offset-main-brown transition duration-200" disabled={isSubmitting}>
+          <button
+            type="submit"
+            className="w-full py-3 px-4 bg-gradient-to-r from-secondary-orange to-main-orange text-white rounded-lg shadow-lg hover:from-main-orange hover:to-secondary-orange focus:outline-none focus:ring-2 focus:ring-main-orange focus:ring-offset-2 focus:ring-offset-main-brown transition duration-200"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Submitting..." : "Submit Your Pet"}
           </button>
 

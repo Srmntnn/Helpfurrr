@@ -63,7 +63,7 @@ function AdoptForm(props) {
       } else {
         setSuccPopup(true);
       }
-    } catch (err) {
+    } catch (err) { 
       setErrPopup(true);
       console.error(err);
       return;
@@ -84,25 +84,26 @@ function AdoptForm(props) {
     <div className=" flex flex-col items-center justify-between p-8 pb-[64px]">
       <h2 className="mb-6">Pet Adoption Application</h2>
       <div className="flex sm:flex-row  flex-col gap-6 justify-between items-center">
-      
-        <div className="pet-details">
-          <div className="max-w-sm w-full max-h-lg h-full">
-            <img
-              src={`http://localhost:8080/images/${props.dog.filename}`}
-              alt={props.dog.name}
-              className="w-full max-w-[300px]  max-h-lg h-full"
-            />
+        {props.dog && (
+          <div className="pet-details">
+            <div className="max-w-sm w-full max-h-lg h-full">
+              <img
+                src={`http://localhost:8080/images/${props.dog.filename}`}
+                alt={props.dog.name}
+                className="w-full max-w-[300px]  max-h-lg h-full"
+              />
+            </div>
+            <div className="pet-info">
+              <h2>{props.dog.name}</h2>
+              <p>
+                <b>Age:</b> {props.dog.age}
+              </p>
+              <p>
+                <b>Location:</b> {props.dog.shelter}
+              </p>
+            </div>
           </div>
-          <div className="pet-info">
-            <h2>{props.dog.name}</h2>
-            <p>
-              <b>Age:</b> {props.dog.age}
-            </p>
-            <p>
-              <b>Location:</b> {props.dog.shelter}
-            </p>
-          </div>
-        </div>
+        )}
         <div className=" w-full">
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <div className="">

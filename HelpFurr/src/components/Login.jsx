@@ -8,7 +8,7 @@ import { Loader } from "lucide-react";
 import "../index.css";
 import { FaFacebook } from "react-icons/fa";
 import Gmail from "../assets/pngwing 1.png";
-import dogVisual from "../assets/dogshit.png";
+import dogVisual from "../assets/cover.png";
 import { styles } from "../styles";
 
 function Login() {
@@ -45,56 +45,29 @@ function Login() {
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
-
-    /////
-    // if (!email || !password) {
-    //     return handleError('Email and password are required')
-    // }
-    // try {
-    //     const url = 'http://localhost:8080/auth/login';
-    //     const response = await fetch(url, {
-    //         method: "POST",
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(loginInfo)
-    //     });
-    //     const result = await response.json();
-    //     const { success, message, jwtToken, name, error } = result;
-    //     if (success) {
-    //         handleSuccess(message);
-    //         localStorage.setItem('token', jwtToken);
-    //         localStorage.setItem('loggedInUser', name);
-    //         setTimeout(() => {
-    //             navigate('/home')
-    //         }, 1000)
-    //     } else if (error) {
-    //         const details = error?.details[0].message;
-    //         handleError(details);
-    //     } else if (!success) {
-    //         handleError(message);
-    //     }
-    //     console.log(result);
-    // } catch (err) {
-    //     handleError(err);
-    // }
   };
-
 
   return (
     <section
       className={`${styles.paddingX} flex justify-center items-center h-svh`}
     >
+      <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
+        <div class="absolute left-0 right-0 top-0 -z-10 m-auto max-h-[310px] h-full w-full max-w-[310px] rounded-full bg-main-orange opacity-30 blur-[100px]"></div>
+      </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="flex shadow-xl rounded-lg w-full max-w-[1183px] mt-20"
+        className="flex shadow-sm rounded-lg w-full max-w-[1183px] mt-20"
       >
-        <div className="flex flex-col justify-between gap-8 w-full sm:max-w-[418px] max-w-[600px] p-6 sm:p-10 shadow-sm bg-white overflow-hidden  h-[660px]  rounded-lg">
+        <div className="flex flex-col justify-between gap-8 w-full sm:max-w-[418px] max-w-[600px] p-6 sm:p-10 shadow-sm bg-white overflow-hidden  rounded-lg">
           <div className="flex flex-col">
-            <h1 className="text-xl font-bold text-main-brown">Welcome Back!</h1>
-            <p className="text-gray-400">Enter your credentials to sign in.</p>
+            <h1 className=" fredoka-bold text-main-brown md:text-[40px] sm:text-[28px] xs:text-[40px] text-[30px]">
+              Welcome Back!
+            </h1>
+            <p className="text-secondary-brown quicksand-regular">
+              Enter your credentials to sign in.
+            </p>
           </div>
           <form onSubmit={handleLogin} className="flex flex-col gap-6">
             <div className="flex flex-col gap-6">
@@ -110,7 +83,7 @@ function Login() {
                       className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4 "
                       value={email}
                     />
-                    <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-email">
+                    <span className="text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-email text-secondary-brown quicksand-regular ">
                       Email
                     </span>
                   </label>
@@ -126,7 +99,7 @@ function Login() {
                       value={password}
                       className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4"
                     />
-                    <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-password">
+                    <span className="text-secondary-brown quicksand-regular  text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-password">
                       Password
                     </span>
                   </label>
@@ -139,21 +112,25 @@ function Login() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full py-3 px-4 bg-gradient-to-r from-secondary-orange to-main-orange text-white rounded-lg shadow-lg hover:from-main-orange hover:to-secondary-orange focus:outline-none focus:ring-2 focus:ring-main-orange focus:ring-offset-2 focus:ring-offset-main-brown transition duration-200"
+                onClick={() => {
+                  setActive("");
+                  window.scrollTo(0, 0);
+                }}
+                className="w-full py-3 px-4 bg-gradient-to-r from-secondary-orange to-main-orange text-white rounded-lg shadow-lg hover:from-main-orange hover:to-secondary-orange focus:outline-none focus:ring-2 focus:ring-main-orange focus:ring-offset-2 focus:ring-offset-main-brown transition duration-200 quicksand-bold tracking-wider"
                 type="submit"
                 disabled={isLoading}
               >
                 {isLoading ? (
                   <Loader className="w-6 h-6 animate-spin  mx-auto" />
                 ) : (
-                  "LOGIN"
+                  "Login"
                 )}
               </motion.button>
             </div>
 
             <div className="flex flex-row justify-center items-center gap-2 px-6">
               <span className="h-[1px] w-full bg-gray-400 flex"></span>
-              <p className="whitespace-nowrap text-gray-400 text-sm">
+              <p className="whitespace-nowrap text-gray-400 text-sm quicksand-regular">
                 or signin with
               </p>
               <span className="h-[1px] w-full bg-gray-400 flex"></span>
@@ -171,15 +148,26 @@ function Login() {
           <div className="flex flex-col items-center">
             <div className="flex items-center">
               <Link
+                onClick={() => {
+                  setActive("");
+                  window.scrollTo(0, 0);
+                }}
                 to="/forgot-password"
-                className="text-sm text-main-orange hover:underline"
+                className="text-sm text-main-orange hover:underline quicksand-regular"
               >
                 Forgot password?
               </Link>
             </div>
-            <span className="flex gap-1">
+            <span className="flex gap-1 quicksand-regular">
               <p>Does't have an account?</p>
-              <Link to="/signup" className="text-main-orange hover:underline">
+              <Link
+                onClick={() => {
+                  setActive("");
+                  window.scrollTo(0, 0);
+                }}
+                to="/signup"
+                className="text-main-orange hover:underline"
+              >
                 Signup
               </Link>
             </span>

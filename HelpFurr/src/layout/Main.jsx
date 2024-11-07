@@ -18,7 +18,6 @@ function Main() {
   return (
     <div className="">
       <Navbar />
-
       <Outlet />
       <Footer />
     </div>

@@ -2,19 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
 
 input[type="email"]:focus ~ .input-email,
-input[type="email"]:not(:placeholder-shown) ~ .input-email{
+input[type="email"]:not(:placeholder-shown) ~ .input-email {
   @apply text-main-orange bg-white transform -translate-y-6 -translate-x-2 scale-75;
-} 
+}
 
 input[type="password"]:focus ~ .input-password,
-input[type="password"]:not(:placeholder-shown) ~ .input-password{
+input[type="password"]:not(:placeholder-shown) ~ .input-password {
   @apply text-main-orange bg-white transform -translate-y-6 -translate-x-2 scale-75;
 }
 
 input[type="text"]:focus ~ .input-text,
-input[type="text"]:not(:placeholder-shown) ~ .input-text{
+input[type="text"]:not(:placeholder-shown) ~ .input-text {
   @apply text-main-orange bg-white transform -translate-y-6 -translate-x-2 scale-75;
 }
 
@@ -43,6 +48,106 @@ input[type="text"]:not(:placeholder-shown) ~ .input-text{
   grid-template-columns: 1fr 1fr 1fr;
 }
 
+@font-face {
+  font-family: fredoka-medium;
+  src: url(./assets/fonts/FredokaOne/Fredoka-Medium.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: fredoka;
+  src: url(./assets/fonts/FredokaOne/Fredoka-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: fredoka-bold;
+  src: url(./assets/fonts/FredokaOne/Fredoka-Bold.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: raleway-regular;
+  src: url(./assets/fonts/Raleway/Raleway-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: raleway-semi-bold;
+  src: url(./assets/fonts/Raleway/Raleway-SemiBold.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: raleway-medium;
+  src: url(./assets/fonts/Raleway/Raleway-Medium.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: raleway-bold;
+  src: url(./assets/fonts/Raleway/Raleway-Bold.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: raleway-thin;
+  src: url(./assets/fonts/Raleway/Raleway-Thin.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: quicksand-regular;
+  src: url(./assets/fonts/Quicksand/Quicksand-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: quicksand-semi-bold;
+  src: url(./assets/fonts/Quicksand/Quicksand-SemiBold.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: quicksand-medium;
+  src: url(./assets/fonts/Quicksand/Quicksand-Medium.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: quicksand-bold;
+  src: url(./assets/fonts/Quicksand/Quicksand-Bold.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: quicksand-thin;
+  src: url(./assets/fonts/Quicksand/Quicksand-Light.ttf) format("truetype");
+}
+
+.fredoka {
+  font-family: "fredoka", sans-serif;
+}
+
+.fredoka-medium {
+  font-family: "fredoka-medium", sans-serif;
+}
+
+.fredoka-bold {
+  font-family: "fredoka-bold", sans-serif;
+}
+
+.raleway-regular {
+  font-family: "raleway-regular";
+}
+
+.raleway-medium {
+  font-family: "raleway-medium";
+}
+
+.quicksand-medium {
+  font-family: "quicksand-medium";
+}
+
+.quicksand-regular {
+  font-family: "quicksand-regular";
+}
+
+.quicksand-semi-bold {
+  font-family: "quicksand-semi-bold";
+}
+
+.quicksand-bold {
+  font-family: "quicksand-bold";
+}
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

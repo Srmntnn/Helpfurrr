@@ -12,7 +12,8 @@ export default {
         'main-brown': '#564941',
         'main-orange': '#F69946',
         'secondary-orange': '#F8B374',
-        'light-orange': '#FFF8F1'
+        'light-orange': '#FFF8F1',
+        'secondary-brown': '#807571',
       },
       boxShadow: {
         'box-btn': '0 4px 0 100% rgba(0, 0, 0, 0.3)',
@@ -24,6 +25,13 @@ export default {
           '0 45px 65px rgba(0, 0, 0, 0.15)'
         ]
       },
+      textColor: {
+        'main-brown': '#564941',
+        'main-orange': '#F69946',
+        'secondary-orange': '#F8B374',
+        'light-orange': '#FFF8F1',
+        'secondary-brown': '#807571',
+      }
     },
   },
   plugins: [daisyui],
