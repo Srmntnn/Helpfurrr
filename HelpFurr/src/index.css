@@ -8,6 +8,22 @@
   font-weight: 400;
 }
 
+/* Target the input field and its pseudo-elements */
+.peer[type="number"]::-webkit-outer-spin-button,
+.peer[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.modal-open {
+  overflow: hidden;
+}
+
+/* For Firefox */
+.peer[type="number"] {
+  -moz-appearance: textfield;
+}
+
 input[type="email"]:focus ~ .input-email,
 input[type="email"]:not(:placeholder-shown) ~ .input-email {
   @apply text-main-orange bg-white transform -translate-y-6 -translate-x-2 scale-75;

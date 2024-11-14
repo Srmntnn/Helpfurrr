@@ -20,8 +20,7 @@ import {
 } from "@headlessui/react";
 import "../index.css";
 
-
-function Navbar() {
+function Navbar(props) {
   const { user, logout } = useAuthStore();
   const [toggle, setToggle] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -229,7 +228,7 @@ function Navbar() {
                       </a>
                     </li>
                     <li>
-                      <a>Settings</a>
+                      <Link to={`/myrequest/`}>Post Resquest</Link>
                     </li>
                     <li>
                       <button onClick={logoutHandler}>Logout</button>
@@ -281,7 +280,7 @@ function Navbar() {
                       </a>
                     </li>
                     <li>
-                      <a>Settings</a>
+                      <Link to="/myrequest">Settings</Link>
                     </li>
                     <li>
                       <button onClick={logoutHandler}>Logout</button>

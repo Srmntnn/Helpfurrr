@@ -40,23 +40,34 @@ function Dogdisplay() {
         <option value="Other">Other</option>
       </select>
     </div> */}
+      <div className=" flex-col items-center justify-center sm:mt-40 mt-16 sm:mb-14 mb-8">
+        <h1
+          className={`${styles.heroHeadText} text-5xl text-main-orange font-bold text-center fredoka-bold`}
+        >
+          Newest Dogs
+        </h1>
+        <p
+          className={`${styles.heroSubText} text-secondary-brown text-center quicksand-regular`}
+        >
+          Browse the list of newest dogs.
+        </p>
+      </div>
       <div
-        className={`${styles.paddingX} flex flex-wrap mx-auto justify-center md:gap-6 gap-9 items-center mt-40`}
+        className={`${styles.paddingX} flex flex-wrap mx-auto justify-center md:gap-6 gap-9 items-center `}
       >
-        <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
-          <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-secondary-orange opacity-20 blur-[100px]"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6 w-full">
+          {loading ? (
+            <p>Loading</p>
+          ) : dogsData.length > 0 ? (
+            dogsData
+              .slice(0, 3)
+              .map((dogDetail, index) => (
+                <Dogviewer dog={dogDetail} key={index} />
+              ))
+          ) : (
+            <p className="oops-msg">Oops!... No Dogs available</p>
+          )}
         </div>
-        {loading ? (
-          <p>Loading</p>
-        ) : dogsData.length > 0 ? (
-          dogsData
-            .slice(0, 4)
-            .map((dogDetail, index) => (
-              <Dogviewer dog={dogDetail} key={index} />
-            ))
-        ) : (
-          <p className="oops-msg">Oops!... No Dogs available</p>
-        )}
       </div>
     </>
   );

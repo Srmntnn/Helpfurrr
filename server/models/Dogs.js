@@ -10,9 +10,10 @@ const dogsSchema = new Schema({
         minLength: 3,
     },
     postedBy: {
-        // type: mongoose.Schema.Types.ObjectId,
-        // ref: "users",
-       
+        type: String
+    },
+    clientEmail: {
+        type: String
     },
     age: String,
     color: String,
@@ -35,16 +36,20 @@ const dogsSchema = new Schema({
         required: true
     },
     vaccinated: {
-        type: Boolean,
-        default: false
+        type: String,
+        required: true
     },
-    Neutered: {
-        type: Boolean,
-        default: false
+    neutered: {
+        type: String,
+        required: true
     },
     urgent: {
-        type: Boolean,
-        default: false
+        type: String,
+        required: true
+    },
+    gender: {
+        type: String,
+        required: true
     }
 }, { timestamps: true })
 

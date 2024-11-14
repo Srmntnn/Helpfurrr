@@ -16,7 +16,7 @@ function Main() {
 
   if (isCheckingAuth) return <LoadingSpinner />;
   return (
-    <div className="">
+    <div>
       <Navbar />
       <Outlet />
       <Footer />

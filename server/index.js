@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const AuthRouter = require('./routes/AuthRouter');
 const DogsRouter = require('./routes/DogRoutes');
+const CampaignRoute = require('./routes/CampaignRoute')
 const AdoptionFormRoutes = require('./routes/AdoptionFormRoutes')
 const Notifications = require('./routes/NotificationRoute')
 const path = require('path');
@@ -20,6 +21,7 @@ app.use(express.json())
 const PORT = process.env.PORT || 8080;
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/campaignimages', express.static(path.join(__dirname, 'campaignimages')));
 
 
 app.get('/ping', (req, res) => {
@@ -42,14 +44,15 @@ app.use('/auth', AuthRouter)
 app.use('/dogs', DogsRouter)
 app.use('/form', AdoptionFormRoutes)
 app.use('/notification', Notifications)
+app.use('/campaigns', CampaignRoute)
 
 app.listen(PORT, () => console.log(`Listening on Port ${PORT}...`))
 
 //jwt
- app.post('/jwt', async (req, res) => {
-     const user = req.body
-   const token = jwt.sign(user, process.env.JWT_SECRET, {
-          expiresIn: '24hr'
-     })
-    res.send({ token });
+app.post('/jwt', async (req, res) => {
+  const user = req.body
+  const token = jwt.sign(user, process.env.JWT_SECRET, {
+    expiresIn: '24hr'
   })
+  res.send({ token });
+})

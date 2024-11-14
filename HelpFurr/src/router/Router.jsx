@@ -10,49 +10,52 @@ import Dashboard from "../pages/admin/Dashboard";
 import Users from "../pages/admin/Users";
 import Adoptionpage from "../pages/Adoption/AdoptionPage";
 import PostForAdoption from "../pages/PostForAdoptionPage/PostForAdoption";
-import PostingDogs from "../pages/admin/PostingDogs";
-import ApprovedDogs from "../pages/admin/ApprovedDogs";
-import AdoptionRequest from "../pages/admin/AdoptionRequest";
-import AdoptedHistory from "../pages/admin/AdoptedHistory";
+import PostingDogs from "../pages/admin/DogAdminPages/PostingDogs";
+import ApprovedDogs from "../pages/admin/DogAdminPages/ApprovedDogs";
+import AdoptionRequest from "../pages/admin/DogAdminPages/AdoptionRequest";
+import AdoptedHistory from "../pages/admin/DogAdminPages/AdoptedHistory";
 import EmailVerificationPage from "../pages/EmailVerificationPage";
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "../store/authStore";
 import { Navigate } from "react-router-dom";
-import AdoptForm from '../components/AdoptForm'
+import AdoptForm from "../components/AdoptForm";
 import DogDetails from "../pages/Adoption/DogDetails";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import ForgotPasswordPage from "../pages/ForgotPasswordPage";
 import AdoptionFormPage from "../pages/AdoptionFormPage.jsx/AdoptionFormPage";
-
+import UserRequestedDogs from "../pages/Ownerpage/UserRequestedDogs";
+import DonationCampaign from "../pages/Donation/DonationCampaign";
+import CampaignRequest from "../pages/admin/CampaingsPages/CampaignRequest";
+import ApprovedCampaign from "../pages/admin/CampaingsPages/ApprovedCampaign";
+import RequestPage from "../pages/Ownerpage/RequestPage";
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
-	const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
 
-	if (!isAuthenticated) {
-		return <Navigate to='/login' replace />;
-	}
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
-	if (!user.isVerified) {
-		return <Navigate to='/email-verification' replace />;
-	}
+  if (!user.emailVerified) {
+    return <Navigate to="/email-verification" replace />;
+  }
 
-	return children;
+  return children;
 };
 
 // redirect authenticated users to the home page
 const RedirectAuthenticatedUser = ({ children }) => {
-	const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
 
-	if (isAuthenticated && user.emailVerified) {
-		return <Navigate to='/' replace />;
-	}
+  if (isAuthenticated && user.emailVerified) {
+    return <Navigate to="/" replace />;
+  }
 
-	return children;
+  return children;
 };
 
 const router = createBrowserRouter([
-  
   {
     path: "/",
     element: <Main />,
@@ -63,11 +66,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <RedirectAuthenticatedUser><Login /></RedirectAuthenticatedUser>,
+        element: (
+          <RedirectAuthenticatedUser>
+            <Login />
+          </RedirectAuthenticatedUser>
+        ),
       },
       {
         path: "/signup",
-        element: <RedirectAuthenticatedUser><Signup /></RedirectAuthenticatedUser>,
+        element: (
+          <RedirectAuthenticatedUser>
+            <Signup />
+          </RedirectAuthenticatedUser>
+        ),
       },
       {
         path: "/adoption",
@@ -79,6 +90,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/donation",
+        element: <DonationCampaign />,
       },
       {
         path: "/location",
@@ -87,24 +99,36 @@ const router = createBrowserRouter([
         path: "/educresources",
       },
       {
-        path: '/email-verification',
-        element: <EmailVerificationPage/>
+        path: "/email-verification",
+        element: <EmailVerificationPage />,
       },
       {
-        path: '/adoption-form/:dogId',
-        element: <AdoptionFormPage/>
+        path: "/adoption-form/:dogId",
+        element: <AdoptionFormPage />,
       },
       {
-        path: '/dogdetails/:dogId',
-        element: <DogDetails/>
+        path: "/dogdetails/:dogId",
+        element: (
+          <ProtectedRoute>
+            <DogDetails />
+          </ProtectedRoute>
+        ),
       },
       {
-        path: '/reset-password/:token',
-        element: <ResetPasswordPage/>
+        path: "/reset-password/:token",
+        element: <ResetPasswordPage />,
       },
       {
-        path: '/forgot-password',
-        element: <ForgotPasswordPage/>
+        path: "/forgot-password",
+        element: <ForgotPasswordPage />,
+      },
+      {
+        path: "/myrequest",
+        element: (
+          <ProtectedRoute>
+            <RequestPage />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
@@ -137,6 +161,14 @@ const router = createBrowserRouter([
         path: "adoptedhistory",
         element: <AdoptedHistory />,
       },
+      {
+        path: "campaignrequest",
+        element: <CampaignRequest />,
+      },
+      {
+        path: "approvedcampaign",
+        element: <ApprovedCampaign />
+      }
     ],
   },
 ]);
