@@ -8,8 +8,6 @@ const createCampaign = async (req, res) => {
   try {
     // Validate input data
     const { campaignName, campDeadline, maxDonation, campaignCategory, shortDescription, longDescription, email, author } = req.body;
-
-
     const { filename } = req.file;
 
     // Create a new campaign

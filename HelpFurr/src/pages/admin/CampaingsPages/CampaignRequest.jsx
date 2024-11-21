@@ -33,7 +33,7 @@ function CampaignRequest() {
         <p>Error: {error}</p>
       ) : requests.length > 0 ? (
         requests.map((request, index) => (
-          <CampaignTable
+          <CampaignCard
             key={request._id}
             campaign={request}
             index={index}

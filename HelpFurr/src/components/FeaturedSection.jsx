@@ -92,7 +92,7 @@ export function FeaturedSection() {
                           <div className="space-y-4">
                             <img
                               className="rounded-xl h-52 w-full object-cover"
-                              src={`http://localhost:8080/images/${dog.filename}`}
+                              src={dog.image[0]}
                               alt=""
                             />
                             <div className="flex justify-between items-center w-full">

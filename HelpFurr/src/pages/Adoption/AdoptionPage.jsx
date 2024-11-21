@@ -89,7 +89,12 @@ const AdoptionPage = () => {
           >
             Browse the list of available dogs
           </p>
+          {/* Displaying the number of available dogs */}
+          <p className="text-lg text-secondary-brown fredoka">
+            ({loading ? "Loading..." : sortedDogs.length})
+          </p>
         </div>
+
         <div className="pt-96">
           {/* New search container */}
           <div className="flex items-center justify-center my-16 sm:mx-16  h-12">
@@ -188,7 +193,7 @@ const AdoptionPage = () => {
             ) : (
               <p className="oops-msg">Oops!... No Dogs available</p>
             )}
-          </div>  
+          </div>
         </div>
       </div>
     </section>

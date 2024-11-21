@@ -3,12 +3,15 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
+const connectCloudinary = require('./config/cloudinary')
+
 const cookieParser = require('cookie-parser');
 const AuthRouter = require('./routes/AuthRouter');
 const DogsRouter = require('./routes/DogRoutes');
 const CampaignRoute = require('./routes/CampaignRoute')
 const AdoptionFormRoutes = require('./routes/AdoptionFormRoutes')
 const Notifications = require('./routes/NotificationRoute')
+const VolunteersRoute = require('./routes/VolunteersRoute')
 const path = require('path');
 const helmet = require('helmet')
 const morgan = require('morgan')
@@ -45,6 +48,7 @@ app.use('/dogs', DogsRouter)
 app.use('/form', AdoptionFormRoutes)
 app.use('/notification', Notifications)
 app.use('/campaigns', CampaignRoute)
+app.use('/volunteers', VolunteersRoute)
 
 app.listen(PORT, () => console.log(`Listening on Port ${PORT}...`))
 

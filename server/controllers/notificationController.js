@@ -2,20 +2,18 @@ const Notification = require("../models/notification.js");
 
 const getNotifications = async (req, res) => {
 	try {
-		const UserId = req.params._id;
+        const { userId } = req.params; // Get userId from request parameters
 
-		const notifications = await Notification.find({ to: UserId }).populate({
-			path: "from",
-			select: "username",
-		});
+        const notifications = await Notification.find({ userId }).sort({ createdAt: -1 });
 
-		await Notification.updateMany({ to: UserId }, { read: true });
-
-		res.status(200).json(notifications);
-	} catch (error) {
-		console.log("Error in getNotifications function", error.message);
-		res.status(500).json({ error: "Internal Server Error" });
-	}
+        if (notifications.length > 0) {
+            res.status(200).json(notifications);
+        } else {
+            res.status(404).json({ message: 'No notifications found' });
+        }
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 };
 
 const deleteNotifications = async (req, res) => {
@@ -32,6 +30,6 @@ const deleteNotifications = async (req, res) => {
 };
 
 module.exports = {
-    getNotifications,
-    deleteNotifications,
-  }
+	getNotifications,
+	deleteNotifications,
+}

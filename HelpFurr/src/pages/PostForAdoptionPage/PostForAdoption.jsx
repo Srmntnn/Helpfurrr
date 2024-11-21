@@ -13,6 +13,7 @@ import { MdOutlinePets } from "react-icons/md";
 import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "../../components/use-toast";
+import uploadImage from "../../assets/upload (1).svg";
 
 function PostForAdoption() {
   const { user } = useAuthStore();
@@ -33,8 +34,11 @@ function PostForAdoption() {
   const [vaccinated, setVaccinated] = useState("");
   const [neutered, setNeutered] = useState("");
   const [picture, setPicture] = useState(null);
-  const [fileName, setFileName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [image1, setImage1] = useState(false);
+  const [image2, setImage2] = useState(false);
+  const [image3, setImage3] = useState(false);
+  const [image4, setImage4] = useState(false);
 
   useEffect(() => {
     if (!isSubmitting) {
@@ -59,13 +63,13 @@ function PostForAdoption() {
     return emailPattern.test(email);
   };
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      setPicture(selectedFile);
-      setFileName(selectedFile.name);
-    }
-  };
+  // const handleFileChange = (e) => {
+  //   const selectedFile = e.target.files[0];
+  //   if (selectedFile) {
+  //     setPicture(selectedFile);
+  //     setFileName(selectedFile.name);
+  //   }
+  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -77,7 +81,7 @@ function PostForAdoption() {
       !email ||
       !phone ||
       !postedBy ||
-      !fileName ||
+      // !fileName ||
       !gender ||
       !vaccinated ||
       !urgent ||
@@ -110,9 +114,14 @@ function PostForAdoption() {
     formData.append("urgent", urgent);
     formData.append("clientEmail", clientEmail);
 
-    if (picture) {
-      formData.append("picture", picture);
-    }
+    image1 && formData.append("image1", image1);
+    image2 && formData.append("image2", image2);
+    image3 && formData.append("image3", image3);
+    image4 && formData.append("image4", image4);
+
+    // if (picture) {
+    //   formData.append("picture", picture);
+    // }
 
     try {
       const response = await fetch("http://localhost:8080/dogs/postadoption", {
@@ -135,7 +144,10 @@ function PostForAdoption() {
       setClientEmail("");
       setPhone("");
       setPicture(null);
-      setFileName("");
+      setImage1(false);
+      setImage2(false);
+      setImage3(false);
+      setImage4(false);
       setGender("");
       setVaccinated("");
       setNeutered("");
@@ -155,7 +167,7 @@ function PostForAdoption() {
         <div classname="absolute left-0 right-0 top-0 -z-10 m-auto max-h-[310px] h-full w-full max-w-[310px] rounded-full bg-main-orange opacity-30 blur-[100px]"></div>
       </div>
       <div
-        className={`${styles.paddingX} max-w-screen-2xl justify-center w-full`}
+        className={`${styles.paddingX} max-w-screen-xl justify-center w-full`}
       >
         <Helmet>
           <title>HelpFur | Add dog</title>
@@ -183,6 +195,86 @@ function PostForAdoption() {
               <MdOutlinePets className="text-[32px]" />
               Pet Info
             </h1>
+            <div className="">
+              <Label>Pictures:</Label>
+              <div className="flex gap-4 w-full justify-evenly border py-7">
+                <div className="flex flex-col w-36 aspect-square overflow-hidden items-center justify-center ">
+                  <label
+                    htmlFor="image1"
+                    className="text-main-brown cursor-pointer"
+                  >
+                    <img
+                      src={!image1 ? uploadImage : URL.createObjectURL(image1)}
+                      className="w-36 object-cover  "
+                      alt=""
+                    />
+                    <input
+                      onChange={(e) => setImage1(e.target.files[0])}
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      id="image1"
+                    />
+                  </label>
+                </div>
+                <div className="flex flex-col w-36 overflow-hidden aspect-square justify-center ">
+                  <label
+                    htmlFor="image2"
+                    className="text-main-brown cursor-pointer"
+                  >
+                    <img
+                      src={!image2 ? uploadImage : URL.createObjectURL(image2)}
+                      className="w-36 object-cover"
+                      alt=""
+                    />
+                    <input
+                      onChange={(e) => setImage2(e.target.files[0])}
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      id="image2"
+                    />
+                  </label>
+                </div>
+                <div className="flex flex-col w-36 overflow-hidden aspect-square justify-center ">
+                  <label
+                    htmlFor="image3"
+                    className="text-main-brown cursor-pointer"
+                  >
+                    <img
+                      src={!image3 ? uploadImage : URL.createObjectURL(image3)}
+                      className="w-36 object-cover"
+                    />
+                    <input
+                      onChange={(e) => setImage3(e.target.files[0])}
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      id="image3"
+                    />
+                  </label>
+                </div>
+                <div className="flex flex-col w-36 overflow-hidden aspect-square justify-center ">
+                  <label
+                    htmlFor="image4"
+                    className="text-main-brown cursor-pointer"
+                  >
+                    <img
+                      src={!image4 ? uploadImage : URL.createObjectURL(image4)}
+                      className="w-36 object-cover"
+                      alt=""
+                    />
+                    <input
+                      onChange={(e) => setImage4(e.target.files[0])}
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      id="image4"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
 
             <div className="flex justify-center flex-col ">
               <Label className="text-main-brown"> Dog name</Label>
@@ -204,11 +296,6 @@ function PostForAdoption() {
                   setAge(e.target.value);
                 }}
               />
-            </div>
-
-            <div className="flex flex-col">
-              <Label className="text-main-brown">Picture:</Label>
-              <Input type="file" accept="image/*" onChange={handleFileChange} />
             </div>
 
             <div className="flex justify-center flex-col">

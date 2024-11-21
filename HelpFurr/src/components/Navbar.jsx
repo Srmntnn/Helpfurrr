@@ -194,10 +194,21 @@ function Navbar(props) {
               Educational
             </Link>
           </li>
+          <li className="hover:text-[#F69946]  quicksand-semi-bold text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
+            <Link
+              to="/volunteer"
+              onClick={() => {
+                setActive("");
+                window.scrollTo(0, 0);
+              }}
+            >
+              Book a Visit
+            </Link>
+          </li>
 
           <div>
             <Link to="/notification">
-              <IoIosNotifications />
+              <IoIosNotifications className="text-[24px] text-secondary-orange"/>
             </Link>
           </div>
 

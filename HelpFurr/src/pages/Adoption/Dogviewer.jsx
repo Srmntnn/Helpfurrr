@@ -30,7 +30,7 @@ const Dogviewer = (props) => {
         <figure className="w-full overflow-hidden">
           <img
             className="  object-cover  md:w-96 w-full md:h-80  rounded-t-lg "
-            src={`http://localhost:8080/images/${props.dog.filename}`}
+            src={props.dog.image[0]}
             alt={props.dog.name}
           />
         </figure>

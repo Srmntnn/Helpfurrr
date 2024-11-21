@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DogCards from "./DogCards";
 import axios from 'axios';
+import DogTable from "./DogTable";
 
 const PostingDogs = () => {
   const [requests, setRequests] = useState([]);
@@ -31,7 +32,7 @@ const PostingDogs = () => {
         <p>Error: {error}</p>
       ) : requests.length > 0 ? (
         requests.map((request, index) => (
-          <DogCards
+          <DogTable
             key={request._id}
             dog={request}
             updateCards={fetchRequests}

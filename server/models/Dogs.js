@@ -31,10 +31,6 @@ const dogsSchema = new Schema({
         type: String,
         required: true
     },
-    filename: {
-        type: String,
-        required: true
-    },
     vaccinated: {
         type: String,
         required: true
@@ -49,6 +45,10 @@ const dogsSchema = new Schema({
     },
     gender: {
         type: String,
+        required: true
+    },
+    image: {
+        type: Array,
         required: true
     }
 }, { timestamps: true })

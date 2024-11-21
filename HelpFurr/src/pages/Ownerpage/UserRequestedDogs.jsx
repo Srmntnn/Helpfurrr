@@ -5,6 +5,8 @@ import axios from "axios"; // Import Axios
 import { SlOptionsVertical } from "react-icons/sl";
 import { Button } from "../../components/button";
 import { styles } from "../../styles";
+import { motion } from "framer-motion";
+import { Loader } from "lucide-react";
 
 const UserRequestedDogs = () => {
   const { user } = useAuthStore();
@@ -40,10 +42,15 @@ const UserRequestedDogs = () => {
 
   return (
     <section>
-      <div className=" w-full  h-screen max-w-screen-2xl mx-auto">
+      <motion.div
+        className=" w-full  h-screen max-w-screen-2xl mx-auto"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="rounded-md border my-12">
           {isLoading ? (
-            <p>Loading dogs...</p>
+            <Loader className="mx-auto">Loading dogs...</Loader>
           ) : error ? (
             <p>Error: {error}</p>
           ) : dogs.length === 0 ? (
@@ -95,7 +102,7 @@ const UserRequestedDogs = () => {
                             <div className="avatar">
                               <div className="mask mask-squircle h-12 w-12">
                                 <img
-                                  src={`http://localhost:8080/images/${dog.filename}`}
+                                 src={dog.image[0]}
                                   alt={dog.name}
                                 />
                               </div>
@@ -136,7 +143,7 @@ const UserRequestedDogs = () => {
                         </td>
                         <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0">
                           <Button className="hover:text-light-orange">
-                            <SlOptionsVertical className=" "/>
+                            <SlOptionsVertical className=" " />
                           </Button>
                         </td>
                       </tr>
@@ -147,7 +154,7 @@ const UserRequestedDogs = () => {
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };

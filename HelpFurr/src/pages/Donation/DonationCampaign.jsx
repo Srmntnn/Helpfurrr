@@ -5,7 +5,6 @@ import { Helmet } from "react-helmet";
 import { Input } from "../../components/input";
 import { Label } from "../../components/label";
 import Select from "react-select";
-import { DatePicker } from "../../components/date-picker";
 import { Textarea } from "../../components/textarea";
 import { FaUser } from "react-icons/fa";
 import TimeDisplay from "../../components/time-display";
@@ -13,6 +12,7 @@ import { styles } from "../../styles";
 import { toast, useToast } from "../../components/use-toast";
 import success from "../../components/Success.gif";
 import { Loader } from "lucide-react";
+import { DatePicker } from "@/components/ui/date-picker";
 
 const options = [
   { value: "adoption", label: "Adoption & Rescue" },

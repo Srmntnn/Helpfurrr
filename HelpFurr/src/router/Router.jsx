@@ -28,6 +28,9 @@ import DonationCampaign from "../pages/Donation/DonationCampaign";
 import CampaignRequest from "../pages/admin/CampaingsPages/CampaignRequest";
 import ApprovedCampaign from "../pages/admin/CampaingsPages/ApprovedCampaign";
 import RequestPage from "../pages/Ownerpage/RequestPage";
+import NotificationPage from "../pages/Notification/NotificationPage";
+import Volunteer from "../pages/Volunteer/Volunteer";
+import VolunteerRequest from "../pages/admin/VolunteerPages/VolunteerRequest";
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
@@ -107,6 +110,14 @@ const router = createBrowserRouter([
         element: <AdoptionFormPage />,
       },
       {
+        path: "/volunteer",
+        element: <Volunteer />,
+      },
+      {
+        path: "/notification",
+        element: <NotificationPage />,
+      },
+      {
         path: "/dogdetails/:dogId",
         element: (
           <ProtectedRoute>
@@ -167,7 +178,11 @@ const router = createBrowserRouter([
       },
       {
         path: "approvedcampaign",
-        element: <ApprovedCampaign />
+        element: <ApprovedCampaign />,
+      },
+      {
+        path: "volunteer-request",
+        element: <VolunteerRequest />
       }
     ],
   },

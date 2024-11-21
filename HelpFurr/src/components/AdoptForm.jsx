@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import "../index.css";
 import { motion } from "framer-motion";
+import { Label } from "./label";
+import { Input } from "./input";
+import { useAuthStore } from "../store/authStore";
 
 function AdoptForm(props) {
-  const [email, setEmail] = useState("");
+  const { user } = useAuthStore();
+  const [email, setEmail] = useState(user?.email || "");
   const [phoneNo, setPhoneNo] = useState("");
   const [livingSituation, setLivingSituation] = useState("");
   const [previousExperience, setPreviousExperience] = useState("");
@@ -63,7 +67,7 @@ function AdoptForm(props) {
       } else {
         setSuccPopup(true);
       }
-    } catch (err) { 
+    } catch (err) {
       setErrPopup(true);
       console.error(err);
       return;
@@ -81,22 +85,27 @@ function AdoptForm(props) {
   };
 
   return (
-    <div className=" flex flex-col items-center justify-between p-8 pb-[64px]">
-      <h2 className="mb-6">Pet Adoption Application</h2>
-      <div className="flex sm:flex-row  flex-col gap-6 justify-between items-center">
+    <div className=" flex flex-col  sm:p-8 p-6 pb-[64px]">
+      <h2 className="mb-6 quicksand-bold text-2xl sm:text-start text-center">Pet Adoption Application</h2>
+      <div className="flex sm:flex-row  flex-col gap-6">
         {props.dog && (
-          <div className="pet-details">
-            <div className="max-w-sm w-full max-h-lg h-full">
+          <div className="">
+            <div className="w-full">
               <img
-                src={`http://localhost:8080/images/${props.dog.filename}`}
+                src={props.dog.image[0]}
                 alt={props.dog.name}
-                className="w-full max-w-[300px]  max-h-lg h-full"
+                className="sm:w-[500px] w-full rounded-md"
               />
             </div>
-            <div className="pet-info">
-              <h2>{props.dog.name}</h2>
+            <div className="flex flex-col mt-4 capitalize quicksand-regular">
+              <h2 className="text-2xl fredoka-bold text-secondary-orange mb-2">
+                {props.dog.name}
+              </h2>
               <p>
                 <b>Age:</b> {props.dog.age}
+              </p>
+              <p>
+                <b>Gender:</b> {props.dog.gender}
               </p>
               <p>
                 <b>Location:</b> {props.dog.shelter}
@@ -105,79 +114,54 @@ function AdoptForm(props) {
           </div>
         )}
         <div className=" w-full">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="">
-              <div className="flex justify-center items-center">
-                <label className="relative w-full">
-                  {emailError && <p>Please provide valid email address.</p>}
-                  <input
-                    type="email"
-                    value={email}
-                    placeholder="email"
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4 "
-                  />
-                  <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-email">
-                    Email
-                  </span>
-                </label>
+              <div className="flex  flex-col">
+                <Label className="">Email</Label>
+                {emailError && <p>Please provide valid email address.</p>}
+                <Input
+                  type="email"
+                  value={email}
+                  placeholder="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </div>
             </div>
-            <div className="flex justify-center">
-              <label className="relative w-full">
-                <input
-                  type="text"
-                  value={phoneNo}
-                  placeholder="Phone #"
-                  onChange={(e) => setPhoneNo(e.target.value)}
-                  className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4 "
-                />
-                <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-text">
-                  Phone #.
-                </span>
-              </label>
+            <div className="flex  flex-col">
+              <Label className="relative w-full">Phone #</Label>
+              <Input
+                type="text"
+                value={phoneNo}
+                placeholder="Phone #"
+                onChange={(e) => setPhoneNo(e.target.value)}
+              />
             </div>
-            <div className="flex justify-center">
-              <label className="relative w-full">
-                <input
-                  type="text"
-                  placeholder="Living Situation"
-                  value={livingSituation}
-                  onChange={(e) => setLivingSituation(e.target.value)}
-                  className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4 "
-                />
-                <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-text">
-                  Living Situation
-                </span>
-              </label>
+            <div className="flex justify-center flex-col">
+              <Label className="relative w-full "> Living Situation</Label>
+              <Input
+                type="text"
+                placeholder="Living Situation"
+                value={livingSituation}
+                onChange={(e) => setLivingSituation(e.target.value)}
+              />
             </div>
-            <div className="flex justify-center">
-              <label className="relative w-full">
-                <input
-                  type="text"
-                  placeholder="Previous Dog Experience"
-                  value={previousExperience}
-                  onChange={(e) => setPreviousExperience(e.target.value)}
-                  className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4 "
-                />
-                <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-text">
-                  Previous Dog Experience
-                </span>
-              </label>
+            <div className="flex justify-center flex-col">
+              <Label className="relative w-full">Previous Dog Experience</Label>
+              <Input
+                type="text"
+                placeholder="Previous Dog Experience"
+                value={previousExperience}
+                onChange={(e) => setPreviousExperience(e.target.value)}
+              />
             </div>
-            <div className="flex justify-center">
-              <label className="relative w-full">
-                <input
-                  type="text"
-                  placeholder="Any Other Pets"
-                  value={familyComposition}
-                  onChange={(e) => setFamilyComposition(e.target.value)}
-                  className="h-12 w-full border-main-brown border-2 outline-none bg-white border-opacity-20 rounded-[4px] focus:border-main-orange transition duration-200 placeholder-gray-300 placeholder-opacity-0 px-4 "
-                />
-                <span className="text-main-brown text-opacity-80 absolute left-0 top-3 px-1 mx-4 transition duration-200 input-text">
-                  Any Other Pets
-                </span>
-              </label>
+            <div className="flex justify-center flex-col">
+              <Label className="relative w-full">Other Pets </Label>
+              <Input
+                type="text"
+                placeholder="Any Other Pets"
+                value={familyComposition}
+                onChange={(e) => setFamilyComposition(e.target.value)}
+              />
             </div>
             {formError && (
               <p className="error-message">Please fill out all fields.</p>
@@ -185,7 +169,7 @@ function AdoptForm(props) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full py-3 px-4 bg-gradient-to-r from-secondary-orange to-main-orange text-white rounded-lg shadow-lg hover:from-main-orange hover:to-secondary-orange focus:outline-none focus:ring-2 focus:ring-main-orange focus:ring-offset-2 focus:ring-offset-main-brown transition duration-200"
+              className="w-full py-3 px-4 bg-gradient-to-r from-secondary-orange to-main-orange text-white rounded-lg shadow-lg hover:from-main-orange hover:to-secondary-orange focus:outline-none focus:ring-2 focus:ring-main-orange focus:ring-offset-2 focus:ring-offset-main-brown transition duration-200 quicksand-regular"
               type="submit"
               disabled={isSubmitting}
             >

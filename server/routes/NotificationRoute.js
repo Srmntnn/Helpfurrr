@@ -3,7 +3,7 @@ const { deleteNotifications, getNotifications }  = require("../controllers/notif
 
 const router = express.Router();
 
-router.get("/", getNotifications);
-router.delete("/",  deleteNotifications);
+router.get("/:userId", getNotifications);
+router.delete("/:userId",  deleteNotifications);
 
 module.exports = router; 
