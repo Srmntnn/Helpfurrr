@@ -22,6 +22,16 @@ import AdoptForm from "../../components/AdoptForm";
 import { styles } from "../../styles";
 import { FaArrowLeftLong } from "react-icons/fa6";
 
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
 function DogDetails() {
   const { user } = useAuthStore();
   const { dogId } = useParams();
@@ -190,52 +200,32 @@ function DogDetails() {
                 </div>
 
                 <div className="bg-light-orange mt-6 quicksand-semi-bold text-center md:py-4 md:px-6 py-3 px-4 rounded-lg text-main-orange hover:bg-main-orange hover:text-light-orange transition duration-200 shadow-sm">
-                  <button onClick={togglePopup} className=" whitespace-nowrap ">
+                  {/* <button onClick={togglePopup} className=" whitespace-nowrap ">
                     Adopt Now <i className="fa fa-paw"></i>
-                  </button>
+                  </button> */}
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <button>Continue</button>
+                    </SheetTrigger>
+                    <SheetContent className="" side="bottom">
+                      <SheetHeader>
+                        <SheetTitle>Dog Adoption Form</SheetTitle>
+                        <p className="w-full max-w-[750px] text-center quicksand-regular">
+                          Adoption is a loving choice that allows you to provide
+                          a permanent home for a child in need. This form will
+                          help us get to know you better and determine if
+                          adoption is the right path for you
+                        </p>
+                        <SheetDescription>
+                          <AdoptForm dog={dog} />
+                        </SheetDescription>
+                      </SheetHeader>
+                    </SheetContent>
+                  </Sheet>
                 </div>
               </div>
             </div>
           )
-        )}
-        {showPopup && (
-          <Dialog
-            open={showPopup}
-            onClose={setShowPopup}
-            className="relative z-50"
-          >
-            <DialogBackdrop
-              transition
-              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
-            />
-
-            <div className="fixed inset-0 z-10 mt-12 w-full overflow-y-auto ">
-              <div className="flex min-h-full w-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <DialogPanel
-                  transition
-                  className="relative transform overflow-hidden rounded-lg bg-white items-center flex flex-col  text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in my-8 w-full max-w-screen-md data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
-                >
-                  <div className="mt-3  sm:mt-0 sm:text-left">
-                    <div className="">
-                      <div className="">
-                        <AdoptForm closeForm={togglePopup} dog={dog} />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                    <button
-                      type="button"
-                      onClick={togglePopup}
-                      className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </DialogPanel>
-              </div>
-            </div>
-          </Dialog>
         )}
       </div>
     </section>

@@ -10,6 +10,10 @@ const adoptFormSchema = new Schema({
         type: String,
         required: true
     },
+    contactReference: {
+        type: String,
+        required: true
+    },
     livingSituation: {
         type: String,
         required: true
@@ -25,7 +29,37 @@ const adoptFormSchema = new Schema({
     dogId: {
         type: String,
         required: true
+    },
+    adopterName: {
+        type: String,
+        required: true
+    },
+    occupation: {
+        type: String,
+        required: true
+    },
+    renting: {
+        type: String,
+        required: true
+    },
+    familyAllergic: {
+        type: String,
+        required: true
+    },
+    neutering: {
+        type: String,
+        required: true
+    },
+    image: {
+        type: Array,
+        required: true
+    },
+    address: {
+        type: String,
+        required: true
     }
+
 }, { timestamps: true})
 
-module.exports = mongoose.model('AdoptForm', adoptFormSchema)
+const AdoptForm = mongoose.model('AdoptForm', adoptFormSchema);
+module.exports = AdoptForm;

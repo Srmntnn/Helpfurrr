@@ -12,6 +12,7 @@ const CampaignRoute = require('./routes/CampaignRoute')
 const AdoptionFormRoutes = require('./routes/AdoptionFormRoutes')
 const Notifications = require('./routes/NotificationRoute')
 const VolunteersRoute = require('./routes/VolunteersRoute')
+const DonationRoute = require('./routes/DonationRoutes')
 const path = require('path');
 const helmet = require('helmet')
 const morgan = require('morgan')
@@ -23,9 +24,6 @@ app.use(express.json())
 
 const PORT = process.env.PORT || 8080;
 
-app.use('/images', express.static(path.join(__dirname, 'images')));
-app.use('/campaignimages', express.static(path.join(__dirname, 'campaignimages')));
-
 
 app.get('/ping', (req, res) => {
   res.send('PONG');
@@ -35,7 +33,7 @@ app.get('/ping', (req, res) => {
 // Middlewares
 
 app.use(helmet())
-app.use(express.json({ limit: "25mb" }));
+app.use(express.json({ limit: "50mb" }));
 app.use((express.urlencoded({ extended: true })));
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -49,6 +47,7 @@ app.use('/form', AdoptionFormRoutes)
 app.use('/notification', Notifications)
 app.use('/campaigns', CampaignRoute)
 app.use('/volunteers', VolunteersRoute)
+app.use('/donations', DonationRoute);
 
 app.listen(PORT, () => console.log(`Listening on Port ${PORT}...`))
 

@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import Main from "../layout/Main";
-import DashboardLayout from "../layout/dashboardLayout";
+import DashboardLayout from "../layout/DashboardPageLayout";
 import Home from "../pages/homepage/Home";
 import PrivateRoute from "../PrivateRouter/PrivateRoute";
 import Login from "../components/Login";
@@ -25,12 +25,20 @@ import ForgotPasswordPage from "../pages/ForgotPasswordPage";
 import AdoptionFormPage from "../pages/AdoptionFormPage.jsx/AdoptionFormPage";
 import UserRequestedDogs from "../pages/Ownerpage/UserRequestedDogs";
 import DonationCampaign from "../pages/Donation/DonationCampaign";
+import DonationPage from "../pages/Donation/CampaignPage";
 import CampaignRequest from "../pages/admin/CampaingsPages/CampaignRequest";
 import ApprovedCampaign from "../pages/admin/CampaingsPages/ApprovedCampaign";
 import RequestPage from "../pages/Ownerpage/RequestPage";
 import NotificationPage from "../pages/Notification/NotificationPage";
 import Volunteer from "../pages/Volunteer/Volunteer";
 import VolunteerRequest from "../pages/admin/VolunteerPages/VolunteerRequest";
+import MapLocation from "../pages/Map/MapLocation";
+import AllDogs from "../pages/admin/DogAdminPages/AllDogs";
+import ApprovedVolunteeers from "../pages/admin/VolunteerPages/ApprovedVolunteeers";
+import RejectedVolunteers from "../pages/admin/VolunteerPages/RejectedVolunteers";
+import AllVolunteers from "../pages/admin/VolunteerPages/AllVolunteers";
+import CampaignDetails from "../pages/Donation/CampaignDetails";
+import AllCampaigns from "../pages/admin/CampaingsPages/AllCampaigns"
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
@@ -93,10 +101,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/donation",
-        element: <DonationCampaign />,
+        element: <DonationPage />,
       },
       {
         path: "/location",
+        element: <MapLocation />,
       },
       {
         path: "/educresources",
@@ -124,6 +133,10 @@ const router = createBrowserRouter([
             <DogDetails />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "/campaigndetails/:campaignId",
+        element: <CampaignDetails />,
       },
       {
         path: "/reset-password/:token",
@@ -173,17 +186,33 @@ const router = createBrowserRouter([
         element: <AdoptedHistory />,
       },
       {
-        path: "campaignrequest",
-        element: <CampaignRequest />,
+        path: "all-dogs",
+        element: <AllDogs />,
       },
       {
-        path: "approvedcampaign",
-        element: <ApprovedCampaign />,
+        path: "create-campaign",
+        element: <DonationCampaign />,
+      },
+      {
+        path: "all-campaigns",
+        element: <AllCampaigns />,
+      },
+      {
+        path: "all-volunteers",
+        element: <AllVolunteers />,
       },
       {
         path: "volunteer-request",
-        element: <VolunteerRequest />
-      }
+        element: <VolunteerRequest />,
+      },
+      {
+        path: "approved-volunteer-request",
+        element: <ApprovedVolunteeers />,
+      },
+      {
+        path: "rejected-volunteer-request",
+        element: <RejectedVolunteers />,
+      },
     ],
   },
 ]);

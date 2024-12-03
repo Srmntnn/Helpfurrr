@@ -69,7 +69,7 @@ function CampaignTable(props) {
     setIsRejecting(true);
     try {
       const response = await fetch(
-        `http://localhost:8080/campaigns/rejecting-campaign/${props.campaign._id}`,
+        `${import.meta.env.VITE_BASE_URL}/campaigns/rejecting-campaign/${props.campaign._id}`,
         {
           method: "PUT",
           body: JSON.stringify({
@@ -96,7 +96,7 @@ function CampaignTable(props) {
     setIsDeleting(true);
     try {
       const deleteResponses = await fetch(
-        `http://localhost:8080/campaign/delete-campaign/${props.campaign._id}`,
+        `${import.meta.env.VITE_BASE_URL}/campaign/delete-campaign/${props.campaign._id}`,
         {
           method: "DELETE",
         }
@@ -132,10 +132,7 @@ function CampaignTable(props) {
                 <div className="flex items-center gap-3">
                   <div className="avatar">
                     <div className="mask mask-squircle h-12 w-12">
-                      <img
-                        src={`http://localhost:8080/campaignimages/${props.campaign.filename}`}
-                        alt={props.campaign.name}
-                      />
+                      
                     </div>
                   </div>
                   <div>

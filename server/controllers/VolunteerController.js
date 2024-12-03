@@ -67,6 +67,19 @@ const getAllVolunteers = async (reqStatus, req, res) => {
     }
 };
 
+const AllVolunteers = async ( req, res) => {
+    try {
+        const data = await Visit.find();
+        if (data.length > 0) {
+            res.status(200).json(data);
+        } else {
+            res.status(404).json({ message: 'No data found' });
+        }
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
 const approveRequest = async (req, res) => {
     try {
         const id = req.params.id;
@@ -105,5 +118,6 @@ const approveRequest = async (req, res) => {
 module.exports = {
     VolunteerRequest,
     approveRequest,
-    getAllVolunteers
+    getAllVolunteers,
+    AllVolunteers
 }

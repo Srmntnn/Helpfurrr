@@ -11,7 +11,7 @@ function CampaignRequest() {
   const fetchRequests = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/campaigns/campaign-requests"
+        `${import.meta.env.VITE_BASE_URL}/campaigns/campaign-requests`
       );
       setRequests(response.data);
     } catch (error) {
@@ -33,7 +33,7 @@ function CampaignRequest() {
         <p>Error: {error}</p>
       ) : requests.length > 0 ? (
         requests.map((request, index) => (
-          <CampaignCard
+          <CampaignTable
             key={request._id}
             campaign={request}
             index={index}

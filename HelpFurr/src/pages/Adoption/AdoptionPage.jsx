@@ -10,6 +10,8 @@ const AdoptionPage = () => {
   const [searchTerm, setSearchTerm] = useState(""); // New state for search term
   const [initialDogsData, setInitialDogsData] = useState([]); // State for original data
   const [sortBy, setSortBy] = useState(""); // New state for sorting by age
+  const [colorFilter, setColorFilter] = useState("");
+  const [genderFilter, setGenderFilter] = useState("");
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -37,6 +39,7 @@ const AdoptionPage = () => {
 
     fetchRequests();
   }, []);
+
   const handleSearch = (event) => {
     setSearchTerm(event.target.value.toLowerCase());
   };
@@ -44,16 +47,29 @@ const AdoptionPage = () => {
   const handleReset = () => {
     setSearchTerm("");
     setDogsData(initialDogsData.slice());
-    setSortBy(""); // Reset sorting when resetting search
+    setSortBy("");
+    setColorFilter(""); // Reset color filter"
+    setGenderFilter("");
   };
 
   const handleSort = (event) => {
     setSortBy(event.target.value);
   };
 
-  const filteredDogs = searchTerm
-    ? dogsData.filter((dog) => dog.name.toLowerCase().includes(searchTerm))
-    : dogsData;
+  const filteredDogs = dogsData.filter((dog) => {
+    const matchesSearch = searchTerm
+      ? dog.name?.toLowerCase().includes(searchTerm) ||
+        dog.color?.toLowerCase().includes(searchTerm) ||
+        dog.gender?.toLowerCase().includes(searchTerm)
+      : true;
+    const matchesColor = colorFilter
+      ? dog.color?.toLowerCase() === colorFilter
+      : true;
+    const matchesGender = genderFilter
+      ? dog.gender?.toLowerCase() === genderFilter
+      : true;
+    return matchesSearch && matchesColor && matchesGender;
+  });
 
   const sortedDogs = sortBy
     ? [...filteredDogs].sort((a, b) => {
@@ -71,6 +87,15 @@ const AdoptionPage = () => {
         }
       })
     : filteredDogs;
+
+  const handleColorFilterChange = (event) => {
+    setColorFilter(event.target.value);
+  };
+
+  const handleGenderFilterChange = (event) => {
+    setGenderFilter(event.target.value);
+  };
+
   return (
     <section className="w-full items-center justify-center gap-10 flex">
       <div className={`${styles.paddingX} max-w-screen-2xl justify-center`}>
@@ -87,11 +112,11 @@ const AdoptionPage = () => {
           <p
             className={`${styles.heroSubText} text-secondary-brown text-center quicksand-regular`}
           >
-            Browse the list of available dogs
+            Browse the list of available dogs for adoption
           </p>
           {/* Displaying the number of available dogs */}
-          <p className="text-lg text-secondary-brown fredoka">
-            ({loading ? "Loading..." : sortedDogs.length})
+          <p className="text-sm text-secondary-brown fredoka">
+            Available Dogs ({loading ? "Loading..." : sortedDogs.length})
           </p>
         </div>
 
@@ -135,9 +160,7 @@ const AdoptionPage = () => {
                 Filter
               </h6>
               <div className="flex flex-col gap-2">
-                <div className="quicksand-bold text-secondary-orange">
-                  By age
-                </div>
+                <div className="quicksand-bold">By age</div>
                 <select
                   value={sortBy}
                   onChange={handleSort}
@@ -149,9 +172,36 @@ const AdoptionPage = () => {
                 </select>
               </div>
               <div className="flex flex-col gap-2">
-                <div className="quicksand-bold text-secondary-orange">
-                  By name
-                </div>
+                <div className="quicksand-bold">By color</div>
+                <select
+                  value={colorFilter}
+                  onChange={handleColorFilterChange}
+                  className="h-12 border border-gray-30 text-xs font-medium rounded-lg block w-full  py-2.5 px-4 relative appearance-none focus:outline-none"
+                >
+                  <option value="">Select one</option>
+                  <option value="brown">Brown</option>
+                  <option value="black">Black</option>
+                  <option value="gray">Gray</option>
+                  <option value="white">White</option>
+                  <option value="mixed">Mixed</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <div className="quicksand-bold">Gender</div>
+                <select
+                  value={genderFilter}
+                  onChange={handleGenderFilterChange}
+                  className="h-12 border border-gray-30 text-xs font-medium rounded-lg block w-full  py-2.5 px-4 relative appearance-none focus:outline-none"
+                >
+                  <option value="">Select one</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-2">
+                <div className="quicksand-bold ">By name</div>
                 <div className="relative w-full mb-8">
                   <select
                     value={sortBy}

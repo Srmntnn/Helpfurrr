@@ -19,6 +19,20 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import "../index.css";
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 function Navbar(props) {
   const { user, logout } = useAuthStore();
@@ -104,8 +118,9 @@ function Navbar(props) {
                         </h1>
                       </div>
                       <p className="text-secondary-brown quicksand-regular">
-                        Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry.
+                        Find your new best friend today! Every dog deserves a
+                        loving home. Adopt, don’t shop, and make a difference in
+                        a pup’s life.
                       </p>
                     </Link>
                   </li>
@@ -127,15 +142,15 @@ function Navbar(props) {
                         </h1>
                       </div>
                       <p className="text-secondary-brown quicksand-regular">
-                        Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry.
+                        Have a dog that needs a home? Post here and help them
+                        find their forever family!
                       </p>
                     </Link>
                   </li>
                 </div>
               </div>
               <div>
-                <div className="hover:bg-light-orange hover:text-main-orange p-4 rounded-lg w-[300px]">
+                {/* <div className="hover:bg-light-orange hover:text-main-orange p-4 rounded-lg w-[300px]">
                   <li className="hover:text-[#F69946] text-main-brown bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont  text-[16px] font-[400] cursor-pointer transition duration-200">
                     <Link
                       to="/matchmaking"
@@ -148,16 +163,17 @@ function Navbar(props) {
                       <div className="flex gap-2 items-center">
                         <IoMdHeartHalf className="text-[24px] text-main-brow" />
                         <h1 className="flex h-full w-full text-[18px] font-bold fredoka-medium tracking-wider">
-                          Matchmaking
+                          Dog Finder
                         </h1>
                       </div>
                       <p className="text-secondary-brown quicksand-regular">
-                        Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry.
+                        Looking for a loyal companion? This sweet dog is
+                        ready to join your family! Adopt today and make a
+                        difference.
                       </p>
                     </Link>
                   </li>
-                </div>
+                </div> */}
               </div>
             </ul>
           </div>
@@ -208,7 +224,7 @@ function Navbar(props) {
 
           <div>
             <Link to="/notification">
-              <IoIosNotifications className="text-[24px] text-secondary-orange"/>
+              <IoIosNotifications className="text-[24px] text-secondary-orange" />
             </Link>
           </div>
 
@@ -314,186 +330,129 @@ function Navbar(props) {
               </>
             )}
           </div>
-          <img
-            src={toggle ? closeIcon : menuIcon}
-            alt="menu"
-            className="w-7 h-7 object-contain"
-            onClick={() => setToggle(!toggle)}
-          />
-        </div>
 
-        <motion.div
-          initial={{ opacity: 0, x: 100 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className={`${
-            styles.paddingX
-          } absolute top-0 right-0 bg-white md:hidden py-3 min-w-[100%] z-10 transition duration-200 ${
-            !toggle ? "hidden" : "block"
-          }`}
-        >
-          <div className="flex items-center justify-between w-full">
-            <Link
-              to="/"
-              className="flex items-center gap-2 "
-              onClick={() => {
-                setActive("");
-                window.scrollTo(0, 0);
-              }}
-            >
-              <img className="sm:w-14 w-12" src={appLogo} alt="" />
-            </Link>
-            <img
-              src={closeIcon}
-              alt=""
-              onClick={() => setToggle(!toggle)}
-              className=" w-6 h-6 "
-            />
-          </div>
-
-          <ul className="list-none h-[100vh] flex items-center justify-center flex-1  flex-col gap-4">
-            {/* <div className="dropdown  dropdown-end dropdown-hover">
-              <div
-                tabIndex={0}
-                role="button"
-                className="hover:text-[#F69946] text-main-brown transition-colors duration-200 text-[16px] font-[400] cursor-pointer flex gap-1 items-center"
-              >
-                Adoption
-                <span>
-                  <IoIosArrowDown />
-                </span>
-              </div>
-              <ul
-                tabIndex={0}
-                className="flex flex-col dropdown-content bg-base-100 rounded-[4px] z-[1] mt-8 gap-4  px-4 py-4 shadow"
-              >
-                <li className="hover:text-[#F69946] text-main-brown bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont hover:bg-light-orange pl-2 pr-4 py-2 border-l-2 hover:border-l-main-orange text-[16px] font-[400] cursor-pointer transition duration-200">
-                  <Link
-                    to="/adoption"
-                    onClick={() => {
-                      setActive("");
-                      window.scrollTo(0, 0);
-                    }}
-                    className="flex h-full w-full"
-                  >
-                    Dogs
-                  </Link>
-                </li>
-                <li className="hover:text-[#F69946] text-main-brown bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont hover:bg-light-orange pl-2 pr-4 py-2 border-l-2 hover:border-l-main-orange text-[16px] font-[400] cursor-pointer transition duration-200">
-                  <Link
-                    to="/postadoption"
-                    onClick={() => {
-                      setActive("");
-                      window.scrollTo(0, 0);
-                    }}
-                    className="whitespace-nowrap"
-                  >
-                    Post a dog for adoption
-                  </Link>
-                </li>
-                <li className="hover:text-[#F69946] text-main-brown bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont hover:bg-light-orange pl-2 pr-4 py-2 border-l-2 hover:border-l-main-orange text-[16px] font-[400] cursor-pointer transition duration-200">
-                  <Link
-                    to="/matchmaking"
-                    onClick={() => {
-                      setActive("");
-                      window.scrollTo(0, 0);
-                    }}
-                    className="whitespace-nowrap"
-                  >
-                    Matchmaking
-                  </Link>
-                </li>
-              </ul>
-            </div> */}
-            <div className="h-screen w-full pt-32 px-4">
-              <div className="mx-auto w-full max-w-lg divide-y divide-white/5">
-                <Disclosure as="div" className="" defaultOpen={false}>
-                  <DisclosureButton className="group flex w-full items-center justify-between">
-                    <span className="text-base/6 text-main-orange group-data-[hover]:text-white/80">
-                      Adoption
-                    </span>
-                    <IoIosArrowDown className="size-5 text-main-brown group-data-[hover]:fill-white/50 group-data-[open]:rotate-180" />
-                  </DisclosureButton>
-                  <DisclosurePanel className="mt-2 text-sm/5 text-white/50">
-                    <ul>
-                      <li className="hover:text-[#F69946] text-main-brown bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont hover:bg-light-orange pl-2 pr-4 py-2 border-l-2 hover:border-l-main-orange text-[16px] font-[400] cursor-pointer transition duration-200">
-                        <Link
-                          to="/adoption"
-                          onClick={() => {
-                            setActive("");
-                            window.scrollTo(0, 0);
-                          }}
-                          className="flex h-full w-full"
-                        >
-                          Dogs
-                        </Link>
-                      </li>
-                      <li className="hover:text-[#F69946] text-main-brown bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont hover:bg-light-orange pl-2 pr-4 py-2 border-l-2 hover:border-l-main-orange text-[16px] font-[400] cursor-pointer transition duration-200">
-                        <Link
-                          to="/postadoption"
-                          onClick={() => {
-                            setActive("");
-                            window.scrollTo(0, 0);
-                          }}
-                          className="whitespace-nowrap"
-                        >
-                          Post for adoption
-                        </Link>
-                      </li>
-                      <li className="hover:text-[#F69946] text-main-brown bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont hover:bg-light-orange pl-2 pr-4 py-2 border-l-2 hover:border-l-main-orange text-[16px] font-[400] cursor-pointer transition duration-200">
-                        <Link
-                          to="/matchmaking"
-                          onClick={() => {
-                            setActive("");
-                            window.scrollTo(0, 0);
-                          }}
-                          className="whitespace-nowrap"
-                        >
-                          Matchmaking
-                        </Link>
-                      </li>
-                    </ul>
-                  </DisclosurePanel>
-                </Disclosure>
-                <ul className="flex flex-col gap-3 mt-3">
-                  <li className="text-[#F69946]  transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
+          <Sheet>
+            <SheetTrigger asChild>
+              <button>
+                <Menu />
+              </button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>
+                  <div className="flex items-center justify-between w-full">
                     <Link
-                      to="/donation"
+                      to="/"
+                      className="flex items-center gap-2 "
                       onClick={() => {
                         setActive("");
                         window.scrollTo(0, 0);
                       }}
                     >
-                      Donation
+                      <img className="sm:w-14 w-12" src={appLogo} alt="" />
                     </Link>
-                  </li>
-                  <li className="text-[#F69946] nransition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
-                    <Link
-                      to="/location"
-                      onClick={() => {
-                        setActive("");
-                        window.scrollTo(0, 0);
-                      }}
-                    >
-                      Location
-                    </Link>
-                  </li>
-                  <li className="text-[#F69946] transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
-                    <Link
-                      to="/educresources"
-                      onClick={() => {
-                        setActive("");
-                        window.scrollTo(0, 0);
-                      }}
-                    >
-                      Educational Resources
-                    </Link>
-                  </li>
+                  </div>
+                </SheetTitle>
+              </SheetHeader>
+              <div className="grid gap-4 py-4 quicksand-regular text-sm">
+                <ul className="list-none h-[100vh] flex items-center justify-center flex-1  flex-col gap-4">
+                  <div className="h-screen w-full">
+                    <div className="mx-auto w-full max-w-lg divide-y divide-white/5">
+                      <Disclosure as="div" className="" defaultOpen={false}>
+                        <DisclosureButton className="group flex w-full items-center justify-between">
+                          <span className="text-base/6 text-main-orange group-data-[hover]:text-white/80">
+                            Adoption
+                          </span>
+                          <IoIosArrowDown className="size-5 text-main-brown group-data-[hover]:fill-white/50 group-data-[open]:rotate-180" />
+                        </DisclosureButton>
+                        <DisclosurePanel className="mt-2 text-sm/5 text-white/50">
+                          <ul>
+                            <li className="hover:text-[#F69946] text-main-brown bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont hover:bg-light-orange pl-2 pr-4 py-2 border-l-2 hover:border-l-main-orange text-[16px] font-[400] cursor-pointer transition duration-200">
+                              <Link
+                                to="/adoption"
+                                onClick={() => {
+                                  setActive("");
+                                  window.scrollTo(0, 0);
+                                }}
+                                className="flex h-full w-full"
+                              >
+                                Dogs
+                              </Link>
+                            </li>
+                            <li className="hover:text-[#F69946] text-main-brown bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont hover:bg-light-orange pl-2 pr-4 py-2 border-l-2 hover:border-l-main-orange text-[16px] font-[400] cursor-pointer transition duration-200">
+                              <Link
+                                to="/postadoption"
+                                onClick={() => {
+                                  setActive("");
+                                  window.scrollTo(0, 0);
+                                }}
+                                className="whitespace-nowrap"
+                              >
+                                Post for adoption
+                              </Link>
+                            </li>
+                            <li className="hover:text-[#F69946] text-main-brown bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont hover:bg-light-orange pl-2 pr-4 py-2 border-l-2 hover:border-l-main-orange text-[16px] font-[400] cursor-pointer transition duration-200">
+                              <Link
+                                to="/matchmaking"
+                                onClick={() => {
+                                  setActive("");
+                                  window.scrollTo(0, 0);
+                                }}
+                                className="whitespace-nowrap"
+                              >
+                                Matchmaking
+                              </Link>
+                            </li>
+                          </ul>
+                        </DisclosurePanel>
+                      </Disclosure>
+                      <ul className="flex flex-col gap-3 mt-3">
+                        <li className="text-[#F69946]  transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
+                          <Link
+                            to="/donation"
+                            onClick={() => {
+                              setActive("");
+                              window.scrollTo(0, 0);
+                            }}
+                          >
+                            Donation
+                          </Link>
+                        </li>
+                        <li className="text-[#F69946] nransition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
+                          <Link
+                            to="/location"
+                            onClick={() => {
+                              setActive("");
+                              window.scrollTo(0, 0);
+                            }}
+                          >
+                            Location
+                          </Link>
+                        </li>
+                        <li className="text-[#F69946] transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
+                          <Link
+                            to="/educresources"
+                            onClick={() => {
+                              setActive("");
+                              window.scrollTo(0, 0);
+                            }}
+                          >
+                            Educational Resources
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </ul>
               </div>
-            </div>
-          </ul>
-        </motion.div>
+              <SheetFooter>
+                <SheetClose asChild>
+                  <Button type="submit">Save changes</Button>
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
       <ToastContainer />
     </nav>

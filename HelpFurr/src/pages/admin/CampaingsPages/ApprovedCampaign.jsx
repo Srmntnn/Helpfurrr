@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios"; // Import axios
 import CampaignCard from "./CampaignCard";
 
 function ApprovedCampaign() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const fetchRequests = async () => {
     try {
-      const response = await fetch("http://localhost:8080/campaigns/get-campaigns");
-      if (!response.ok) {
-        throw new Error("An error occurred");
-      }
-      const data = await response.json();
-      setRequests(data);
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/campaigns/get-campaigns`
+      );
+      setRequests(response.data); // Axios automatically parses JSON response
     } catch (error) {
-      console.log(error);
+      console.error("An error occurred", error);
     } finally {
       setLoading(false);
     }
@@ -22,12 +22,13 @@ function ApprovedCampaign() {
   useEffect(() => {
     fetchRequests();
   }, []);
+
   return (
-    <div className="pet-container">
+    <div className="">
       {loading ? (
         <p>Loading...</p>
       ) : requests.length > 0 ? (
-        requests.map((request, index) => (
+        requests.map((request) => (
           <CampaignCard
             key={request._id}
             campaign={request}

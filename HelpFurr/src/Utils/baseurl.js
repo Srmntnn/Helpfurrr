@@ -1,3 +1,3 @@
 export const getBaseUrl = () => {
-    return "http://localhost:8080/auth";
+    return `${import.meta.env.VITE_BASE_URL}/auth`;
 }

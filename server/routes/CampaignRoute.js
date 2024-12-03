@@ -9,24 +9,21 @@ const { createCampaign,
     pauseCampaign,
     getCampaignsById,
     approveCampaign,
-    deleteCampaign,rejectCampaign } = require('../controllers/CampaignController');
+    getAllCampaigns,
+    deleteCampaign,
+    rejectCampaign } = require('../controllers/CampaignController');
 const verifyToken = require('../middlewares/verifyToken');
+const upload = require('../middlewares/multer');
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../campaignimages'));
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname));
-    }
-});
-
-
-const upload = multer({ storage: storage });
-
-router.post('/create-campaign', upload.single('picture'), createCampaign);
-router.get('/campaign-requests', (req, res) => getCampaigns('Pending', req, res));
+router.post('/create-campaign', upload.fields([
+    { name: 'image1', maxCount: 1 },
+    { name: 'image2', maxCount: 1 },
+    { name: 'image3', maxCount: 1 },
+    { name: 'image4', maxCount: 1 }
+]), createCampaign);
+router.get('/campaign-requests', (req, res) => getCampaigns('Ongoing', req, res));
 router.get('/get-campaigns', (req, res) => getCampaigns('Approved', req, res));
+router.get('/get-all-campaigns', getAllCampaigns);
 router.get('/edit-campaign/:id', editCampaign);
 router.patch('/edit-campaign', editCampaign);
 router.patch('/pause-campaign', verifyToken, pauseCampaign);

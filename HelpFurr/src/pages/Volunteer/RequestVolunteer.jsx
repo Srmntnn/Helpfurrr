@@ -178,13 +178,13 @@ function RequestVolunteer() {
                 <div>
                   <input
                     type="radio"
-                    id="consultation"
+                    id="Apply Volunteer"
                     name="visitType"
-                    value="Consultation"
-                    checked={typeOfVisit === "Consultation"}
+                    value="Apply Volunteer"
+                    checked={typeOfVisit === "Apply Volunteer"}
                     onChange={(e) => setTypeOfVisit(e.target.value)}
                   />
-                  <Label htmlFor="consultation">Consultation</Label>
+                  <Label htmlFor="Apply Volunteer">Apply Volunteer</Label>
                 </div>
                 <div>
                   <input

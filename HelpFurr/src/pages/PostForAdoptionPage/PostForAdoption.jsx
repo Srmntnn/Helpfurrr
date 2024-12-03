@@ -14,6 +14,15 @@ import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "../../components/use-toast";
 import uploadImage from "../../assets/upload (1).svg";
+import Select from "react-select";
+
+const colorOptions = [
+  { value: "brown", label: "Brown" },
+  { value: "black", label: "Black" },
+  { value: "white", label: "White" },
+  { value: "mixed", label: "Mixed" },
+  { value: "gray", label: "Gray" },
+];
 
 function PostForAdoption() {
   const { user } = useAuthStore();
@@ -34,6 +43,7 @@ function PostForAdoption() {
   const [vaccinated, setVaccinated] = useState("");
   const [neutered, setNeutered] = useState("");
   const [picture, setPicture] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [image1, setImage1] = useState(false);
   const [image2, setImage2] = useState(false);
@@ -63,13 +73,6 @@ function PostForAdoption() {
     return emailPattern.test(email);
   };
 
-  // const handleFileChange = (e) => {
-  //   const selectedFile = e.target.files[0];
-  //   if (selectedFile) {
-  //     setPicture(selectedFile);
-  //     setFileName(selectedFile.name);
-  //   }
-  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -81,12 +84,12 @@ function PostForAdoption() {
       !email ||
       !phone ||
       !postedBy ||
-      // !fileName ||
       !gender ||
       !vaccinated ||
       !urgent ||
       !neutered ||
       !clientEmail ||
+      !selectedOption ||
       ageError
     ) {
       setFormError(true);
@@ -106,6 +109,7 @@ function PostForAdoption() {
     formData.append("shelter", shelter);
     formData.append("condition", condition);
     formData.append("email", email);
+    formData.append("color", selectedOption.value);
     formData.append("phone", phone);
     formData.append("postedBy", postedBy);
     formData.append("gender", gender);
@@ -118,10 +122,6 @@ function PostForAdoption() {
     image2 && formData.append("image2", image2);
     image3 && formData.append("image3", image3);
     image4 && formData.append("image4", image4);
-
-    // if (picture) {
-    //   formData.append("picture", picture);
-    // }
 
     try {
       const response = await fetch("http://localhost:8080/dogs/postadoption", {
@@ -150,6 +150,7 @@ function PostForAdoption() {
       setImage4(false);
       setGender("");
       setVaccinated("");
+      setSelectedOption(null);
       setNeutered("");
       setUrgent("");
       togglePopup();
@@ -181,9 +182,7 @@ function PostForAdoption() {
           </h1>
           <p
             className={`${styles.heroSubText} text-secondary-brown text-center quicksand-regular`}
-          >
-            Browse the list of available dogs
-          </p>
+          ></p>
         </div>
         <div className="flex flex-col lg:flex-row py-4 gap-6 sm:pt-96 pt-72 mt-24 w-full">
           <form
@@ -298,8 +297,25 @@ function PostForAdoption() {
               />
             </div>
 
+            <div className="space-y-2 w-full">
+              <Label htmlFor="campaign-category">Colors</Label>
+              <Select
+                styles={{
+                  control: (baseStyles, state) => ({
+                    ...baseStyles,
+                    borderColor: state.isFocused
+                      ? "border-gray-200"
+                      : "border-gray-300",
+                  }),
+                }}
+                onChange={setSelectedOption}
+                options={colorOptions}
+                className="quicksand-regular"
+              />
+            </div>
+
             <div className="flex justify-center flex-col">
-              <Label className="text-main-brown">Dog age</Label>
+              <Label className="text-main-brown">Dog Location</Label>
               <Input
                 type="text"
                 value={shelter}
@@ -311,7 +327,7 @@ function PostForAdoption() {
             </div>
 
             <div className="flex justify-center flex-col">
-              <Label>Dog gender</Label>
+              <Label className="text-main-brown">Dog gender</Label>
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
@@ -327,7 +343,9 @@ function PostForAdoption() {
             </div>
 
             <div className="flex justify-center flex-col">
-              <Label className="relative w-full">Dog condition</Label>
+              <Label className="relative w-full text-main-brown">
+                Dog condition
+              </Label>
               <Input
                 type="text"
                 value={condition}
@@ -337,7 +355,7 @@ function PostForAdoption() {
             </div>
 
             <div className="space-y-4">
-              <Label>Other info</Label>
+              <Label className="text-main-brown">Other info</Label>
               <ul className="items-center w-full text-sm font-medium text-main-orange  border bg-light-orange border-gray-200 rounded-lg sm:flex   ">
                 <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r ">
                   <div className="flex items-center ps-3">

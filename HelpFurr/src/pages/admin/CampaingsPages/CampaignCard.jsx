@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 
 function CampaignCard(props) {
   const [showConditionPopup, setShowConditionPopup] = useState(false);
@@ -9,7 +9,7 @@ function CampaignCard(props) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
-  const [showReject, setShowReject] = useState(false)
+  const [showReject, setShowReject] = useState(false);
 
   const truncateText = (text, maxLength) => {
     if (text.length <= maxLength) {
@@ -24,11 +24,19 @@ function CampaignCard(props) {
     return formatDistanceToNow(date, { addSuffix: true });
   };
 
+  const formatCampaignDeadline = (deadline) => {
+    try {
+      return format(new Date(deadline), "MMMM d, yyyy");
+    } catch (error) {
+      return "Invalid date";
+    }
+  };
+
   const handleApprove = async () => {
     setIsApproving(true);
     try {
       const response = await fetch(
-        `http://localhost:8080/campaigns/approving-campaign/${props.campaign._id}`,
+        `${import.meta.env.VITE_BASE_URL}/campaigns/approving-campaign/${props.campaign._id}`,
         {
           method: "PUT",
           body: JSON.stringify({
@@ -52,15 +60,15 @@ function CampaignCard(props) {
     }
   };
 
-  const handleReject = async () => {
+  const HandlePause = async () => {
     setIsRejecting(true);
     try {
       const response = await fetch(
-        `http://localhost:8080/campaigns/rejecting-campaign/${props.campaign._id}`,
+        `${import.meta.env.VITE_BASE_URL}/campaigns/rejecting-campaign/${props.campaign._id}`,
         {
           method: "PUT",
           body: JSON.stringify({
-            status: "Rejected",
+            status: "Paused",
           }),
           headers: {
             "Content-Type": "application/json",
@@ -83,7 +91,7 @@ function CampaignCard(props) {
     setIsDeleting(true);
     try {
       const deleteResponses = await fetch(
-        `http://localhost:8080/campaign/delete-campaign/${props.campaign._id}`,
+        `${import.meta.env.VITE_BASE_URL}/campaign/delete-campaign/${props.campaign._id}`,
         {
           method: "DELETE",
         }
@@ -99,27 +107,22 @@ function CampaignCard(props) {
   return (
     <div className="req-containter">
       <div className="pet-view-card">
-        <div className="pet-card-pic">
-          <img
-            src={`http://localhost:8080/campaignimages/${props.campaign.filename}`}
-            alt={props.campaign.name}
-          />
-        </div>
+        <div className="pet-card-pic"></div>
         <div className="pet-card-details">
           <h2>{props.campaign.name}</h2>
           <p>
             <b>Campaign Name</b> {props.campaign.campaignName}
           </p>
           <p>
-            <b>Campaign Deadline</b> {props.campaign.shelter}
+            <b>Campaign Deadline:</b>{" "}
+            {formatCampaignDeadline(props.campaign.campDeadline)}
           </p>
           <p>
-            <b>Author Name:</b> {props.campaign.author}
+            <b>Status</b> {props.campaign.status}
           </p>
           <p>
-            <b>Author Email:</b> {props.campaign.email}
+            <b>Author</b> {props.campaign.author}
           </p>
-
           <p>
             <b>Description</b>
             <span>
@@ -138,11 +141,8 @@ function CampaignCard(props) {
           <p>{formatTimeAgo(props.campaign.updatedAt)}</p>
         </div>
         <div className="app-rej-btn">
-          <button
-            onClick={handleReject}
-            disabled={isRejecting || isApproving}
-          >
-            {isRejecting ? <p>Rejecting</p> : props.deleteBtnText}
+          <button onClick={HandlePause} disabled={isRejecting || isApproving}>
+            {isRejecting ? <p>Pause</p> : <p>Pause</p>}
           </button>
           {props.approveBtn ? (
             <button
@@ -188,7 +188,9 @@ function CampaignCard(props) {
               <p>Approving Successful</p>
               <p>
                 Please contact the customer at{" "}
-                <a href={`mailto:${props.campaign.email}`}>{props.campaign.email}</a> 
+                <a href={`mailto:${props.campaign.email}`}>
+                  {props.campaign.email}
+                </a>
                 to arrange the transfer of the pet from the owner's home to our
                 adoption center.
               </p>

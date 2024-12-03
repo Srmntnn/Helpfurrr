@@ -37,61 +37,65 @@ const data = {
       items: [
         {
           title: "All dogs",
-          url: "#",
+          url: "/dashboard/all-dogs",
+        },
+        {
+          title: "Post Dogs Requests",
+          link: "/dashboard/postingdogs",
         },
         {
           title: "Approved Dogs",
-          url: "#",
+          link: "/dashboard/approvedDogs",
         },
         {
           title: "Rejected Dogs",
-          url: "#",
+          link: "#",
         },
         {
           title: "Adoption Requests",
-          url: "#",
+          link: "/dashboard/adoptionrequest",
         },
         {
-          title: "Styling",
-          url: "#",
-        },
-        {
-          title: "Optimizing",
-          url: "#",
-        },
-        {
-          title: "Configuring",
-          url: "#",
+          title: "Adoption History",
+          link: "/dashboard/adoptedhistory",
         },
       ],
     },
+
+    {
+      title: "Campaigns",
+      url: "#",
+      items: [
+        {
+          title: "All Campaigns",
+          url: "/dashboard/all-campaigns",
+        },
+        {
+          title: "Create Campaign",
+          url: "/dashboard/create-campaign",
+        },
+      ],
+    },
+
     {
       title: "Visit / Volunteer Request",
       url: "#",
       items: [
         {
-          title: "Components",
-          url: "#",
+          title: "All Volunteers",
+          url: "/dashboard/all-volunteers",
         },
         {
-          title: "File Conventions",
-          url: "#",
+          title: "Volunteer Request",
+          url: "/dashboard/volunteer-request",
         },
         {
-          title: "Functions",
-          url: "#",
+          title: "Approved Volunteer Request",
+          url: "/dashboard/approved-volunteer-request",
         },
         {
-          title: "next.config.js Options",
-          url: "#",
-        },
-        {
-          title: "CLI",
-          url: "#",
-        },
-        {
-          title: "Edge Runtime",
-          url: "#",
+          title: "Approved Rejected Request",
+          url: "/dashboard/rejected-volunteer-request",
         },
       ],
     },
@@ -108,9 +112,11 @@ export function AppSidebar(props) {
         {/* Create a SidebarGroup for each parent item */}
         {data.navMain.map((item) => (
           <SidebarGroup key={item.title}>
-            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+            <SidebarGroupLabel className="quicksand-regular text-main-orange">
+              {item.title}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>
+              <SidebarMenu className="quicksand-regular">
                 {item.items.map((subItem) => (
                   <SidebarMenuItem key={subItem.title}>
                     <SidebarMenuButton asChild isActive={subItem.isActive}>

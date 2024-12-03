@@ -17,14 +17,6 @@ function Login() {
 
   const navigate = useNavigate();
 
-  // const handleChange = (e) => {
-  //     const { name, value } = e.target;
-  //     console.log(name, value);
-  //     const copyLoginInfo = { ...loginInfo };
-  //     copyLoginInfo[name] = value;
-  //     setLoginInfo(copyLoginInfo);
-  // }
-
   const { login, isLoading, error, user } = useAuthStore();
 
   useEffect(() => {
@@ -52,7 +44,7 @@ function Login() {
       className={`${styles.paddingX} flex justify-center items-center h-svh`}
     >
       <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
-        <div class="absolute left-0 right-0 top-0 -z-10 m-auto max-h-[310px] h-full w-full max-w-[310px] rounded-full bg-main-orange opacity-30 blur-[100px]"></div>
+        <div className="absolute left-0 right-0 top-0 -z-10 m-auto max-h-[310px] h-full w-full max-w-[310px] rounded-full bg-main-orange opacity-30 blur-[100px]"></div>
       </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -128,7 +120,7 @@ function Login() {
               </motion.button>
             </div>
 
-            <div className="flex flex-row justify-center items-center gap-2 px-6">
+            {/* <div className="flex flex-row justify-center items-center gap-2 px-6">
               <span className="h-[1px] w-full bg-gray-400 flex"></span>
               <p className="whitespace-nowrap text-gray-400 text-sm quicksand-regular">
                 or signin with
@@ -143,7 +135,7 @@ function Login() {
               <div className="flex w-full bg-white py-2 shadow-xl overflow-hidden rounded-full justify-center">
                 <img src={Gmail} className="" alt="" />
               </div>
-            </div>
+            </div> */}
           </form>
           <div className="flex flex-col items-center">
             <div className="flex items-center">

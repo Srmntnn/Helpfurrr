@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useAuthStore } from "../../store/authStore";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { Input } from "../../components/input";
@@ -13,6 +12,9 @@ import { toast, useToast } from "../../components/use-toast";
 import success from "../../components/Success.gif";
 import { Loader } from "lucide-react";
 import { DatePicker } from "@/components/ui/date-picker";
+import uploadImage from "../../assets/upload (1).svg";
+import { useAuthStore } from "@/store/authStore";
+
 
 const options = [
   { value: "adoption", label: "Adoption & Rescue" },
@@ -25,7 +27,8 @@ const options = [
 ];
 
 function DonationCampaign() {
-  const { user } = useAuthStore();
+  const { user, checkAuth } = useAuthStore();
+  console.log(user)
   const [campaignName, setCampaignName] = useState("");
   const [maxDonation, setMaxDonation] = useState("");
   const [campDeadline, setCampDeadline] = useState("");
@@ -34,12 +37,20 @@ function DonationCampaign() {
   const [longDescription, setLongDescription] = useState("");
   const [email, setEmail] = useState(user?.email || "");
   const [picture, setPicture] = useState(null);
-  const [fileName, setFileName] = useState("");
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [active, setActive] = useState();
+  const [image1, setImage1] = useState(false);
+  const [image2, setImage2] = useState(false);
+  const [image3, setImage3] = useState(false);
+  const [image4, setImage4] = useState(false);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   useEffect(() => {
     if (!isSubmitting) {
@@ -47,14 +58,6 @@ function DonationCampaign() {
       setFormError(false);
     }
   }, [isSubmitting]);
-
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      setPicture(selectedFile);
-      setFileName(selectedFile.name);
-    }
-  };
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -85,7 +88,6 @@ function DonationCampaign() {
       !email ||
       !shortDescription ||
       !longDescription ||
-      !fileName ||
       !maxDonation
     ) {
       setFormError(true);
@@ -109,9 +111,11 @@ function DonationCampaign() {
     formData.append("longDescription", longDescription);
     formData.append("email", email);
     formData.append("author", user?.name || "");
-    if (picture) {
-      formData.append("picture", picture);
-    }
+
+    image1 && formData.append("image1", image1);
+    image2 && formData.append("image2", image2);
+    image3 && formData.append("image3", image3);
+    image4 && formData.append("image4", image4);
 
     try {
       const response = await fetch(
@@ -145,11 +149,14 @@ function DonationCampaign() {
     setLongDescription("");
     setEmail(user?.email || "");
     setPicture(null);
-    setFileName("");
+    setImage1(false);
+    setImage2(false);
+    setImage3(false);
+    setImage4(false);
   };
 
   return (
-    <section className="w-full items-center justify-center h-full gap -10 flex">
+    <section className="w-full justify-center h-full gap -10 flex">
       <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto max-h-[310px] h-full w-full max-w-[310px] rounded-full bg-main-orange opacity-30 blur-[100px]"></div>
       </div>
@@ -157,34 +164,109 @@ function DonationCampaign() {
         className={`${styles.paddingX} max-w-screen-2xl justify-center w-full`}
       >
         <Helmet>
-          <title>Helpfur | Create Campaign</title>
+          <title>Admin | Create Campaign</title>
         </Helmet>
-        <div className="sm:bg-light-orange bg-secondary-orange sm:h-96 h-80 flex absolute left-0 right-0 flex-col items-center justify-center">
+        <div className="sm:bg-light-orange bg-secondary-orange sm:h-70 h-60 flex absolute left-0 right-0 flex-col items-center justify-center">
           <h1
             className={`${styles.heroHeadText} text-5xl sm:text-secondary-orange text-light-orange font-bold text-center fredoka-bold`}
           >
-           Create Dog Campaign
+            Create Campaign
           </h1>
-          <p
-            className={`${styles.heroSubText} text-secondary-brown text-center quicksand-regular`}
-          >
-            Browse the list of available dogs
-          </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row py-4 gap-6 sm:pt-96 pt-72 mt-24 w-full">
+        <div className="flex flex-col lg:flex-row py-4 gap-6 sm:pt-58 pt-56 mt-24 w-full">
           <form
             onSubmit={handleSubmit}
             className="flex-1 flex flex-col border border-gray-100 rounded-lg p-4 space-y-4"
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className="space-y-2 w-full">
-                <Label htmlFor="campaign-image">Campaign Picture</Label>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
+              <div className="">
+                <Label>Pictures:</Label>
+                <div className="flex gap-4 w-full justify-evenly border py-7">
+                  <div className="flex flex-col w-36 aspect-square overflow-hidden items-center justify-center ">
+                    <label
+                      htmlFor="image1"
+                      className="text-main-brown cursor-pointer"
+                    >
+                      <img
+                        src={
+                          !image1 ? uploadImage : URL.createObjectURL(image1)
+                        }
+                        className="w-36 object-cover  "
+                        alt=""
+                      />
+                      <input
+                        onChange={(e) => setImage1(e.target.files[0])}
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        id="image1"
+                      />
+                    </label>
+                  </div>
+                  <div className="flex flex-col w-36 overflow-hidden aspect-square justify-center ">
+                    <label
+                      htmlFor="image2"
+                      className="text-main-brown cursor-pointer"
+                    >
+                      <img
+                        src={
+                          !image2 ? uploadImage : URL.createObjectURL(image2)
+                        }
+                        className="w-36 object-cover"
+                        alt=""
+                      />
+                      <input
+                        onChange={(e) => setImage2(e.target.files[0])}
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        id="image2"
+                      />
+                    </label>
+                  </div>
+                  <div className="flex flex-col w-36 overflow-hidden aspect-square justify-center ">
+                    <label
+                      htmlFor="image3"
+                      className="text-main-brown cursor-pointer"
+                    >
+                      <img
+                        src={
+                          !image3 ? uploadImage : URL.createObjectURL(image3)
+                        }
+                        className="w-36 object-cover"
+                      />
+                      <input
+                        onChange={(e) => setImage3(e.target.files[0])}
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        id="image3"
+                      />
+                    </label>
+                  </div>
+                  <div className="flex flex-col w-36 overflow-hidden aspect-square justify-center ">
+                    <label
+                      htmlFor="image4"
+                      className="text-main-brown cursor-pointer"
+                    >
+                      <img
+                        src={
+                          !image4 ? uploadImage : URL.createObjectURL(image4)
+                        }
+                        className="w-36 object-cover"
+                        alt=""
+                      />
+                      <input
+                        onChange={(e) => setImage4(e.target.files[0])}
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        id="image4"
+                      />
+                    </label>
+                  </div>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label>Campaign Name</Label>
@@ -232,6 +314,7 @@ function DonationCampaign() {
                   }}
                   onChange={setSelectedOption}
                   options={options}
+                  className="quicksand-regular"
                 />
               </div>
             </div>
@@ -241,6 +324,7 @@ function DonationCampaign() {
                 placeholder="Enter a detailed description"
                 value={longDescription}
                 onChange={(e) => setLongDescription(e.target.value)}
+                className="quicksand-regular"
               />
             </div>
             {emailError && (
@@ -268,16 +352,15 @@ function DonationCampaign() {
               )}
             </motion.button>
           </form>
-          <div className="basis-1/3">
+          <div className="basis-1/3 quicksand-regular">
             <div className="border border-gray-100 rounded-lg p-4 space-y-4">
-              <h1 className="text-2xl font-bold inline-flex items-center gap-2">
+              <h1 className="text-lg text-main-brown font-bold inline-flex items-center gap-2">
                 <FaUser />
                 User Info
               </h1>
               <hr />
               <p>Name: {user?.name}</p>
               <p>Email: {user?.email}</p>
-              <p>Phone: +880 1643091606</p>
               <p>
                 Current Time: <TimeDisplay />
               </p>

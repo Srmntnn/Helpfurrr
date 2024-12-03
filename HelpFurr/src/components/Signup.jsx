@@ -40,7 +40,7 @@ function Signup() {
       className={`${styles.paddingX} sm:px-16 px-6 flex justify-center items-center h-svh mt-16`}
     >
       <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
-        <div class="absolute left-0 right-0 top-0 -z-10 m-auto max-h-[310px] h-full w-full max-w-[310px] rounded-full bg-main-orange opacity-30 blur-[100px]"></div>
+        <div className="absolute left-0 right-0 top-0 -z-10 m-auto max-h-[310px] h-full w-full max-w-[310px] rounded-full bg-main-orange opacity-30 blur-[100px]"></div>
       </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -48,7 +48,7 @@ function Signup() {
         transition={{ duration: 0.5 }}
         className="flex shadow-sm rounded-lg w-full max-w-[1183px]"
       >
-        <div className="flex flex-col justify-between gap-8 w-full sm:max-w-[418px] max-w-[600px] p-6 sm:p-10 shadow-sm bg-white overflow-hidden h-full max-h- rounded-lg">
+        <div className="flex flex-col justify-between gap-8 w-full sm:max-w-[418px] max-w-[600px] p-6 sm:p-10 shadow-sm bg-white overflow-hidden rounded-lg">
           <div className="flex flex-col">
             <h1 className=" fredoka-bold text-main-brown md:text-[40px] sm:text-[28px] xs:text-[40px] text-[30px]">
               Sign up
@@ -61,8 +61,7 @@ function Signup() {
             <div className="flex flex-col">
               <div className="flex flex-col gap-4">
                 <div
-                  className="flex justify-center
-            "
+                  className="flex justify-center"
                 >
                   <label htmlFor="name" className="relative w-full">
                     <input
@@ -149,7 +148,7 @@ function Signup() {
                 )}
               </motion.button>
             </div>
-            <div className="flex flex-row justify-center items-center gap-2 px-6">
+            {/* <div className="flex flex-row justify-center items-center gap-2 px-6">
               <span className="h-[1px] w-full bg-gray-400 flex"></span>
               <p className="whitespace-nowrap text-gray-400 text-sm quicksand-regular">
                 or signin with
@@ -164,7 +163,7 @@ function Signup() {
               <div className="flex w-full bg-white py-2 shadow-xl overflow-hidden rounded-full justify-center">
                 <img src={Gmail} className="" alt="" />
               </div>
-            </div>
+            </div> */}
           </form>
           <div className="flex flex-col items-center">
             <span className="flex gap-1 quicksand-regular">

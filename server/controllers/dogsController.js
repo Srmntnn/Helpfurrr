@@ -8,7 +8,7 @@ const path = require('path');
 
 const PostDogRequest = async (req, res) => {
   try {
-    const { name, age, shelter, condition, email, phone, postedBy, gender, vaccinated, neutered, urgent, clientEmail } = req.body;
+    const { name, age, shelter, condition, email, phone, postedBy, gender, vaccinated, neutered, urgent, clientEmail, color } = req.body;
 
     // Collect images from req.files
     const images = [
@@ -46,7 +46,8 @@ const PostDogRequest = async (req, res) => {
       vaccinated,
       neutered,
       urgent,
-      clientEmail
+      clientEmail,
+      color
     });
 
     res.status(200).json(dog);
@@ -59,6 +60,19 @@ const PostDogRequest = async (req, res) => {
 const getAllDogs = async (reqStatus, req, res) => {
   try {
     const data = await Dogs.find({ status: reqStatus }).sort({ updatedAt: -1 });
+    if (data.length > 0) {
+      res.status(200).json(data);
+    } else {
+      res.status(404).json({ message: 'No data found' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getAllDogData = async (req, res) => {
+  try {
+    const data = await Dogs.find();
     if (data.length > 0) {
       res.status(200).json(data);
     } else {
@@ -95,7 +109,7 @@ const approveRequest = async (req, res) => {
       return res.status(404).json({ message: 'Dog not found' });
     }
 
-    const user = await UserModel.findOne({ email: dog.email }); 
+    const user = await UserModel.findOne({ email: dog.email });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -113,29 +127,31 @@ const approveRequest = async (req, res) => {
   }
 };
 
-
 const deletePost = async (req, res) => {
   try {
     const id = req.params.id;
     const dog = await Dogs.findByIdAndDelete(id);
-    if (!dog) {
-      return res.status(404).json({ message: 'dog not found' });
-    }
-    const filePath = path.join(__dirname, '../images', dog.filename);
 
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    if (!dog) {
+      return res.status(404).json({ message: 'Dog not found' });
     }
-    res.status(200).json({ message: 'dog deleted successfully' });
+
+    if (dog.imageUrl) {
+      const publicId = dog.imageUrl.split('/').pop().split('.')[0]; 
+      await cloudinary.uploader.destroy(publicId); 
+    }
+
+    return res.status(200).json({ message: 'Dog deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Error deleting dog:", err);
+    return res.status(500).json({ message: 'Failed to delete dog' });
   }
 };
 
 const editDog = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, age, shelter, condition, email, phone, gender, vaccinated, neutered, urgent } = req.body;
+    const { name, age, shelter, condition, email, phone, gender, vaccinated, neutered, urgent, color } = req.body;
 
     const updatedDog = await Dogs.findByIdAndUpdate(id, {
       name,
@@ -147,7 +163,8 @@ const editDog = async (req, res) => {
       gender,
       vaccinated,
       neutered,
-      urgent
+      urgent,
+      color
     }, { new: true });
 
     if (!updatedDog) {
@@ -186,5 +203,6 @@ module.exports = {
   approveRequest,
   getDogsById,
   editDog,
-  getDogByEmail
+  getDogByEmail,
+  getAllDogData
 }

@@ -29,16 +29,16 @@ const campaignSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    filename: {
-        type: String,
-    },
     author: {
         type: String
     },
     email: {
         type: String
     },
-
+    image: {
+        type: Array,
+        required: true
+    }
 }, { timestamps: true })
 
 const Campaign = mongoose.model('Campaign', campaignSchema);

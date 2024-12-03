@@ -38,31 +38,18 @@ const Dogviewer = (props) => {
           <h2 className="text-main-brown fredoka-bold tracking-wider text-2xl font-bold">
             {props.dog.name}
           </h2>
-          <p className="quicksand-regular text-secondary-brown">{formatTimeAgo(props.dog.updatedAt)}</p>
-          {/* <div className="bg-light-orange text-center md:py-4 md:px-6 py-3 px-4 rounded-lg text-main-orange hover:bg-main-orange hover:text-light-orange transition duration-200 shadow-sm">
-            <button onClick={togglePopup} className=" whitespace-nowrap ">
-              Adopt Now <i className="fa fa-paw"></i>
-            </button>
-          </div> */}
-          <Link className="bg-light-orange text-center quicksand-bold md:py-3 md:px-6 py-2 px-6 rounded-lg text-main-orange hover:bg-main-orange hover:text-light-orange transition duration-200 shadow-sm" to={`/dogdetails/${props.dog._id}`}>View details</Link>
+          <p className="quicksand-regular text-secondary-brown">
+            {formatTimeAgo(props.dog.updatedAt)}
+          </p>
+          <Link
+            className="bg-light-orange text-center quicksand-bold md:py-3 md:px-6 py-2 px-6 rounded-lg text-main-orange hover:bg-main-orange hover:text-light-orange transition duration-200 shadow-sm"
+            to={`/dogdetails/${props.dog._id}`}
+          >
+            View details
+          </Link>
         </div>
       </div>
-
-      {/* <div className="pet-card-details">
-            
-            <p>
-              <b>Age:</b> {props.dog.age}
-            </p>
-            <p>
-              <b>Location:</b> {props.dog.shelter}
-            </p>
-            <p>
-              <b>Condition:</b> {props.dog.condition}
-            </p>
-            <p>{formatTimeAgo(props.dog.updatedAt)}</p>
-          </div> */}
-
-      {showPopup && (
+      {/* {showPopup && (
         <Dialog
           open={showPopup}
           onClose={setShowPopup}
@@ -100,7 +87,7 @@ const Dogviewer = (props) => {
             </div>
           </div>
         </Dialog>
-      )}
+      )} */}
     </section>
   );
 };

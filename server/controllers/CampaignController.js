@@ -1,14 +1,39 @@
 const Campaign = require('../models/Campaign');
 const verifyToken = require('../middlewares/verifyToken');
 const fs = require('fs');
+const { v2: cloudinary } = require('cloudinary');
 const path = require('path');
 // Functions for creating, retrieving, editing, and pausing campaigns
 
 const createCampaign = async (req, res) => {
   try {
-    // Validate input data
+    console.log("Request files:", req.files); // Debugging line
+
     const { campaignName, campDeadline, maxDonation, campaignCategory, shortDescription, longDescription, email, author } = req.body;
-    const { filename } = req.file;
+
+    // Check if req.files is defined
+    if (!req.files) {
+      return res.status(400).json({ error: 'No files were uploaded.' });
+    }
+
+    const images = [
+      req.files.image1 && req.files.image1[0],
+      req.files.image2 && req.files.image2[0],
+      req.files.image3 && req.files.image3[0],
+      req.files.image4 && req.files.image4[0]
+    ].filter(Boolean);
+
+    const imageUrl = await Promise.all(
+      images.map(async (item) => {
+        try {
+          const result = await cloudinary.uploader.upload(item.path, { resource_type: 'image' });
+          return result.secure_url;
+        } catch (uploadError) {
+          console.error("Error uploading image:", uploadError);
+          throw new Error("Image upload failed");
+        }
+      })
+    );
 
     // Create a new campaign
     const campaign = await Campaign.create({
@@ -18,8 +43,8 @@ const createCampaign = async (req, res) => {
       campaignCategory,
       shortDescription,
       longDescription,
-      status: 'Pending',
-      filename,
+      status: 'Ongoing',
+      image: imageUrl,
       email,
       author
     });
@@ -30,6 +55,7 @@ const createCampaign = async (req, res) => {
     res.status(500).json({ error: 'Failed to create campaign' });
   }
 };
+
 const getCampaigns = async (reqStatus, req, res) => {
   try {
     const data = await Campaign.find({ status: reqStatus }).sort({ updatedAt: -1 });
@@ -42,6 +68,20 @@ const getCampaigns = async (reqStatus, req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+const getAllCampaigns = async (req, res) => {
+  try {
+    const data = await Campaign.find();
+    if (data.length > 0) {
+      res.status(200).json(data);
+    } else {
+      res.status(404).json({ error: 'No data found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 
 const editCampaign = async (req, res) => {
   try {
@@ -173,5 +213,6 @@ module.exports = {
   approveCampaign,
   deleteCampaign,
   pauseCampaign,
-  rejectCampaign
+  rejectCampaign,
+  getAllCampaigns
 }

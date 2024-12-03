@@ -3,11 +3,61 @@ const AdoptForm = require('../models/AdoptionFormModel')
 const express = require('express')
 const UserModel = require('../models/user')
 const Notification = require('../models/notification')
+const { v2: cloudinary } = require('cloudinary');
+const Dogs = require('../models/Dogs');
 
 const saveForm = async (req, res) => {
     try {
-        const { email, livingSituation, phoneNo, previousExperience, familyComposition, dogId } = req.body
-        const form = await AdoptForm.create({ email, livingSituation, phoneNo, previousExperience, familyComposition, dogId })
+        const id = req.params.id;
+        const {
+            email,
+            livingSituation,
+            phoneNo,
+            previousExperience,
+            familyComposition,
+            dogId,
+            contactReference,
+            adopterName,
+            occupation,
+            renting,
+            familyAllergic,
+            neutering,
+            address
+        } = req.body
+
+        const images = [
+            req.files.image1 && req.files.image1[0],
+            req.files.image2 && req.files.image2[0],
+        ].filter(Boolean); // Filter out undefined values
+
+        const imageUrl = await Promise.all(
+            images.map(async (item) => {
+                try {
+                    const result = await cloudinary.uploader.upload(item.path, { resource_type: 'image' });
+                    return result.secure_url;
+                } catch (uploadError) {
+                    console.error("Error uploading image:", uploadError);
+                    throw new Error("Image upload failed");
+                }
+            })
+        );
+
+        const form = await AdoptForm.create({
+            email,
+            livingSituation,
+            phoneNo,
+            previousExperience,
+            familyComposition,
+            dogId,
+            contactReference,
+            adopterName,
+            occupation,
+            renting,
+            familyAllergic,
+            neutering,
+            address,
+            image: imageUrl
+        })
 
         const user = await UserModel.findOne({ email: form.email });
 
