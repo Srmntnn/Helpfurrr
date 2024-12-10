@@ -37,6 +37,7 @@ function DashboardPageLayout() {
             </BreadcrumbList>
           </Breadcrumb>
         </header>
+       
         <Outlet />
       </SidebarInset>
     </SidebarProvider>

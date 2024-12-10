@@ -82,34 +82,26 @@ const getAllCampaigns = async (req, res) => {
   }
 };
 
-
 const editCampaign = async (req, res) => {
+  const { id } = req.params; // Extract campaign ID from the URL
+  const { campaignName, maxDonation, status } = req.body; // Get updated data from request body
+
   try {
-    const { id } = req.params;
-    const { campaignName, campDeadline, maxDonation, campaignCategory, shortDescription, longDescription } = req.body;
+    // Find the campaign by ID and update it with new data
+    const updatedCampaign = await Campaign.findByIdAndUpdate(
+      id,
+      { campaignName, maxDonation, status },
+      { new: true, runValidators: true } // return the updated campaign and validate
+    );
 
-    // Find the campaign by ID
-    const campaign = await Campaign.findById(id);
-
-    if (!campaign) {
-      return res.status(404).json({ message: 'Campaign not found' });
+    if (!updatedCampaign) {
+      return res.status(404).json({ message: "Campaign not found" });
     }
 
-    // Update the campaign fields
-    campaign.campaignName = campaignName;
-    campaign.campDeadline = campDeadline;
-    campaign.maxDonation = maxDonation;
-    campaign.campaignCategory = campaignCategory;
-    campaign.shortDescription = shortDescription;
-    campaign.longDescription = longDescription;
-
-    // Save the updated campaign
-    await campaign.save();
-
-    res.status(200).json({ message: 'Campaign updated successfully', campaign });
+    return res.status(200).json(updatedCampaign); // Send updated campaign back
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to update campaign' });
+    return res.status(500).json({ message: "Error updating campaign" });
   }
 };
 
@@ -202,7 +194,88 @@ const deleteCampaign = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-// ... (Similar functions for other functionalities)
+
+const updateTotalDonations = async (req, res) => {
+  const { id } = req.params;
+  const { donationAmount } = req.body; // Assuming donationAmount is passed in the body
+
+  try {
+    // Find the campaign by ID
+    const campaign = await Campaign.findById(id);
+    if (!campaign) {
+      return res.status(404).json({ message: 'Campaign not found' });
+    }
+
+    // Update the total donations for the campaign
+    campaign.totalDonations = donationAmount;
+
+    // Save the updated campaign
+    await campaign.save();
+
+    return res.status(200).json({
+      message: 'Total donations updated successfully',
+      totalDonations: campaign.totalDonations
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const postBudgetUsage = async (req, res) => {
+  const { id } = req.params;
+  const { item, cost } = req.body;
+
+  try {
+      if (!cost || cost <= 0) {
+          return res.status(400).json({ message: 'Invalid cost' });
+      }
+
+      const campaign = await Campaign.findById(id);
+      if (!campaign) {
+          return res.status(404).json({ message: 'Campaign not found' });
+      }
+
+      campaign.budgetUsage.push({ item, cost });
+      
+      if (campaign.totalDonations >= cost) {
+          campaign.totalDonations -= cost;
+      } else {
+          return res.status(400).json({ message: 'Insufficient funds to post this budget usage' });
+      }
+
+      await campaign.save();
+      return res.status(200).json({ message: 'Budget usage added successfully', budgetUsage: campaign.budgetUsage, totalDonations: campaign.totalDonations });
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const setTotalDonations = async (req, res) => {
+  const { campaignId, totalDonations } = req.body;
+
+  try {
+    const campaign = await Campaign.findByIdAndUpdate(
+      campaignId,
+      { totalDonations },
+      { new: true }
+    );
+
+    if (!campaign) {
+      return res.status(404).json({ message: 'Campaign not found' });
+    }
+
+    return res.status(200).json({
+      message: 'Total donations updated successfully',
+      totalDonations: campaign.totalDonations,
+    });
+  } catch (error) {
+    console.error('Error updating total donations:', error);
+    return res.status(500).json({ message: 'Error updating total donations' });
+  }
+};
+
 
 module.exports = {
   createCampaign,
@@ -214,5 +287,8 @@ module.exports = {
   deleteCampaign,
   pauseCampaign,
   rejectCampaign,
-  getAllCampaigns
+  getAllCampaigns,
+  postBudgetUsage,
+  updateTotalDonations,
+  setTotalDonations
 }

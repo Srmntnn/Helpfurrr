@@ -38,7 +38,12 @@ import ApprovedVolunteeers from "../pages/admin/VolunteerPages/ApprovedVolunteee
 import RejectedVolunteers from "../pages/admin/VolunteerPages/RejectedVolunteers";
 import AllVolunteers from "../pages/admin/VolunteerPages/AllVolunteers";
 import CampaignDetails from "../pages/Donation/CampaignDetails";
-import AllCampaigns from "../pages/admin/CampaingsPages/AllCampaigns"
+import AllCampaigns from "../pages/admin/CampaingsPages/AllCampaigns";
+import AdminLogin from "../pages/admin/AdminLogin";
+import EditDogForm from "@/pages/Ownerpage/EditDogForm";
+import ScannedDogData from "@/pages/Ownerpage/ScannedData";
+import AdminAddDogs from "@/pages/admin/DogAdminPages/AdminAddDogs";
+import SetTotalDonation from "@/pages/admin/Donations/SetTotalDonation";
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
@@ -61,6 +66,16 @@ const RedirectAuthenticatedUser = ({ children }) => {
 
   if (isAuthenticated && user.emailVerified) {
     return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
+const AdminRoute = ({ children }) => {
+  const { user } = useAuthStore();
+
+  if (!user || user.role !== "admin") {
+    return <Navigate to="/admin-login" replace />;
   }
 
   return children;
@@ -97,7 +112,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/postadoption",
-        element: <PostForAdoption />,
+        element: (
+          <ProtectedRoute>
+            <PostForAdoption />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/donation",
@@ -125,6 +144,10 @@ const router = createBrowserRouter([
       {
         path: "/notification",
         element: <NotificationPage />,
+      },
+      {
+        path: "/edit-dog/:id",
+        element: <EditDogForm />,
       },
       {
         path: "/dogdetails/:dogId",
@@ -158,8 +181,18 @@ const router = createBrowserRouter([
   },
 
   {
+    path: "admin-login",
+    element: <AdminLogin />,
+  },
+
+  { path: "/scanned-data", element: <ScannedDogData /> },
+  {
     path: "dashboard",
-    element: <DashboardLayout />,
+    element: (
+      <AdminRoute>
+        <DashboardLayout />
+      </AdminRoute>
+    ),
     children: [
       {
         path: "",
@@ -169,6 +202,7 @@ const router = createBrowserRouter([
         path: "users",
         element: <Users />,
       },
+
       {
         path: "postingdogs",
         element: <PostingDogs />,
@@ -212,6 +246,14 @@ const router = createBrowserRouter([
       {
         path: "rejected-volunteer-request",
         element: <RejectedVolunteers />,
+      },
+      {
+        path: "add-dog",
+        element: <AdminAddDogs />,
+      },
+      {
+        path: "all-donations",
+        element: <SetTotalDonation />,
       },
     ],
   },

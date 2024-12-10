@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
+import { Dialog, Transition } from "@headlessui/react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Fragment } from "react";
 
 const FormCard = (props) => {
   const [showErrorPopup, setShowErrorPopup] = useState(false);
@@ -9,24 +11,32 @@ const FormCard = (props) => {
   const [showDeletedSuccess, setShowDeletedSuccess] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
+  const [isRejecting, setShowRejectPopup] = useState(false);
   const [showDetailsPopup, setShowDetailsPopup] = useState(false);
+  const [remarks, setRemarks] = useState(""); // New state for remarks
 
   const formatTimeAgo = (updatedAt) => {
     const date = new Date(updatedAt);
     return formatDistanceToNow(date, { addSuffix: true });
   };
 
+  const closeModal = () => {
+    setShowErrorPopup(false);
+    setShowApproved(false);
+    setShowDeletedSuccess(false);
+    setShowDetailsPopup(false);
+    setShowRejectPopup(false); // Fix: closing the reject popup when closing modal
+  };
+
   const handleApprove = async () => {
     setIsApproving(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/dogs/approving/${props.form.dogId}`,
+        `${import.meta.env.VITE_BASE_URL}/form/approve/${props.form._id}`, // Make sure the correct endpoint is used for approval
         {
           method: "PUT",
           body: JSON.stringify({
-            email: props.form.email,
-            phone: props.form.phoneNo,
-            status: "Adopted",
+            status: "adopted", // Mark as adopted
           }),
           headers: {
             "Content-Type": "application/json",
@@ -39,10 +49,10 @@ const FormCard = (props) => {
       } else {
         setShowApproved(true);
       }
-    } catch (err) {
+    } catch {
       setShowErrorPopup(true);
     } finally {
-      deleteFormAdoptedPet();
+      setIsApproving(false);
     }
   };
 
@@ -50,38 +60,49 @@ const FormCard = (props) => {
     try {
       const deleteResponse = await fetch(
         `${import.meta.env.VITE_BASE_URL}/form/delete/many/${props.form.dogId}`,
-        {
-          method: "DELETE",
-        }
+        { method: "DELETE" }
       );
       if (!deleteResponse.ok) {
         throw new Error("Failed to delete forms");
       }
-    } catch (err) {
+    } catch {
+      // Handle errors silently if needed
     } finally {
       setIsApproving(false);
     }
   };
 
   const handleReject = async () => {
+    if (!remarks) {
+      toast.error("Please provide remarks for rejection."); // Display error if remarks are empty
+      return;
+    }
+
     setIsDeleting(true);
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}/form/reject/${props.form._id}`,
         {
-          method: "DELETE",
+          method: "PUT", // Changed to PUT to update status instead of DELETE
+          body: JSON.stringify({
+            status: "rejected",
+            remarks: remarks, // Sending remarks with the rejection request
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
 
       if (!response.ok) {
         setShowErrorPopup(true);
-        throw new Error("Failed to delete form");
+        throw new Error("Failed to reject form");
       } else {
         setShowDeletedSuccess(true);
+        closeModal(); // Close the modal after successful rejection
       }
-    } catch (err) {
+    } catch {
       setShowErrorPopup(true);
-      console.error("Error deleting form:", err);
     } finally {
       setIsDeleting(false);
     }
@@ -90,34 +111,29 @@ const FormCard = (props) => {
   return (
     <div className="overflow-auto">
       <div className="overflow-x-auto w-full p-4">
-        <div className="flex flex-wrap justify-between gap-4">
+        <div className="flex flex-wrap justify-between gap-4 border p-4 rounded-md">
           <div className="flex flex-col w-full sm:w-1/2 lg:w-1/3">
-            <b>Email:</b> {props.form.email}
+            <b>Adoptor Name:</b> {props.form.adopterName}
           </div>
           <div className="flex flex-col w-full sm:w-1/2 lg:w-1/3">
-            <b>Phone Number:</b> {props.form.phoneNo}
+            <b>Adoptor Email:</b> {props.form.email}
           </div>
           <div className="flex flex-col w-full sm:w-1/2 lg:w-1/3">
-            <b>Living Situation:</b> {props.form.livingSituation}
+            <b>Adoptor Phone Number:</b> {props.form.phoneNo}
           </div>
-          <div className="flex flex-col w-full sm:w-1/2 lg:w-1/3">
-            <b>Previous Pet Experience:</b> {props.form.previousExperience}
-          </div>
-          <div className="flex flex-col w-full sm:w-1/2 lg:w-1/3">
-            <b>Having Other Pets?</b> {props.form.familyComposition}
-          </div>
+          {/* Other Details */}
           <div className="flex flex-col w-full sm:w-1/2 lg:w-1/3">
             <b>Updated:</b> {formatTimeAgo(props.form.updatedAt)}
           </div>
         </div>
 
-        <div className="app-rej-btn mt-4 flex flex-wrap gap-4">
+        <div className="mt-4 flex flex-wrap gap-4">
           <button
-            onClick={handleReject}
+            onClick={() => setShowRejectPopup(true)}
             disabled={isDeleting || isApproving}
             className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700"
           >
-            {isDeleting ? <p>Deleting</p> : props.deleteBtnText}
+            {isDeleting ? "Rejecting..." : "Reject"}
           </button>
           <button
             onClick={() => setShowDetailsPopup(true)}
@@ -131,96 +147,161 @@ const FormCard = (props) => {
               disabled={isDeleting || isApproving}
               className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-700"
             >
-              {isApproving ? <p>Approving</p> : "Approve"}
+              {isApproving ? "Approving..." : "Approve"}
             </button>
           )}
         </div>
 
-        {showErrorPopup && (
-          <div className="popup">
-            <div className="popup-content">
-              <p>Oops!... Connection Error</p>
-            </div>
-            <button
-              onClick={() => setShowErrorPopup(!showErrorPopup)}
-              className="close-btn"
+        {/* Popups */}
+        <Transition
+          appear
+          show={
+            showErrorPopup ||
+            showApproved ||
+            showDeletedSuccess ||
+            showDetailsPopup ||
+            isRejecting
+          }
+          as={Fragment}
+        >
+          <Dialog as="div" className="relative z-10" onClose={closeModal}>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
             >
-              Close <i className="fa fa-times"></i>
-            </button>
-          </div>
-        )}
+              <div className="fixed inset-0 bg-black/30" />
+            </Transition.Child>
+            <div className="fixed inset-0 flex items-center justify-center p-4">
+              <Dialog.Panel className="w-full max-w-md bg-white p-6 rounded-lg shadow-md quicksand-regular">
+                {showErrorPopup && <p>Oops! Connection Error.</p>}
+                {showApproved && (
+                  <div>
+                    <p>Pet is Adopted Successfully...</p>
+                    <p>
+                      Please contact the Adopter at{" "}
+                      <a href={`mailto:${props.form.email}`}>
+                        {props.form.email}
+                      </a>{" "}
+                      or{" "}
+                      <a href={`tel:${props.form.phoneNo}`}>
+                        {props.form.phoneNo}
+                      </a>{" "}
+                      to arrange the transfer of the pet from our adoption
+                      center to their house.
+                    </p>
+                  </div>
+                )}
+                {showDeletedSuccess && <p>Request Rejected Successfully.</p>}
+                {showDetailsPopup && (
+                  <div className="quicksand-regular">
+                    <h2>
+                      <b>Dog name: </b>
+                      {props.dog.name}
+                    </h2>
+                    <div className="w-full h-px bg-gray-200 my-2"></div>
+                    {/* Details */}
+                    <div className="flex flex-col gap-1 ml-2">
+                      <p>
+                        <b>Adoptor name: </b>
+                        {props.form.adopterName}
+                      </p>
+                      <p>
+                        <b>Adoptor Email: </b>
+                        {props.form.email}
+                      </p>
+                      <p>
+                        <b>Adoptor Phone Number: </b>
+                        {props.form.phoneNo}
+                      </p>
+                      <p>
+                        <b>Contact Reference Number: </b>
+                        {props.form.contactReference}
+                      </p>
+                      <p>
+                        <b>Adoptor Occupation: </b>
+                        {props.form.occupation}
+                      </p>
+                      <div className="w-[80%] mx-auto h-px bg-gray-200 my-2"></div>
 
-        {showApproved && (
-          <div className="popup">
-            <div className="popup-content">
-              <p>Pet is Adopted Successfully...</p>
-              <p>
-                Please contact the Adopter at{" "}
-                <a href={`mailto:${props.form.email}`}>{props.form.email}</a> or{" "}
-                <a href={`tel:${props.form.phoneNo}`}>{props.form.phoneNo}</a>{" "}
-                to arrange the transfer of the pet from our adoption center to
-                their house.
-              </p>
-            </div>
-            <button
-              onClick={() => {
-                props.updateCards();
-                setShowApproved(!showApproved);
-                runEvent();
-              }}
-              className="close-btn"
-            >
-              Close <i className="fa fa-times"></i>
-            </button>
-          </div>
-        )}
+                      <p>
+                        <b>Living Situation: </b>
+                        {props.form.livingSituation}
+                      </p>
+                      <p>
+                        <b>Previous Dog Experience: </b>
+                        {props.form.previousExperience}
+                      </p>
+                      <p>
+                        <b>Complete Address: </b>
+                        {props.form.address}
+                      </p>
+                      <p>
+                        <b>
+                          Any of your family members who are allergic to dog?:{" "}
+                        </b>
+                        {props.form.familyAllergic}
+                      </p>
+                      <p>
+                        <b>
+                          Are you in favor of neutering/spaying your petto avoid
+                          unwanted litters/pups?:{" "}
+                        </b>
+                        {props.form.neutering}
+                      </p>
+                      <p>
+                        <b>Are you renting an apartment?: </b>
+                        {props.form.renting}
+                      </p>
+                      <p>
+                        <b>Other Pets: </b>
+                        {props.form.familyComposition}
+                      </p>
+                    </div>
+                    <div>
+                      <img src={props.form.image[0]} alt="" />
+                    </div>
+                  </div>
+                )}
 
-        {showDeletedSuccess && (
-          <div className="popup">
-            <div className="popup-content">
-              <p>Request Rejected Successfully...</p>
-            </div>
-            <button
-              onClick={() => {
-                setShowDeletedSuccess(!showDeletedSuccess);
-                props.updateCards();
-              }}
-              className="close-btn"
-            >
-              Close <i className="fa fa-times"></i>
-            </button>
-          </div>
-        )}
+                {isRejecting && (
+                  <div>
+                    <label htmlFor="remarks" className="font-bold">
+                      Remarks:
+                    </label>
+                    <textarea
+                      id="remarks"
+                      value={remarks}
+                      onChange={(e) => setRemarks(e.target.value)}
+                      className="w-full p-2 border rounded-md mt-2"
+                      placeholder="Provide a reason for rejection"
+                    ></textarea>
+                    <div className="flex justify-end mt-2">
+                      <button
+                        onClick={handleReject}
+                        disabled={isDeleting}
+                        className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                      >
+                        {isDeleting ? "Rejecting..." : "Reject"}
+                      </button>
+                    </div>
+                  </div>
+                )}
 
-        {showDetailsPopup && (
-          <div className="popup">
-            <div className="popup-content">
-              <h2>{props.dog.name}</h2>
-              <p>
-                <b>Email:</b> {props.form.email}
-              </p>
-              <p>
-                <b>Phone Number:</b> {props.form.phoneNo}
-              </p>
-              <p>
-                <b>Living Situation:</b> {props.form.livingSituation}
-              </p>
-              <p>
-                <b>Previous Pet Experience:</b> {props.form.previousExperience}
-              </p>
-              <p>
-                <b>Having Other Pets?</b> {props.form.familyComposition}
-              </p>
-              <p>{formatTimeAgo(props.form.updatedAt)}</p>
+                <button
+                  onClick={closeModal}
+                  className="mt-4 bg-main-orange text-light-orange px-4 py-2 rounded-lg quicksand-regular"
+                >
+                  Close
+                </button>
+              </Dialog.Panel>
             </div>
-            <button
-              onClick={() => setShowDetailsPopup(false)}
-              className="close-btn"
-            >
-              Close <i className="fa fa-times"></i>
-            </button>
-          </div>
-        )}
+          </Dialog>
+        </Transition>
       </div>
       <ToastContainer />
     </div>

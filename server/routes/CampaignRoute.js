@@ -11,7 +11,9 @@ const { createCampaign,
     approveCampaign,
     getAllCampaigns,
     deleteCampaign,
-    rejectCampaign } = require('../controllers/CampaignController');
+    rejectCampaign,
+    updateTotalDonations,
+    postBudgetUsage } = require('../controllers/CampaignController');
 const verifyToken = require('../middlewares/verifyToken');
 const upload = require('../middlewares/multer');
 
@@ -24,14 +26,15 @@ router.post('/create-campaign', upload.fields([
 router.get('/campaign-requests', (req, res) => getCampaigns('Ongoing', req, res));
 router.get('/get-campaigns', (req, res) => getCampaigns('Approved', req, res));
 router.get('/get-all-campaigns', getAllCampaigns);
-router.get('/edit-campaign/:id', editCampaign);
+router.patch('/edit-campaign/:id', editCampaign);
 router.patch('/edit-campaign', editCampaign);
 router.patch('/pause-campaign', verifyToken, pauseCampaign);
 router.get('/get-campaignbyid/:id', getCampaignsById)
 router.put('/approving-campaign/:id', approveCampaign);
 router.put('/rejecting-campaign/:id', rejectCampaign);
 router.delete('/delete-campaign/:id', deleteCampaign);
-
+router.patch('/:id/donations', updateTotalDonations);
+router.patch('/:id/post-budget-usage', postBudgetUsage);
 
 // router.get('/campaigns/:id', getCampaignDetailsWithRecommendations);
 

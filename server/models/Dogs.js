@@ -50,6 +50,14 @@ const dogsSchema = new Schema({
     image: {
         type: Array,
         required: true
+    },
+    qrCodeUrl: {
+        type: String,
+        required: false,
+    },
+    remarks: { type: String, default: '' },
+    currentOwner: {
+        type: String,
     }
 }, { timestamps: true })
 

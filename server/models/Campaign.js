@@ -38,7 +38,20 @@ const campaignSchema = new mongoose.Schema({
     image: {
         type: Array,
         required: true
-    }
+    },
+    totalDonations: { type: Number, default: 0 },
+    remainingBudget: {
+        type: Number,
+        default: 0,
+    },
+    budgetUsage: [
+        {
+            item: String,
+            cost: Number,
+            date: { type: Date, default: Date.now }
+        }
+    ],
+    usedBudget: { type: Number, default: 0 },
 }, { timestamps: true })
 
 const Campaign = mongoose.model('Campaign', campaignSchema);

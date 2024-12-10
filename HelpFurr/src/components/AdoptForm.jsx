@@ -39,6 +39,12 @@ function AdoptForm(props) {
     e.preventDefault();
     setEmailError(false);
 
+    if (props.dog.email === user.email) {
+      setErrPopup(true);
+      // alert("you cannot adopt the dog the you've posted")
+      return;
+    }
+
     if (
       !email ||
       !phoneNo ||
@@ -81,7 +87,6 @@ function AdoptForm(props) {
 
     image1 && formData.append("image1", image1);
     image2 && formData.append("image2", image2);
-
 
     try {
       const response = await fetch(

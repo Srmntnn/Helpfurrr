@@ -21,7 +21,7 @@ const AdoptedCards = (props) => {
           method: "DELETE",
         }
       );
-  
+
       if (!response.ok) {
         setShowErrorPopup(true);
         throw new Error("Failed to delete pet");
@@ -35,7 +35,6 @@ const AdoptedCards = (props) => {
       setIsDeleting(false);
     }
   };
-  
 
   return (
     <div className="req-container">
@@ -50,9 +49,6 @@ const AdoptedCards = (props) => {
 
         <div className="pet-card-details flex flex-col justify-between space-y-2">
           <h2 className="text-xl font-bold">{props.dog.name}</h2>
-          <p>
-            <span className="font-semibold">Type:</span> {props.dog.type}
-          </p>
           <p>
             <span className="font-semibold">New Owner Email:</span>{" "}
             {props.dog.email}

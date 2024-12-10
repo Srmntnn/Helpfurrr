@@ -21,8 +21,7 @@ const UserSchema = new Schema({
         type: String,
         default: 'user'
     },
-    profession: String,
-    profilePicture: String,
+    
     createdAt: {
         type: Date,
         default: Date.now,
@@ -35,6 +34,8 @@ const UserSchema = new Schema({
     resetPasswordExpiresAt: Date,
     verificationToken: String,
     verificationTokenExpiresAt: Date,
+
+    profilePicture: String,
 });
 
 

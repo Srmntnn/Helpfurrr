@@ -21,8 +21,6 @@ const VolunteerRequest = async (req, res) => {
             return res.status(400).json({ error: 'All fields are required' });
         }
 
-
-
         // Create visit entry in the database
         const volunteer = await Visit.create({
             typeOfVisit,
@@ -67,7 +65,25 @@ const getAllVolunteers = async (reqStatus, req, res) => {
     }
 };
 
-const AllVolunteers = async ( req, res) => {
+const getVolunteerByEmail = async (req, res) => {
+    try {
+        const { email } = req.params; // Assuming email is in the request body
+
+        if (!email) {
+            return res.status(400).json({ message: 'Please provide email in request body' });
+        }
+
+        const volunteer = await Visit.find({ email });
+        if (!volunteer) {
+            return res.status(404).json({ message: 'Dog not Found' });
+        }
+        res.status(200).json(volunteer);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+const AllVolunteers = async (req, res) => {
     try {
         const data = await Visit.find();
         if (data.length > 0) {
@@ -115,9 +131,52 @@ const approveRequest = async (req, res) => {
     }
 };
 
+const rejectVisit = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { email, status, remarks } = req.body;
+
+        // Validate incoming data
+        if (!email || !status || !remarks) {
+            return res.status(400).json({ message: 'Email, status, and remarks are required.' });
+        }
+
+        // Update the visit request with rejection status and remarks
+        const volunteer = await Visit.findByIdAndUpdate(
+            id,
+            { email, status, remarks },
+            { new: true }
+        );
+
+        if (!volunteer) {
+            return res.status(404).json({ message: 'Volunteer not found' });
+        }
+
+        const user = await UserModel.findOne({ email: volunteer.email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Create a notification for the user
+        await Notification.create({
+            userId: user._id,
+            message: `Your visit request has been rejected. \nRemarks: ${remarks}`,
+        });
+
+        res.status(200).json({ message: 'Visit request rejected successfully', volunteer });
+    } catch (err) {
+        console.error("Error in rejectVisit:", err); // Log error details
+        res.status(500).json({ message: err.message });
+    }
+};
+
+
 module.exports = {
     VolunteerRequest,
     approveRequest,
     getAllVolunteers,
-    AllVolunteers
+    AllVolunteers,
+    getVolunteerByEmail,
+    rejectVisit
 }

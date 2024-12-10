@@ -34,7 +34,7 @@ const sheetVariants = cva(
           "inset-x-0 bottom-0 border-t h-[90%] data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom overflow-auto",
         left: "inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left ",
         right:
-          "inset-y-0 right-0 h-full w-3/4  border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
+          "inset-y-0 right-0 h-full w-full sm:w-[400px] border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
       },
     },
     defaultVariants: {
@@ -63,7 +63,7 @@ const SheetHeader = ({
   ...props
 }) => (
   <div
-    className={cn("flex flex-col space-y-2  justify-center items-center sm:text-left", className)}
+    className={cn("flex flex-col space-y-2  justify-center  sm:text-left", className)}
     {...props} />
 )
 SheetHeader.displayName = "SheetHeader"

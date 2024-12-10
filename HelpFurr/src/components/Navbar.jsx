@@ -13,6 +13,10 @@ import { useAuthStore } from "../store/authStore";
 // import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { TbDog } from "react-icons/tb";
 import { IoMdHeartHalf } from "react-icons/io";
+import { BiLogOutCircle } from "react-icons/bi";
+import { FaRegUser } from "react-icons/fa";
+import { FaRegFileAlt } from "react-icons/fa";
+
 import {
   Disclosure,
   DisclosureButton,
@@ -21,7 +25,7 @@ import {
 import "../index.css";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/input";
 import { Label } from "@/components/ui/label";
 import {
   Sheet,
@@ -33,11 +37,39 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-
+import { fetchNotifications } from "../Services/NotificationService";
+import toast from "react-hot-toast";
+import { Toast, ToastProvider } from "./ui/toast";
 function Navbar(props) {
   const { user, logout } = useAuthStore();
   const [toggle, setToggle] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const userId = user?._id;
+
+  const navigate = useNavigate();
+  const [notifications, setNotifications] = useState([]);
+
+  // Fetch notifications on userId change
+  useEffect(() => {
+    const getNotifications = async () => {
+      if (userId) {
+        const data = await fetchNotifications(userId);
+        setNotifications(data);
+      }
+    };
+
+    // Initial fetch
+    getNotifications();
+
+    // Set up polling to fetch notifications every 30 seconds
+    const interval = setInterval(getNotifications, 500000);
+
+    // Clean up interval when component unmounts or userId changes
+    return () => clearInterval(interval);
+  }, [userId]);
+
+  // Get the notification count
+  const notificationCount = notifications.length;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,12 +87,12 @@ function Navbar(props) {
   const logoutHandler = () => {
     try {
       logout();
-      handleSuccess("Logged Out Succesfull");
+      Toast("Logged Out Succesfull");
       setTimeout(() => {
         navigate("/login");
       }, 1000);
     } catch (error) {
-      handleError("Logout Unsuccessful");
+      Toast("Logout Unsuccessful");
     }
   };
 
@@ -98,7 +130,7 @@ function Navbar(props) {
             </div>
             <ul
               tabIndex={0}
-              className="flex dropdown-content bg-base-100 rounded-[4px] z-[1] mt-8 gap-4  px-4 py-4 shadow"
+              className="flex dropdown-content bg-base-100 rounded-[4px] z-[1] mt-8 gap-4  px-4 py-4 "
             >
               <div className="flex flex-col gap-4 ">
                 <div className="hover:bg-light-orange hover:text-main-orange p-4 rounded-lg w-[300px]">
@@ -188,7 +220,7 @@ function Navbar(props) {
               Donation
             </Link>
           </li>
-          <li className="hover:text-[#F69946]  quicksand-semi-bold text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
+          {/* <li className="hover:text-[#F69946]  quicksand-semi-bold text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
             <Link
               to="/location"
               onClick={() => {
@@ -198,8 +230,8 @@ function Navbar(props) {
             >
               Location
             </Link>
-          </li>
-          <li className="hover:text-[#F69946]  quicksand-semi-bold text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
+          </li> */}
+          {/* <li className="hover:text-[#F69946]  quicksand-semi-bold text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
             <Link
               to="/educresources"
               onClick={() => {
@@ -209,7 +241,7 @@ function Navbar(props) {
             >
               Educational
             </Link>
-          </li>
+          </li> */}
           <li className="hover:text-[#F69946]  quicksand-semi-bold text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
             <Link
               to="/volunteer"
@@ -223,8 +255,13 @@ function Navbar(props) {
           </li>
 
           <div>
-            <Link to="/notification">
+            <Link to="/notification" className="relative">
               <IoIosNotifications className="text-[24px] text-secondary-orange" />
+              {notificationCount > 0 && (
+                <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {notificationCount}
+                </span>
+              )}
             </Link>
           </div>
 
@@ -246,18 +283,64 @@ function Navbar(props) {
                   </div>
                   <ul
                     tabIndex={0}
-                    className=" dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow-sm"
+                    className=" dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 px-4 py-6 flex flex-col gap-2  quicksand-regular"
                   >
                     <li>
-                      <a className="justify-between ">
-                        Profile
-                        <span className="badge">New</span>
-                      </a>
+                      <Sheet>
+                        <SheetTrigger asChild>
+                          <button className="flex items-center gap-2">
+                            <FaRegUser />
+                            <div>
+                              <p>Profile</p>
+                            </div>
+                          </button>
+                        </SheetTrigger>
+                        <SheetContent>
+                          <SheetHeader>
+                            <SheetTitle>Profile</SheetTitle>
+                          </SheetHeader>
+                          <div className="mt-10 flex flex-col gap-3">
+                            <div>
+                              <img
+                                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                                alt=""
+                                className="rounded-full max-w-40 mx-auto"
+                              />
+                              <span className="text-center flex justify-center quicksand-regular">
+                                <Label className="text-sm quicksand-regular">
+                                  Profile Picture
+                                </Label>
+                              </span>
+                            </div>
+                            <div className="gap-2 flex flex-col">
+                              <Label>Name</Label>
+                              <Input value={user?.name} />
+                            </div>
+                            <div className="gap-2 flex flex-col">
+                              <Label value={user?.email}>Email Address</Label>
+                              <Input />
+                            </div>
+                          </div>
+                          <SheetFooter className="mt-4">
+                            <SheetClose asChild>
+                              <Button
+                                className="bg-main-orange hover:text-main-brown hover:bg-light-orange quicksand-regular hover:outline outline-1 outline-main-orange"
+                                type="submit"
+                              >
+                                Edit Profile
+                              </Button>
+                            </SheetClose>
+                          </SheetFooter>
+                        </SheetContent>
+                      </Sheet>
                     </li>
-                    <li>
-                      <Link to={`/myrequest/`}>Post Resquest</Link>
+                    <li className="flex items-center gap-2">
+                      <FaRegFileAlt />
+                      <Link to="/myrequest">My Requests</Link>
                     </li>
-                    <li>
+                    <li className="flex items-center gap-2">
+                      <BiLogOutCircle />
+
                       <button onClick={logoutHandler}>Logout</button>
                     </li>
                   </ul>
@@ -280,55 +363,15 @@ function Navbar(props) {
           </div>
         </ul>
         <div className="md:hidden flex items-center gap-3">
-          <div className="">
-            {user ? (
-              <>
-                <div className="dropdown dropdown-end">
-                  <div
-                    tabIndex={0}
-                    role="button"
-                    className="btn btn-ghost btn-circle avatar"
-                  >
-                    <div className="w-10 rounded-full">
-                      <img
-                        alt="Tailwind CSS Navbar component"
-                        src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                      />
-                    </div>
-                  </div>
-                  <ul
-                    tabIndex={0}
-                    className=" dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow-sm"
-                  >
-                    <li>
-                      <a className="justify-between ">
-                        Profile
-                        <span className="badge">New</span>
-                      </a>
-                    </li>
-                    <li>
-                      <Link to="/myrequest">Settings</Link>
-                    </li>
-                    <li>
-                      <button onClick={logoutHandler}>Logout</button>
-                    </li>
-                  </ul>
-                </div>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/signup"
-                  onClick={() => {
-                    setActive("");
-                    window.scrollTo(0, 0);
-                  }}
-                  className=" text-light-orange rounded-full py-3 px-5 bg-main-orange uppercase sm:text-[18px] text-[16px] hover:bg-main-brown duration-200 transition "
-                >
-                  Sign-up
-                </Link>
-              </>
-            )}
+          <div>
+            <Link to="/notification" className="relative">
+              <IoIosNotifications className="text-[24px] text-secondary-orange" />
+              {notificationCount > 0 && (
+                <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {notificationCount}
+                </span>
+              )}
+            </Link>
           </div>
 
           <Sheet>
@@ -339,7 +382,7 @@ function Navbar(props) {
             </SheetTrigger>
             <SheetContent>
               <SheetHeader>
-                <SheetTitle>
+                <SheetTitle className="justify-start">
                   <div className="flex items-center justify-between w-full">
                     <Link
                       to="/"
@@ -360,14 +403,14 @@ function Navbar(props) {
                     <div className="mx-auto w-full max-w-lg divide-y divide-white/5">
                       <Disclosure as="div" className="" defaultOpen={false}>
                         <DisclosureButton className="group flex w-full items-center justify-between">
-                          <span className="text-base/6 text-main-orange group-data-[hover]:text-white/80">
+                          <span className="text-base/6 text-main-brown group-data-[hover]:text-white/80">
                             Adoption
                           </span>
                           <IoIosArrowDown className="size-5 text-main-brown group-data-[hover]:fill-white/50 group-data-[open]:rotate-180" />
                         </DisclosureButton>
                         <DisclosurePanel className="mt-2 text-sm/5 text-white/50">
                           <ul>
-                            <li className="hover:text-[#F69946] text-main-brown bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont hover:bg-light-orange pl-2 pr-4 py-2 border-l-2 hover:border-l-main-orange text-[16px] font-[400] cursor-pointer transition duration-200">
+                            <li className=" text-main-brown  bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont hover:bg-light-orange pl-2 pr-4 py-2 border-l-2 hover:border-l-main-orange text-[16px] font-[400] cursor-pointer transition duration-200">
                               <Link
                                 to="/adoption"
                                 onClick={() => {
@@ -379,7 +422,7 @@ function Navbar(props) {
                                 Dogs
                               </Link>
                             </li>
-                            <li className="hover:text-[#F69946] text-main-brown bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont hover:bg-light-orange pl-2 pr-4 py-2 border-l-2 hover:border-l-main-orange text-[16px] font-[400] cursor-pointer transition duration-200">
+                            <li className=" text-main-brown bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont hover:bg-light-orange pl-2 pr-4 py-2 border-l-2 hover:border-l-main-orange text-[16px] font-[400] cursor-pointer transition duration-200">
                               <Link
                                 to="/postadoption"
                                 onClick={() => {
@@ -391,23 +434,11 @@ function Navbar(props) {
                                 Post for adoption
                               </Link>
                             </li>
-                            <li className="hover:text-[#F69946] text-main-brown bg-b hover:rounded-tr-btn hover:rounded-br-btn paragraphFont hover:bg-light-orange pl-2 pr-4 py-2 border-l-2 hover:border-l-main-orange text-[16px] font-[400] cursor-pointer transition duration-200">
-                              <Link
-                                to="/matchmaking"
-                                onClick={() => {
-                                  setActive("");
-                                  window.scrollTo(0, 0);
-                                }}
-                                className="whitespace-nowrap"
-                              >
-                                Matchmaking
-                              </Link>
-                            </li>
                           </ul>
                         </DisclosurePanel>
                       </Disclosure>
                       <ul className="flex flex-col gap-3 mt-3">
-                        <li className="text-[#F69946]  transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
+                        <li className="text-main-brown  transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
                           <Link
                             to="/donation"
                             onClick={() => {
@@ -418,7 +449,7 @@ function Navbar(props) {
                             Donation
                           </Link>
                         </li>
-                        <li className="text-[#F69946] nransition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
+                        <li className="text-main-brown nransition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
                           <Link
                             to="/location"
                             onClick={() => {
@@ -429,32 +460,129 @@ function Navbar(props) {
                             Location
                           </Link>
                         </li>
-                        <li className="text-[#F69946] transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
+                        <li className="text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
                           <Link
-                            to="/educresources"
+                            to="/volunteer"
                             onClick={() => {
                               setActive("");
                               window.scrollTo(0, 0);
                             }}
                           >
-                            Educational Resources
+                            Book a Visit
                           </Link>
+                        </li>
+                        <li>
+                          <div className="w-full flex justify-end">
+                            {user ? (
+                              <>
+                                <div className="dropdown dropdown-end  px-4 py-6 flex flex-col gap-2  quicksand-regular">
+                                  <div
+                                    tabIndex={0}
+                                    role="button"
+                                    className="btn btn-ghost btn-circle avatar"
+                                  >
+                                    <div className="w-10 rounded-full">
+                                      <img
+                                        alt="Tailwind CSS Navbar component"
+                                        src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                                      />
+                                    </div>
+                                  </div>
+                                  <ul
+                                    tabIndex={0}
+                                    className=" dropdown-content bg-base-100 rounded-box z-[1] mt-14 w-52 px-4 py-6 flex flex-col gap-2 quicksand-regular border"
+                                  >
+                                    <li>
+                                      <Sheet>
+                                        <SheetTrigger asChild>
+                                          <button className="flex gap-2 items-center">
+                                            <FaRegUser />
+                                            <div>
+                                              <p>Profile</p>
+                                            </div>
+                                          </button>
+                                        </SheetTrigger>
+                                        <SheetContent>
+                                          <SheetHeader>
+                                            <SheetTitle>Profile</SheetTitle>
+                                          </SheetHeader>
+                                          <div className="mt-10 flex flex-col gap-3">
+                                            <div>
+                                              <img
+                                                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                                                alt=""
+                                                className="rounded-full max-w-40 mx-auto"
+                                              />
+                                              <span className="text-center flex justify-center quicksand-regular">
+                                                <Label className="text-sm quicksand-regular">
+                                                  Profile Picture
+                                                </Label>
+                                              </span>
+                                            </div>
+                                            <div className="gap-2 flex flex-col">
+                                              <Label>Name</Label>
+                                              <Input value={user?.name} />
+                                            </div>
+                                            <div className="gap-2 flex flex-col">
+                                              <Label value={user?.email}>
+                                                Email Address
+                                              </Label>
+                                              <Input />
+                                            </div>
+                                          </div>
+                                          <SheetFooter className="mt-4">
+                                            <SheetClose asChild>
+                                              <Button
+                                                className="bg-main-orange hover:text-main-brown hover:bg-light-orange quicksand-regular hover:outline outline-1 outline-main-orange"
+                                                type="submit"
+                                              >
+                                                Save changes
+                                              </Button>
+                                            </SheetClose>
+                                          </SheetFooter>
+                                        </SheetContent>
+                                      </Sheet>
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                      <FaRegFileAlt />
+                                      <Link to="/myrequest">My Requests</Link>
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                      <BiLogOutCircle />
+
+                                      <button onClick={logoutHandler}>
+                                        Logout
+                                      </button>
+                                    </li>
+                                  </ul>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <Link
+                                  to="/signup"
+                                  onClick={() => {
+                                    setActive("");
+                                    window.scrollTo(0, 0);
+                                  }}
+                                  className="flex justify-center text-light-orange rounded-lg py-3 px-5 bg-main-orange uppercase sm:text-[18px] text-[16px] hover:bg-main-brown duration-200 transition "
+                                >
+                                  Sign-up
+                                </Link>
+                              </>
+                            )}
+                          </div>
                         </li>
                       </ul>
                     </div>
                   </div>
                 </ul>
               </div>
-              <SheetFooter>
-                <SheetClose asChild>
-                  <Button type="submit">Save changes</Button>
-                </SheetClose>
-              </SheetFooter>
             </SheetContent>
           </Sheet>
         </div>
       </div>
-      <ToastContainer />
+      <ToastProvider />
     </nav>
   );
 }

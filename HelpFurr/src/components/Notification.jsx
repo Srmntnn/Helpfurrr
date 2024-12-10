@@ -3,6 +3,8 @@ import axios from "axios";
 import { fetchNotifications } from "../Services/NotificationService";
 import { styles } from "../styles";
 import { Helmet } from "react-helmet";
+import { SlOptionsVertical } from "react-icons/sl";
+
 
 function Notification({ userId }) {
   const [notifications, setNotifications] = useState([]);
@@ -18,7 +20,7 @@ function Notification({ userId }) {
   return (
     <section className="w-full items-center justify-center h-full gap-10 flex">
       <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
-        <div classname="absolute left-0 right-0 top-0 -z-10 m-auto max-h-[310px] h-full w-full max-w-[310px] rounded-full bg-main-orange opacity-30 blur-[100px]"></div>
+        <div className="absolute left-0 right-0 top-0 -z-10 m-auto max-h-[310px] h-full w-full max-w-[310px] rounded-full bg-main-orange opacity-30 blur-[100px]"></div>
       </div>
       <div
         className={`${styles.paddingX} max-w-screen-xl justify-center w-full`}
@@ -39,11 +41,19 @@ function Notification({ userId }) {
         </div>
         <div className="flex flex-col lg:flex-row py-4 gap-6 sm:pt-76 pt-72 mt-24 w-full">
           {notifications.length > 0 ? (
-            <ul>
+            <ul className="flex flex-col gap-2">
               {notifications.map((notification) => (
-                <li key={notification._id}>
-                  {notification.message} -{" "}
-                  {new Date(notification.createdAt).toLocaleString()}
+                <li
+                  key={notification._id}
+                  className="quicksand-regular border sm:px-6 px-4 py-8 flex items-center justify-between rounded-md gap-3"
+                >
+                  <div>
+                    {notification.message} -{" "}
+                    {new Date(notification.createdAt).toLocaleString()}
+                  </div>
+                  <div className="text-main-brown cursor-pointer">
+                    < SlOptionsVertical />
+                  </div>
                 </li>
               ))}
             </ul>

@@ -15,6 +15,10 @@ const notificationSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    remarks: { // New field
+        type: String,
+        default: "", // Optional
+    },
 }, { timestamps: true });
 
 const Notification = mongoose.model('Notification', notificationSchema);

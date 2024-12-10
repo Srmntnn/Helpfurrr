@@ -37,7 +37,8 @@ const visitSchema = new Schema({
     status: {
         type: String,
         required: true
-    }
+    },
+    remarks: { type: String, default: '' },
 }, { timestamps: true })
 
 const Visit = mongoose.model('Visit', visitSchema)

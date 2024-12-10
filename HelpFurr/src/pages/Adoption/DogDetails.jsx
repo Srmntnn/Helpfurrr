@@ -21,6 +21,7 @@ import {
 import AdoptForm from "../../components/AdoptForm";
 import { styles } from "../../styles";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { MdOutlinePhone } from "react-icons/md";
 
 import {
   Sheet,
@@ -104,7 +105,7 @@ function DogDetails() {
                         {dog.name}
                       </h1>
                       <p className="text-sm md:text-base lg:text-lg font-medium quicksand-bold text-light-orange">
-                        {dog.condition}
+                        {dog.age}
                       </p>
                     </div>
                   </div>
@@ -127,72 +128,89 @@ function DogDetails() {
                 </div>
 
                 <div>
-                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg lg:text-xl">
+                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg lg:text-xl quicksand-semi-bold">
                     {dog?.condition}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-2 mt-4 quicksand-regular">
-                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg lg:text-xl inline-flex gap-2 items-center">
-                    <LuCalendarDays />{" "}
+                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg inline-flex gap-2 items-center">
+                    <LuCalendarDays />
                     {moment(dog?.postedBy?.postedTime).format("MMMM Do YYYY")}
                   </p>
-                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg lg:text-xl inline-flex gap-2 items-center">
+                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg inline-flex gap-2 items-center">
                     <MdShareLocation /> {dog.shelter}
                   </p>
-                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg lg:text-xl inline-flex gap-2 items-center">
+                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg inline-flex gap-2 items-center">
                     <HiOutlineStatusOnline />{" "}
-                    {dog?.adopted ? "Adopted" : "Not Adopted"}
+                    {dog?.status ? "Adopted" : "Not Adopted"}
                   </p>
                 </div>
 
                 <div className="flex flex-col border rounded-lg p-4 space-y-4 quicksand-regular mt-4">
                   <h1 className="text-base md:text-lg lg:text-xl quicksand-bold">
-                    Post Author Info:
+                    Owner Details
                   </h1>
                   <hr />
-                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg lg:text-xl inline-flex gap-2 items-center">
+                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg inline-flex gap-2 items-center">
                     <IoPersonCircleOutline /> {dog.postedBy}
                   </p>
-                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg lg:text-xl inline-flex gap-2 items-center">
-                    <MdOutlineAttachEmail /> {dog.email}
+                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg inline-flex gap-2 items-center">
+                    <MdOutlineAttachEmail /> {dog.clientEmail}
+                  </p>
+                  <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg inline-flex gap-2 items-center">
+                    <MdOutlinePhone /> {dog.phone}
                   </p>
                 </div>
 
-                <div className="space-y-4 md:space-y-5 mt-4 lg:space-y-6">
-                  <h2 className="text-base md:text-lg lg:text-2xl fredoka-medium text-main-brown">
+                <div className="space-y-2 md:space-y-3 mt-4 lg:space-y-4">
+                  <h2 className="text-base md:text-lg lg:text-xl fredoka-medium text-main-brown">
                     Details
                   </h2>
-                  <div className="grid grid-cols-2 gap-1 md:gap-3 lg:gap-4 quicksand-regular">
+                  <div className="grid grid-cols-2 gap-1 md:gap-3 lg:gap-2 quicksand-regular">
                     <div className="flex gap-2">
-                      <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg lg:text-xl">
+                      <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg ">
                         Age:
                       </p>
-                      <p className="text-base md:text-lg lg:text-xl">
-                        {dog?.age}
+                      <p className="text-base md:text-lg ">{dog?.age}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg ">
+                        Gender:
+                      </p>
+                      <p className="text-base md:text-lg capitalize ">
+                        {dog?.gender}
                       </p>
                     </div>
                     <div className="flex gap-2">
-                      <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg lg:text-xl">
+                      <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg ">
+                        Color:
+                      </p>
+                      <p className="text-base md:text-lg capitalize ">
+                        {dog?.color}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg ">
                         Neutered:
                       </p>
-                      <p className="text-base md:text-lg lg:text-xl">
+                      <p className="text-base md:text-lg ">
                         {dog?.neutered ? "Yes" : "No"}
                       </p>
                     </div>
                     <div className="flex gap-2">
-                      <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg lg:text-xl">
+                      <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg">
                         Vaccinated:
                       </p>
-                      <p className="text-base md:text-lg lg:text-xl">
+                      <p className="text-base md:text-lg">
                         {dog?.vaccinated ? "Yes" : "No"}
                       </p>
                     </div>
                     <div className="flex gap-2">
-                      <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg lg:text-xl">
+                      <p className="text-gray-500 dark:text-gray-400 text-base md:text-lg">
                         Urgent:
                       </p>
-                      <p className="text-base md:text-lg lg:text-xl">
+                      <p className="text-base md:text-lg">
                         {dog?.urgent ? "Yes" : "No"}
                       </p>
                     </div>
@@ -208,7 +226,7 @@ function DogDetails() {
                       <button>Continue</button>
                     </SheetTrigger>
                     <SheetContent className="" side="bottom">
-                      <SheetHeader>
+                      <SheetHeader className="items-center">
                         <SheetTitle>Dog Adoption Form</SheetTitle>
                         <p className="w-full max-w-[750px] text-center quicksand-regular">
                           Adoption is a loving choice that allows you to provide

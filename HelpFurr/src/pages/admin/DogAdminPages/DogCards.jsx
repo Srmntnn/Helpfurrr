@@ -12,13 +12,15 @@ const DogCards = (props) => {
   const [showConditionPopup, setShowConditionPopup] = useState(false);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [showApproved, setShowApproved] = useState(false);
-  const [showDeletedSuccess, setshowDeletedSuccess] = useState(false);
+  const [showRejected, setShowRejected] = useState(false); // Added state for rejection
+  const [showDeletedSuccess, setShowDeletedSuccess] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isRejecting, setIsRejecting] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const [user, setUser] = useState(null);
-
   let [isOpen, setIsOpen] = useState(false);
-
+  const [remarks, setRemarks] = useState(""); // State for remarks
+  const [isRemarksModalOpen, setIsRemarksModalOpen] = useState(false);
   function closeModal() {
     setIsOpen(false);
   }
@@ -26,6 +28,15 @@ const DogCards = (props) => {
   function openModal() {
     setIsOpen(true);
   }
+
+  const openRemarksModal = () => {
+    setIsRemarksModalOpen(true);
+  };
+
+  const closeRemarksModal = () => {
+    setIsRemarksModalOpen(false);
+    setRemarks("");
+  };
 
   const truncateText = (text, maxLength) => {
     return text.length <= maxLength
@@ -36,7 +47,9 @@ const DogCards = (props) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/auth/users/`);
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/auth/users/`
+        );
         setUser(response.data);
       } catch (error) {
         console.error("Error fetching user:", error);
@@ -52,36 +65,53 @@ const DogCards = (props) => {
 
   const handleApprove = async () => {
     setIsApproving(true);
-
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}/dogs/approving/${props.dog._id}`,
         {
           method: "PUT",
-          body: JSON.stringify({
-            status: "Approved",
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
+          body: JSON.stringify({ status: "Approved" }),
+          headers: { "Content-Type": "application/json" },
         }
       );
-
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error response:", errorData);
         setShowErrorPopup(true);
       } else {
         setShowApproved(true);
       }
-
-      setIsOpen(true); // Always open modal when either error or success
+      setIsOpen(true);
     } catch (err) {
       console.error("Error approving dog:", err);
       setShowErrorPopup(true);
-      setIsOpen(true); // Open modal for error
+      setIsOpen(true);
     } finally {
       setIsApproving(false);
+    }
+  };
+
+  const handleReject = async () => {
+    setIsRejecting(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/dogs/rejecting/${props.dog._id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ status: "Rejected", remarks }), // Send remarks
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (!response.ok) {
+        setShowErrorPopup(true);
+      } else {
+        setShowRejected(true); // Show rejection message
+      }
+    } catch (err) {
+      console.error("Error rejecting dog:", err);
+      setShowErrorPopup(true);
+    } finally {
+      setIsRejecting(false);
+      setIsOpen(true); // Always open modal on response
     }
   };
 
@@ -105,7 +135,7 @@ const DogCards = (props) => {
     }
   };
 
-  const handleReject = async () => {
+  const handleDelete = async () => {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}/dogs/delete/${props.dog._id}`,
@@ -220,21 +250,23 @@ const DogCards = (props) => {
                     <MenuItems
                       transition
                       anchor="bottom end"
-                      className="w-52 origin-top-right rounded-xl border bg-white transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0"
+                      className="w-52 origin-top-right rounded-xl border px-6 flex flex-col gap-2 py-6 bg-white  transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0"
                     >
-                      <MenuItem>
-                        <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10">
-                          <IoClose />
-                          Reject
-                        </button>
-                      </MenuItem>
+                      <button
+                        onClick={openRemarksModal}
+                        disabled={isRejecting}
+                        className="group flex w-full items-center gap-2 quicksand-regular bg-secondary-orange px-4 py-2 rounded-lg text-light-orange hover:bg-main-orange"
+                      >
+                        <IoClose />
+                        {isRejecting ? "Rejecting..." : "Reject"}
+                      </button>
 
                       <MenuItem>
                         {props.approveBtn && (
                           <button
                             disabled={isDeleting || isApproving}
                             onClick={handleApprove}
-                            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:bg-gray-400 group flex w-full items-center gap-2 data-[focus]:bg-white/10"
+                            className="bg-green-500 text-white quicksand-regular px-4 py-2 rounded-lg hover:bg-green-600 disabled:bg-gray-400 group flex w-full items-center gap-2 "
                           >
                             <FaCheck />
                             {isApproving ? "Approving..." : "Approve"}
@@ -245,10 +277,10 @@ const DogCards = (props) => {
                         <button
                           onClick={deleteFormsAdoptedPet}
                           disabled={isDeleting || isApproving}
-                          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 disabled:bg-gray-400"
+                          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 disabled:bg-gray-400 flex items-center gap-2 quicksand-regular w-full"
                         >
                           <MdDelete />
-                          {isDeleting ? "Deleting..." : props.deleteBtnText}
+                          {isDeleting ? "Deleting..." : "Delete"}
                         </button>
                       </MenuItem>
                     </MenuItems>
@@ -259,32 +291,6 @@ const DogCards = (props) => {
           </div>
         </div>
       </div>
-      {/* <div className="flex items-center">
-                <b>Last Updated:</b>{" "}
-                <span className="ml-2">
-                  {formatTimeAgo(props.dog.updatedAt)}
-                </span>
-              </div> */}
-      {/* <div className="app-rej-btn flex space-x-4 mt-4">
-        <button
-          onClick={deleteFormsAdoptedPet}
-          disabled={isDeleting || isApproving}
-          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 disabled:bg-gray-400"
-        >
-          {isDeleting ? "Deleting..." : props.deleteBtnText}
-        </button>
-        {props.approveBtn && (
-          <button
-            disabled={isDeleting || isApproving}
-            onClick={handleApprove}
-            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:bg-gray-400"
-          >
-            {isApproving ? "Approving..." : "Approve"}
-          </button>
-        )}
-      </div> */}
-      {/* Popups */}
-
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
@@ -317,6 +323,8 @@ const DogCards = (props) => {
                   >
                     {showApproved
                       ? "Dog Approved"
+                      : showRejected
+                      ? "Dog Rejected"
                       : showDeletedSuccess
                       ? "Pet Deleted"
                       : showErrorPopup
@@ -327,6 +335,8 @@ const DogCards = (props) => {
                     <p className="text-sm text-gray-500 quicksand-regular">
                       {showApproved
                         ? "This dog has been approved!"
+                        : showRejected
+                        ? "This dog has been rejected."
                         : showDeletedSuccess
                         ? "This dog has been successfully deleted."
                         : showErrorPopup
@@ -338,10 +348,72 @@ const DogCards = (props) => {
                   <div className="mt-4">
                     <button
                       type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-light-orange px-4 py-2 text-sm font-medium text-main-orange hover:bg-orange-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       onClick={closeModal}
                     >
                       Got it, thanks!
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
+      <Transition appear show={isRemarksModalOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeRemarksModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center quicksand-regular">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900 quicksand-bold"
+                  >
+                    Add Remarks for Rejection
+                  </Dialog.Title>
+                  <div className="mt-2">
+                    <textarea
+                      value={remarks}
+                      onChange={(e) => setRemarks(e.target.value)}
+                      placeholder="Enter remarks here..."
+                      className="w-full border rounded-lg p-2"
+                    />
+                  </div>
+                  <div className="mt-4 flex justify-end gap-2">
+                    <button
+                      className="px-4 py-2 bg-gray-300 rounded-lg"
+                      onClick={closeRemarksModal}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="px-4 py-2 bg-red-500 text-white rounded-lg"
+                      onClick={handleReject}
+                      disabled={isRejecting}
+                    >
+                      {isRejecting ? "Rejecting..." : "Reject"}
                     </button>
                   </div>
                 </Dialog.Panel>

@@ -9,6 +9,7 @@ const CampaignComponent = () => {
   const [initialCampaignsData, setInitialCampaignsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [error, setError] = useState(null);
   const [sortBy, setSortBy] = useState("");
 
   useEffect(() => {
@@ -90,7 +91,6 @@ const CampaignComponent = () => {
             content="Browse available donation campaigns."
           />
         </Helmet>
-
         <div className="bg-light-orange h-96 flex absolute left-0 right-0 flex-col items-center justify-center">
           <h1
             className={`${styles.heroHeadText} text-5xl text-secondary-orange font-bold text-center fredoka-bold`}
@@ -106,16 +106,15 @@ const CampaignComponent = () => {
             ({sortedCampaigns.length} Available)
           </p>
         </div>
-
         <div className="pt-96">
           <div className="flex items-center justify-center my-16 sm:mx-16 h-12">
-            <select value={sortBy} onChange={handleSort} className="mb-4">
+            {/* <select value={sortBy} onChange={handleSort} className="mb-4">
               <option value="">No Sorting</option>
               <option value="category-asc">Category Ascending</option>
               <option value="category-desc">Category Descending</option>
               <option value="name-asc">Name Ascending</option>
               <option value="name-desc">Name Descending</option>
-            </select>
+            </select> */}
             <input
               type="text"
               placeholder="Search by campaign name or category"
@@ -139,6 +138,141 @@ const CampaignComponent = () => {
               ))
             ) : (
               <p className="oops-msg">Oops!... No campaigns available</p>
+            )}
+          </div>
+        </div>{" "}
+        <div className="mt-8">
+          <h1>Donations</h1>
+          <div className="rounded-md border my-12">
+            {loading ? (
+              <Loader className="mx-auto">Loading dogs...</Loader>
+            ) : error ? (
+              <p>Error: {error}</p>
+            ) : campaignData.length === 0 ? (
+              <p>No dogs found for this user.</p>
+            ) : (
+              <div>
+                <div className="relative w-full overflow-auto quicksand-regular">
+                  <table className="table">
+                    <thead className="[&_tr]:border-b ">
+                      <tr className="quicksand-bold">
+                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                          #
+                        </th>
+                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                          Dog Profile
+                        </th>
+                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                          Dog Age
+                        </th>
+                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                          Dog Gender
+                        </th>
+                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                          Dog Condition
+                        </th>
+                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                          Status
+                        </th>
+                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                          Other Information
+                        </th>
+                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                          Owner Information
+                        </th>
+                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                          Dog QR
+                        </th>
+                      </tr>
+                    </thead>
+                    {campaignData.map((campaignData, index) => (
+                      <tbody
+                        key={campaignData.id}
+                        className="[&_tr:last-child]:border-1 hover:[&_tr:last-child]:bg-light-orange cursor-pointer hover:[&_tr:last-child]:text-main-orange transition duration-300"
+                      >
+                        <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted hover: ">
+                          <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0 ">
+                            {index + 1} {/* Display index + 1 */}
+                          </td>
+
+                          <td className="">
+                            <div className="flex items-center gap-3">
+                              <div className="avatar">
+                                <div className="mask mask-squircle h-12 w-12">
+                                  <img
+                                    src={campaignData.image[0]}
+                                    alt={campaignData.name}
+                                  />
+                                </div>
+                              </div>
+                              <div>
+                                <div className="font-bold">
+                                  {campaignData.name}
+                                </div>
+                                <div className="text-sm opacity-50">
+                                  {campaignData.shelter}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                            {campaignData.age}
+                          </td>
+                          <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                            {campaignData.gender}
+                          </td>
+                          <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                            {Array.isArray(campaignData.budgetUsage) &&
+                            campaignData.budgetUsage.length > 0 ? (
+                              <div>
+                                {/* Calculate the total cost */}
+                                <p>
+                                  Total Cost:
+                                  {campaignData.budgetUsage.reduce(
+                                    (total, usage) =>
+                                      total + parseFloat(usage.cost || 0),
+                                    0
+                                  )}
+                                </p>
+                                {/* Optional: display individual items and costs */}
+                                {campaignData.budgetUsage.map(
+                                  (usage, index) => (
+                                    <div key={index}>
+                                      <p>Item: {usage.item}</p>
+                                      <p>Cost: {usage.cost}</p>
+                                      <p>Date: {usage.date}</p>
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                            ) : (
+                              <p>No budget usage available</p>
+                            )}
+                          </td>
+
+                          <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                            {campaignData.status}
+                          </td>
+                          <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                            <div className="flex flex-col capitalize">
+                              <p>Vaccinated: {campaignData.vaccinated}</p>
+                              <p>Adoption Urgency: {campaignData.urgent}</p>
+                              <p>Neutered: {campaignData.neutered}</p>
+                            </div>
+                          </td>
+                          <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                            <div className="flex flex-col">
+                              <p>{campaignData.postedBy}</p>
+                              <p>{campaignData.clientEmail}</p>
+                              <p> {campaignData.phone}</p>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    ))}
+                  </table>
+                </div>
+              </div>
             )}
           </div>
         </div>

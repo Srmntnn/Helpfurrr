@@ -7,6 +7,28 @@ import { Button } from "../../components/button";
 import { styles } from "../../styles";
 import { motion } from "framer-motion";
 import { Loader } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const UserRequestedDogs = () => {
   const { user } = useAuthStore();
@@ -23,7 +45,7 @@ const UserRequestedDogs = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:8080/dogs/mydogs/${user.email}`
+        `${import.meta.env.VITE_BASE_URL}/dogs/mydogs/${user.email}`
       );
       setDogs(response.data);
     } catch (error) {
@@ -40,6 +62,14 @@ const UserRequestedDogs = () => {
     }
   }, [user]); // Dependency only on user
 
+  const downloadImage = (imageUrl) => {
+    const link = document.createElement("a");
+    link.href = imageUrl;
+    link.download = "dog_qr_code.png"; // Specify the desired file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   return (
     <section>
       <motion.div
@@ -57,10 +87,10 @@ const UserRequestedDogs = () => {
             <p>No dogs found for this user.</p>
           ) : (
             <div>
-              <div className="relative w-full overflow-auto">
+              <div className="relative w-full overflow-auto quicksand-regular">
                 <table className="table">
-                  <thead className="[&_tr]:border-b">
-                    <tr className="">
+                  <thead className="[&_tr]:border-b ">
+                    <tr className="quicksand-bold">
                       <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
                         #
                       </th>
@@ -86,14 +116,20 @@ const UserRequestedDogs = () => {
                         Owner Information
                       </th>
                       <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                        Dog QR
+                      </th>
+                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
                         Action
                       </th>
                     </tr>
                   </thead>
                   {dogs.map((dog, index) => (
-                    <tbody key={dog.id} className="[&_tr:last-child]:border-0">
-                      <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                        <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                    <tbody
+                      key={dog.id}
+                      className="[&_tr:last-child]:border-1 hover:[&_tr:last-child]:bg-light-orange cursor-pointer hover:[&_tr:last-child]:text-main-orange transition duration-300"
+                    >
+                      <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted hover: ">
+                        <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0 ">
                           {index + 1} {/* Display index + 1 */}
                         </td>
 
@@ -101,10 +137,7 @@ const UserRequestedDogs = () => {
                           <div className="flex items-center gap-3">
                             <div className="avatar">
                               <div className="mask mask-squircle h-12 w-12">
-                                <img
-                                 src={dog.image[0]}
-                                  alt={dog.name}
-                                />
+                                <img src={dog.image[0]} alt={dog.name} />
                               </div>
                             </div>
                             <div>
@@ -141,10 +174,75 @@ const UserRequestedDogs = () => {
                             <p> {dog.phone}</p>
                           </div>
                         </td>
+                        <td>
+                          <AlertDialog>
+                            <AlertDialogTrigger className="underline text-secondary-orange">
+                              View QR
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  <h1 className="quicksand-bold">
+                                    {dog.name} QR Code
+                                  </h1>
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  <img
+                                    className="w-full"
+                                    src={dog.qrCodeUrl}
+                                    alt="wait for the admin to post the Qr code"
+                                  />
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Close</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => downloadImage(dog.qrCodeUrl)}
+                                  className="bg-main-orange hover:bg-secondary-orange quicksand-regular"
+                                >
+                                  Download
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </td>
                         <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0">
-                          <Button className="hover:text-light-orange">
-                            <SlOptionsVertical className=" " />
-                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger>
+                              <SlOptionsVertical />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <DropdownMenuLabel>Action</DropdownMenuLabel>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem>
+                                <Link to={`/edit-dog/${dog._id}`}>
+                                  <button>Edit</button>
+                                </Link>
+
+                                {/* <button
+                                  disabled={isApproving || isRejecting}
+                                  onClick={() => handleApprove(request)}
+                                  className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:bg-gray-400 w-full"
+                                >
+                                  {isApproving ? "Approving..." : "Approve"}
+                                </button>{" "} */}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Link to={`/dogdetails/${dog._id}`}>
+                                  View Details
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                {/* <button
+                                  disabled={isApproving || isRejecting}
+                                  onClick={() => handleReject(request)}
+                                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 disabled:bg-gray-400 w-full"
+                                >
+                                  {isRejecting ? "Rejecting..." : "Reject"}
+                                </button> */}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </td>
                       </tr>
                     </tbody>

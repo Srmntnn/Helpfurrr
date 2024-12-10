@@ -88,18 +88,18 @@ function Users() {
               onChange={handleSearch}
               className="max-w-[280px] w-full"
             />
-            <div className="border p-3 rounded-md bg-main-orange text-light-orange quicksand-semi-bold">
+            {/* <div className="border p-3 rounded-md bg-main-orange text-light-orange quicksand-semi-bold">
               <button className="text-sm flex items-center gap-2 justify-between">Add User<FaPlus /></button>
-            </div>
+            </div> */}
           </div>
           {filteredUsers.length === 0 ? (
             <p>No users found.</p>
           ) : (
             <div>
-              <div className="relative w-full overflow-auto">
+              <div className="relative w-full overflow-auto quicksand-regular">
                 <table className="table">
                   <thead className="[&_tr]:border-b">
-                    <tr>
+                    <tr className="quicksand-bold text-main-orange">
                       <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                         #
                       </th>

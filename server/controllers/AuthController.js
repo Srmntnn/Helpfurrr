@@ -4,6 +4,7 @@ const router = require("../routes/AuthRouter");
 const { query } = require("express");
 const { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail } = require("../mailtrap/emails.js");
 const crypto = require("crypto");
+const { v2: cloudinary } = require('cloudinary');
 
 const signup = async (req, res, next) => {
     const { name, email, password } = req.body;
@@ -260,34 +261,50 @@ const updateRole = async (req, res) => {
 
 const updateUsers = async (req, res) => {
     try {
-        const { userId, name, profilePicture, profession } = req.body;
+        const { userId, name } = req.body;
+
         if (!userId) {
-            return res.status(400).send({ message: 'User Id is Required' })
+            return res.status(400).send({ message: 'User Id is Required' });
         }
+
         const user = await UserModel.findById(userId);
+
         if (!user) {
-            return res.status(400).send({ message: 'User not Found' })
+            return res.status(400).send({ message: 'User not Found' });
         }
+
+        // If there's a new profile picture, upload to Cloudinary
+        if (req.file) {
+            const uploadedImage = await cloudinary.uploader.upload_stream({ folder: 'user_profile_pics' }, (error, result) => {
+                if (error) {
+                    return res.status(500).send({ message: 'Error uploading image to Cloudinary' });
+                }
+                user.profilePicture = result.secure_url;
+            });
+
+            req.file.stream.pipe(uploadedImage); // Pipe the file stream directly to Cloudinary
+        }
+
+        // Update other fields if provided
         if (name !== undefined) user.name = name;
-        if (profilePicture !== undefined) user.profilePicture = profilePicture;
-        if (profession !== undefined) user.profession = profession;
 
         await user.save();
+
         res.status(200).send({
-            message: 'Profile updated succesfully', user: {
+            message: 'Profile updated successfully',
+            user: {
                 _id: user._id,
                 email: user.email,
                 name: user.name,
                 role: user.role,
-                profilePicture: user.role,
-                profession: user.role
-            }
-        })
+                profilePicture: user.profilePicture,
+            },
+        });
     } catch (error) {
         console.error("Error Updating User's Info", error);
-        res.status(500).send({ message: "Error Updating User's Info", });
+        res.status(500).send({ message: "Error Updating User's Info" });
     }
-}
+};
 
 const getAdmin = async (req, res) => {
     const email = req.params.email;

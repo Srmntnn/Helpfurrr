@@ -11,9 +11,31 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 
+import ImgLogo from "../assets/Helpfurrlogo.png";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+import { useAuthStore } from "@/store/authStore";
+import { handleError, handleSuccess } from "@/Utils/utils";
 const data = {
   versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
   navMain: [
@@ -36,21 +58,25 @@ const data = {
       url: "#",
       items: [
         {
-          title: "All dogs",
+          title: "All Dogs",
           url: "/dashboard/all-dogs",
+        },
+        {
+          title: "Add Dog",
+          url: "/dashboard/add-dog",
         },
         {
           title: "Post Dogs Requests",
           link: "/dashboard/postingdogs",
         },
-        {
-          title: "Approved Dogs",
-          link: "/dashboard/approvedDogs",
-        },
-        {
-          title: "Rejected Dogs",
-          link: "#",
-        },
+        // {
+        //   title: "Approved Dogs",
+        //   link: "/dashboard/approvedDogs",
+        // },
+        // {
+        //   title: "Rejected Dogs",
+        //   link: "#",
+        // },
         {
           title: "Adoption Requests",
           link: "/dashboard/adoptionrequest",
@@ -103,10 +129,27 @@ const data = {
 };
 
 export function AppSidebar(props) {
+  const { user, logout } = useAuthStore();
+
+  const logoutHandler = () => {
+    try {
+      logout();
+      handleSuccess("Logged Out Succesfull");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
+    } catch (error) {
+      handleError("Logout Unsuccessful");
+    }
+  };
+  console.log(user);
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <SearchForm />
+        <Avatar className="rounded-none">
+          <AvatarImage src={ImgLogo} className="rounded-none" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
       </SidebarHeader>
       <SidebarContent>
         {/* Create a SidebarGroup for each parent item */}
@@ -132,6 +175,43 @@ export function AppSidebar(props) {
           </SidebarGroup>
         ))}
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton className="h-16">
+                  <div className="flex items-center gap-3">
+                    <Avatar>
+                      <AvatarImage src="https://github.com/shadcn.png" />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col">
+                      <p className="text-md quicksand-bold capitalize">
+                        {user?.name}
+                      </p>
+                      <p className="text-sm quicksand-regular">{user?.email}</p>
+                    </div>
+                  </div>
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                side="top"
+                className="w-[--radix-popper-anchor-width]"
+              >
+                <DropdownMenuItem className="cursor-pointer">
+                  <button
+                    className="quicksand-regular cursor-pointer"
+                    onClick={logoutHandler}
+                  >
+                    Logout
+                  </button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
