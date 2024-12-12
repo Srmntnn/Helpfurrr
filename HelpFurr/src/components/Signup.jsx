@@ -4,12 +4,12 @@ import { ToastContainer, toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { motion } from "framer-motion";
-import PasswordStrengthMeter from "./passwordStrenghtMeter";
 import { styles } from "../styles";
 import { FaFacebook } from "react-icons/fa";
 import Gmail from "../assets/pngwing 1.png";
 import dogVisual from "../assets/cover.png";
 import "../index.css";
+import PasswordStrengthMeter from "./PasswordStrenghtMeter";
 
 function Signup() {
   const [name, setName] = useState("");
