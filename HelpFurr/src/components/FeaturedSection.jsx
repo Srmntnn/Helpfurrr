@@ -26,7 +26,7 @@ export function FeaturedSection() {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await fetch("http://localhost:8080/dogs/approvedPets");
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/dogs/approvedPets`);
         if (!response.ok) {
           throw new Error("An error occurred");
         }
@@ -49,12 +49,12 @@ export function FeaturedSection() {
     return shuffledDogs.slice(0, 6);
   };
   return (
-    <div className="w-full max-w-screen-2xl flex sm:flex-row flex-col-reverse items-center justify-center gap-10 sm:py-40 py-10 ">
+    <div className="w-full max-w-screen-xl flex sm:flex-row flex-col-reverse items-center justify-center gap-10 sm:py-40 py-10 ">
       <div className="flex gap-6 items-center md:flex-row flex-col justify-center w-full">
         <div className="flex flex-col-reverse lg:flex-row justify-between items-center w-full space-y-12 lg:space-y-0">
           <div className="flex-1 flex items-center justify-center">
             <div className="space-y-4">
-              <h1 className="text-3xl font-bold fredoka-bold text-main-brown">
+              <h1 className="text-4xl font-bold fredoka-bold text-main-brown">
                 <span className="text-main-orange ">Helpfur:</span> Your Gateway
                 to Canine Companionship
               </h1>
@@ -66,7 +66,7 @@ export function FeaturedSection() {
               </p>
               <div>
                 <Link to={"/adoption"}>
-                  <Button className="text-main-orange quicksand-regular hover:text-light-orange">
+                  <Button className="bg-main-orange hover:bg-light-orange quicksand-regular hover:text-main-orange text-light-orange">
                     <MdOutlinePets className="mr-2 h-4 w-4" /> Adopt Now
                   </Button>
                 </Link>
@@ -81,7 +81,7 @@ export function FeaturedSection() {
               orientation="vertical"
               className="w-full lg:max-w-md"
             >
-              <CarouselContent className="h-[490px]">
+              <CarouselContent className="h-[490px] quicksand-regular">
                 {loading ? (
                   <p>loading</p>
                 ) : dogsData.length > 0 ? (
@@ -119,7 +119,7 @@ export function FeaturedSection() {
                           <div>
                             <Link to={`/dogdetails/${dog._id}`}>
                               {/* Use dog._id for link */}
-                              <Button className="w-full mt-5 text-main-orange quicksand-regular hover:text-light-orange">
+                              <Button className="w-full mt-5 bg-main-orange text-light-orange quicksand-semi-bold hover:bg-light-orange hover:text-main-orange">
                                 View Details
                               </Button>
                             </Link>

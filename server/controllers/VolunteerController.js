@@ -31,8 +31,14 @@ const VolunteerRequest = async (req, res) => {
             email,
             totalVisitors,
             questions,
-            status: 'Pending', // Default status
+            status: 'Pending',
         });
+
+        const user = await UserModel.findOne({ email: volunteer.email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
 
         // Send success response
         res.status(201).json({
@@ -67,8 +73,7 @@ const getAllVolunteers = async (reqStatus, req, res) => {
 
 const getVolunteerByEmail = async (req, res) => {
     try {
-        const { email } = req.params; // Assuming email is in the request body
-
+        const { email } = req.params;
         if (!email) {
             return res.status(400).json({ message: 'Please provide email in request body' });
         }

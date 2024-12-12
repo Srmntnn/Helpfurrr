@@ -11,7 +11,7 @@ function AdoptionFormPage(props) {
     const fetchDog = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/dogs/getdogbyId/${dogId}`
+          `${import.meta.env.VITE_BASE_URL}/dogs/getdogbyId/${dogId}`
         );
         setDog(response.data);
       } catch (error) {

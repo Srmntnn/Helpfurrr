@@ -23,7 +23,7 @@ const options = [
   { value: "products", label: "Campaign Products" },
   { value: "services", label: "Campaign Services" },
   { value: "lifestyle", label: "Campaign Lifestyle" },
-  { value: "entertainment", label: "Campaign Entertainment" },
+  { value: "fund-raising", label: "Fund-Raising" },
 ];
 
 function DonationCampaign() {
@@ -119,7 +119,7 @@ function DonationCampaign() {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/campaigns/create-campaign",
+        `${import.meta.env.VITE_BASE_URL}/campaigns/create-campaign`,
         {
           method: "POST",
           body: formData,
@@ -277,7 +277,7 @@ function DonationCampaign() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="max-donation">Maximum Donation $</Label>
+                <Label htmlFor="max-donation">Minimum Donation</Label>
                 <Input
                   type="number"
                   placeholder="Enter maximum donation amount"

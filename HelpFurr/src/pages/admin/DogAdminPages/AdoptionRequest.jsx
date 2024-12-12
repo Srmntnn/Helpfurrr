@@ -35,7 +35,7 @@ const AdoptionRequests = () => {
   const fetchDogs = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/dogs/approvedPets`
+        `${import.meta.env.VITE_BASE_URL}/dogs/approved-and-waiting`
       );
       if (!response.ok)
         throw new Error("An error occurred while fetching dogs.");
@@ -45,7 +45,6 @@ const AdoptionRequests = () => {
       console.error(error);
     }
   };
-
   const fetchUsers = async () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users`);
@@ -166,7 +165,7 @@ const AdoptionRequests = () => {
             );
           })
         ) : (
-          <div>No adoption requests available for any pet.</div>
+          <div className="quicksand-semi-bold text-center">No adoption requests available for any pet.</div>
         )}
       </div>
 

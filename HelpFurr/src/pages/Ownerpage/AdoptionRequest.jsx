@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuthStore } from "../../store/authStore";
-import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { SlOptionsVertical } from "react-icons/sl";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,16 +13,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link } from "react-router-dom";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { Loader } from "lucide-react";
 function AdoptionRequest() {
   const { user } = useAuthStore();
   const navigate = useNavigate();
-
   const [forms, setForms] = useState([]);
   const [dogs, setDogs] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch forms and associated dog data
   const fetchForms = async () => {
     try {
       const response = await axios.get(
@@ -55,22 +53,10 @@ function AdoptionRequest() {
   };
 
   // Delete a form
-  const handleDelete = async (formId) => {
-    try {
-      await axios.delete(
-        `${import.meta.env.VITE_BASE_URL}/form/delete/${formId}`
-      );
-      setForms(forms.filter((form) => form._id !== formId)); // Remove deleted form from state
-      alert("Form deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting form:", error);
-      alert("Failed to delete the form.");
-    }
-  };
 
   // Edit a form
   const handleEdit = (formId) => {
-    navigate(`/edit-form/${formId}`); // Redirect to edit form page
+    navigate(`/edit-form/${formId}`);
   };
 
   useEffect(() => {
@@ -83,14 +69,14 @@ function AdoptionRequest() {
     <div>
       <section>
         <motion.div
-          className="w-full h-screen max-w-screen-2xl mx-auto"
+          className="w-full max-w-screen-2xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="rounded-md border my-12 ">
+          <div className="rounded-md border my-12 text-center p-5 quicksand-semi-bold ">
             {isLoading ? (
-              <Loader className="mx-auto">Loading...</Loader>
+              <Loader className="mx-auto p-6"></Loader>
             ) : error ? (
               <p>Error: {error}</p>
             ) : forms.length === 0 ? (
@@ -139,7 +125,7 @@ function AdoptionRequest() {
                                   {dogs[form.dogId].name}
                                 </p>
                                 <p>
-                                  <strong>Color:</strong>{" "}
+                                  <strong>Color:</strong>
                                   {dogs[form.dogId].color}
                                 </p>
                                 <p>
@@ -151,24 +137,24 @@ function AdoptionRequest() {
                             <p>Loading dog info...</p>
                           )}
                         </td>
-                        <td>{form.status}</td>
                         <td>
-                          <DropdownMenu >
+                          <div className="flex flex-col">
+                            <p className="capitalize">{form.status}</p>
+                            {form.status !== "adopted" && (
+                              <p>Please visit us at {form.appointmentDate}</p>
+                            )}
+                          </div>
+                        </td>
+                        <td>
+                          <DropdownMenu>
                             <DropdownMenuTrigger>
                               <SlOptionsVertical />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                              <DropdownMenuLabel className="quicksand-regular">Action</DropdownMenuLabel>
+                              <DropdownMenuLabel className="quicksand-regular">
+                                Action
+                              </DropdownMenuLabel>
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem>
-                                <button
-                                  className=" text-main-brown px-4 py-2 rounded-lg mr-2 quicksand-regular"
-                                  onClick={() => handleEdit(form._id)}
-                                >
-                                  Edit
-                                </button>
-                              </DropdownMenuItem>
-
                               <DropdownMenuItem>
                                 <button
                                   className=" text-main-brown px-4 py-2 rounded-lg  quicksand-regular"

@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.get("/:userId", getNotifications);
 router.get("/count/:userId", getNotificationCount)
-router.delete("/:userId",  deleteNotifications);
+router.delete("/delete/:id",  deleteNotifications);
 
 module.exports = router; 

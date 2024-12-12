@@ -171,7 +171,7 @@ function PostForAdoption() {
         className={`${styles.paddingX} max-w-screen-xl justify-center w-full`}
       >
         <Helmet>
-          <title>HelpFur | Add dog</title>
+          <title>HelpFurr | Add dog</title>
           <meta name="Helpfur-all dogs" content="Helmet application" />
         </Helmet>
         <div className="sm:bg-light-orange bg-secondary-orange sm:h-96 h-80 flex absolute left-0 right-0 flex-col items-center justify-center">

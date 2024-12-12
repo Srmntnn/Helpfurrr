@@ -12,6 +12,9 @@ import { motion } from "framer-motion";
 import TimeDisplay from "@/components/Time-display";
 import { Loader } from "lucide-react";
 import success from "../../components/Success.gif";
+import { Disclosure } from "@headlessui/react";
+import { IoIosArrowDown } from "react-icons/io";
+import { IoBookOutline } from "react-icons/io5";
 
 const options = [
   { value: "10:00 AM", label: "10:00 AM" },
@@ -97,7 +100,7 @@ function RequestVolunteer() {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/volunteers/visit-request",
+        `${import.meta.env.VITE_BASE_URL}/volunteers/visit-request`,
         {
           method: "POST",
           headers: {
@@ -144,9 +147,9 @@ function RequestVolunteer() {
         className={`${styles.paddingX} max-w-screen-2xl justify-center w-full`}
       >
         <Helmet>
-          <title>Helpfur | Create Campaign</title>
+          <title>Helpfurr | Create Campaign</title>
         </Helmet>
-        <div className="sm:bg-light-orange bg-secondary-orange sm:h-96 h-80 flex absolute left-0 right-0 flex-col items-center justify-center">
+        <div className="sm:bg-light-orange bg-secondary-orange sm:h-80 h-80 flex absolute left-0 right-0 flex-col items-center justify-center">
           <h1
             className={`${styles.heroHeadText} text-5xl sm:text-secondary-orange text-light-orange font-bold text-center fredoka-bold`}
           >
@@ -154,12 +157,10 @@ function RequestVolunteer() {
           </h1>
           <p
             className={`${styles.heroSubText} text-secondary-brown text-center quicksand-regular`}
-          >
-            Browse the list of available dogs
-          </p>
+          ></p>
         </div>
 
-        <div className="flex flex-col lg:flex-row py-4 gap-6 sm:pt-96 pt-72 mt-24 w-full">
+        <div className="flex flex-col lg:flex-row py-4 gap-6 sm:pt-80 pt-62 mt-24 w-full">
           <form
             onSubmit={handleSubmit}
             className="flex-1 flex flex-col border border-gray-100 rounded-lg p-4 space-y-4"
@@ -175,7 +176,7 @@ function RequestVolunteer() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Type of Visit:</Label>
-                <div>
+                <div className="flex gap-2">
                   <input
                     type="radio"
                     id="Apply Volunteer"
@@ -186,7 +187,7 @@ function RequestVolunteer() {
                   />
                   <Label htmlFor="Apply Volunteer">Apply Volunteer</Label>
                 </div>
-                <div>
+                <div className="flex gap-2">
                   <input
                     type="radio"
                     id="followUp"
@@ -197,7 +198,7 @@ function RequestVolunteer() {
                   />
                   <Label htmlFor="followUp">Follow-Up</Label>
                 </div>
-                <div>
+                <div className="flex gap-2">
                   <input
                     type="radio"
                     id="emergency"
@@ -210,7 +211,7 @@ function RequestVolunteer() {
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 hover:bg-light-orange p-6 rounded-sm border transition duration-200">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 hover:border-main-orange p-6 border transition duration-300 rounded-md">
               <div className="space-y-2 w-full">
                 <Label className="text-main-orange ">
                   Book your Appointment
@@ -237,7 +238,7 @@ function RequestVolunteer() {
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="short-description">Name</Label>
+                <Label htmlFor="short-description">First Name</Label>
                 <Input
                   type="text"
                   placeholder="Enter your name"
@@ -278,9 +279,9 @@ function RequestVolunteer() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="long-description">Questions</Label>
+              <Label htmlFor="long-description">Reason for Visiting</Label>
               <Textarea
-                placeholder="Enter any questions you may have"
+                placeholder="Enter any questions or reason you may have."
                 value={questions}
                 onChange={(e) => setQuestions(e.target.value)}
               />
@@ -295,6 +296,201 @@ function RequestVolunteer() {
                 Please fill out all fields correctly.
               </p>
             )}
+            <Label>
+              Volunteers must meet all of the following requirements:
+            </Label>
+            <div className="border rounded-md">
+              <div className="w-full">
+                <div className="mx-auto w-full rounded-2xl bg-white sm:p-8 p-2">
+                  <Disclosure>
+                    {({ open }) => (
+                      <>
+                        <Disclosure.Button className="flex w-full justify-between rounded-lg px-4 py-2 text-left text-sm font-medium text-orange-500 hover:bg-light-orange/80 focus:outline-none focus-visible:ring focus-visible:ring-orange-500/75">
+                          <span className="quicksand-bold">
+                            Volunteers Qualifications.
+                          </span>
+                          <IoIosArrowDown
+                            className={`${
+                              open ? "rotate-180 transform" : ""
+                            } h-5 w-5 text-orange-500`}
+                          />
+                        </Disclosure.Button>
+                        <Disclosure.Panel className="pt-4 text-sm text-gray-500 flex flex-col gap-3">
+                          <div className="w-full border hover:border-main-orange rounded-md transition duration-300 cursor-pointer px-6 py-4 text-sm">
+                            <div className="flex items-center gap-3 sm:flex-row flex-col">
+                              <div className="p-4 bg-light-orange w-fit rounded-lg">
+                                <IoBookOutline className="text-main-orange" />
+                              </div>
+
+                              <div>
+                                <p className=" rounded-md quicksand-semi-bold">
+                                  - Be at least 18 years of age or older.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="w-full border hover:border-main-orange rounded-md transition duration-300 cursor-pointer px-6 py-4 text-sm">
+                            <div className="flex items-center gap-3 sm:flex-row flex-col">
+                              <div className="p-4 bg-light-orange w-fit rounded-lg">
+                                <IoBookOutline className="text-main-orange" />
+                              </div>
+
+                              <div>
+                                <p className=" rounded-md quicksand-semi-bold">
+                                  - Able to understand and fulfil all the
+                                  responsibilities of their role independently.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="w-full border hover:border-main-orange rounded-md transition duration-300 cursor-pointer px-6 py-4 text-sm">
+                            <div className="flex items-center gap-3 sm:flex-row flex-col">
+                              <div className="p-4 bg-light-orange w-fit rounded-lg">
+                                <IoBookOutline className="text-main-orange" />
+                              </div>
+
+                              <div>
+                                <p className=" rounded-md quicksand-semi-bold">
+                                  - Be able to commit your time in the shelter
+                                  at least 2-4 hours depending on assignment.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="w-full border hover:border-main-orange rounded-md transition duration-300 cursor-pointer px-6 py-4 text-sm">
+                            <div className="flex items-center gap-3 sm:flex-row flex-col">
+                              <div className="p-4 bg-light-orange w-fit rounded-lg">
+                                <IoBookOutline className="text-main-orange" />
+                              </div>
+
+                              <div>
+                                <p className=" rounded-md quicksand-semi-bold">
+                                  - Be able to physically fulfil the duties of
+                                  their volunteer role which include standing or
+                                  walking for up to three hours; able to lift
+                                  and carry up to 20 pounds; be able to reach
+                                  and lift; and able to talk with employees and
+                                  other volunteers.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
+                  <Disclosure as="div" className="mt-2">
+                    {({ open }) => (
+                      <>
+                        <Disclosure.Button className="flex w-full justify-between rounded-lg px-4 py-2 text-left text-sm font-medium text-orange-500 hover:bg-light-orange/80 focus:outline-none focus-visible:ring focus-visible:ring-orange-500/75">
+                          <span className="quicksand-bold">
+                            How Could You Help?
+                          </span>
+                          <IoIosArrowDown
+                            className={`${
+                              open ? "rotate-180 transform" : ""
+                            } h-5 w-5 text-orange-500`}
+                          />
+                        </Disclosure.Button>
+                        <Disclosure.Panel className=" pb-2 pt-4 text-sm text-gray-500 flex flex-col gap-3">
+                          <div className="w-full border hover:border-main-orange rounded-md transition duration-300 cursor-pointer px-6 py-4 text-sm">
+                            <div className="flex items-center gap-3 sm:flex-row flex-col">
+                              <div className="p-4 bg-light-orange w-fit rounded-lg ">
+                                <IoBookOutline className="text-main-orange " />
+                              </div>
+
+                              <div>
+                                <p className=" rounded-md quicksand-semi-bold">
+                                  - Animal Care: Help in cleaning the animal
+                                  areas in the shelter, help in feeding,
+                                  bathing, medication and basic grooming as
+                                  needed, walk the dogs and or /puppies,
+                                  socialize with the cats/kittens by petting
+                                  them. Help and support in adoption process.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="w-full border hover:border-main-orange rounded-md transition duration-300 cursor-pointer px-6 py-4 text-sm">
+                            <div className="flex items-center gap-3 sm:flex-row flex-col">
+                              <div className="p-4 bg-light-orange w-fit rounded-lg">
+                                <IoBookOutline className="text-main-orange" />
+                              </div>
+
+                              <div>
+                                <p className=" rounded-md quicksand-semi-bold">
+                                  - Education: Help out in spreading the word
+                                  about C.A.R.E. Animal Rescue Efforts and
+                                  animals for adoptions by campaigning,
+                                  designing flyers and brochures to be given out
+                                  or distributed in barangay, schools,
+                                  veterinary clinics, city government and
+                                  various organisations that support animal
+                                  welfare to create awareness regarding issues
+                                  such as responsible pet ownership; pet
+                                  handling and safety.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="w-full border hover:border-main-orange rounded-md transition duration-300 cursor-pointer px-6 py-4 text-sm">
+                            <div className="flex items-center gap-3 sm:flex-row flex-col">
+                              <div className="p-4 bg-light-orange w-fit rounded-lg">
+                                <IoBookOutline className="text-main-orange" />
+                              </div>
+
+                              <div>
+                                <p className=" rounded-md quicksand-semi-bold">
+                                  - Fund Raising: Help out in organising events
+                                  and activities to raise funds for the shelter.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="w-full border hover:border-main-orange rounded-md transition duration-300 cursor-pointer px-6 py-4 text-sm">
+                            <div className="flex items-center gap-3 sm:flex-row flex-col">
+                              <div className="p-4 bg-light-orange w-fit rounded-lg">
+                                <IoBookOutline className="text-main-orange" />
+                              </div>
+
+                              <div>
+                                <p className=" rounded-md quicksand-semi-bold">
+                                  - Miscellaneous: Various areas requiring
+                                  expertise
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="w-full border hover:border-main-orange rounded-md transition duration-300 cursor-pointer px-6 py-4 text-sm">
+                            <div className="flex items-center gap-3 sm:flex-row flex-col">
+                              <div className="p-4 bg-light-orange w-fit rounded-lg">
+                                <IoBookOutline className="text-main-orange" />
+                              </div>
+
+                              <div>
+                                <p className=" rounded-md quicksand-semi-bold">
+                                  - Foster: Be a foster parent or consider
+                                  adopting one of them. It would be the best
+                                  gift that you could ever bestow on them and
+                                  us.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
+                </div>
+              </div>
+            </div>
 
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -311,16 +507,16 @@ function RequestVolunteer() {
             </motion.button>
           </form>
           <div className="basis-1/3">
-            <div className="border border-gray-100 rounded-lg p-4 space-y-4">
-              <h1 className="text-2xl font-bold inline-flex items-center gap-2">
+            <div className="border border-gray-100 rounded-lg p-4 space-y-4 text-secondary-brown">
+              <h1 className="text-2xl font-bold inline-flex items-center gap-2 quicksand-bold">
                 <FaUser />
                 User Info
               </h1>
               <hr />
-              <p>Name: {user?.name}</p>
-              <p>Email: {user?.email}</p>
-              <p>
-                Current Time: <TimeDisplay />
+              <p className="quicksand-regular"><span className="quicksand-bold">Name:</span> {user?.name}</p>
+              <p className="quicksand-regular"><span className="quicksand-bold">Email:</span> {user?.email}</p>
+              <p className="quicksand-regular">
+                <span className="quicksand-bold">Current Time:</span> <TimeDisplay />
               </p>
             </div>
             <p className="text-red-200 font-light mt-2">

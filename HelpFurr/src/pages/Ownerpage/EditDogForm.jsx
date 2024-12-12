@@ -54,7 +54,7 @@ const EditDogForm = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.put(`/api/dogs/${dogId}`, dogData);
+      const response = await axios.put(`${import.meta.env.VITE_BASE_URL}/dogs/${dogId}`, dogData);
       console.log("Updated Dog:", response.data);
       // Optionally redirect or show a success message
     } catch (error) {

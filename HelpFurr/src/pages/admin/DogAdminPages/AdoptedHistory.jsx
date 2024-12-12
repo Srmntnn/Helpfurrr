@@ -27,7 +27,7 @@ const AdoptedHistory = () => {
   }, []);
 
   return (
-    <div className="pet-container">
+    <div className="pet-container min-h-[80%]">
       {loading ? (
         <p>Loading...</p>
       ) : requests.length > 0 ? (
@@ -41,7 +41,7 @@ const AdoptedHistory = () => {
           />
         ))
       ) : (
-        <p>No Adopted Pets available</p>
+        <p className="flex justify-center items-center h-full quicksand-semi-bold">No adopted pets available</p>
       )}
     </div>
   );

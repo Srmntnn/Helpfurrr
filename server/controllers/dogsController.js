@@ -111,7 +111,12 @@ const AddDog = async (req, res) => {
 
 const getAllDogs = async (reqStatus, req, res) => {
   try {
-    const data = await Dogs.find({ status: reqStatus }).sort({ updatedAt: -1 });
+    // If reqStatus is a string, wrap it in an array to handle both cases
+    const statusArray = Array.isArray(reqStatus) ? reqStatus : [reqStatus];
+
+    // Use MongoDB's $in operator to query multiple statuses
+    const data = await Dogs.find({ status: { $in: statusArray } }).sort({ updatedAt: -1 });
+
     if (data.length > 0) {
       res.status(200).json(data);
     } else {
@@ -121,6 +126,7 @@ const getAllDogs = async (reqStatus, req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 const getAllDogData = async (req, res) => {
   try {
@@ -324,21 +330,73 @@ const editDog = async (req, res) => {
 
 const getDogByEmail = async (req, res) => {
   try {
-    const { email } = req.params; // Assuming email is in the request body
+    const { email } = req.params;
 
     if (!email) {
-      return res.status(400).json({ message: 'Please provide email in request body' });
+      return res.status(400).json({ message: 'Email parameter is required' });
     }
 
-    const dog = await Dogs.find({ email });
-    if (!dog) {
-      return res.status(404).json({ message: 'Dog not Found' });
+    // Define the statuses to filter
+    const allowedStatuses = ['Approved', 'Pending', 'Rejected'];
+
+    // Find dogs by email and statuses, and sort by updatedAt in descending order
+    const dogs = await Dogs.find({ email, status: { $in: allowedStatuses } }).sort({ updatedAt: -1 });
+
+    if (dogs.length > 0) {
+      res.status(200).json(dogs);
+    } else {
+      res.status(404).json({ message: 'No dogs found with the specified statuses for the given email' });
     }
-    res.status(200).json(dog);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
+const getAdoptedDogByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email parameter is required' });
+    }
+
+    // Define the statuses to filter
+    const allowedStatuses = ['Adopted'];
+
+    // Find dogs by email and statuses, and sort by updatedAt in descending order
+    const dogs = await Dogs.find({ email, status: { $in: allowedStatuses } }).sort({ updatedAt: -1 });
+
+    if (dogs.length > 0) {
+      res.status(200).json(dogs);
+    } else {
+      res.status(404).json({ message: 'No dogs found with the specified statuses for the given email' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getDogsByStatus = async (req, res) => {
+  try {
+    // Query database for dogs with statuses 'waiting for owner' or 'approved'
+    const dogs = await Dogs.find({
+      status: { $in: ['waiting for owner', 'approved'] }
+    });
+
+    // Respond with the dogs data
+    res.status(200).json({
+      success: true,
+      data: dogs,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve dogs',
+    });
+  }
+};
+
 
 
 module.exports = {
@@ -351,5 +409,7 @@ module.exports = {
   getDogByEmail,
   getAllDogData,
   rejectDog,
-  AddDog
+  AddDog,
+  getDogsByStatus,
+  getAdoptedDogByEmail
 }

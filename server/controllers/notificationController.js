@@ -16,7 +16,7 @@ const getNotifications = async (req, res) => {
 	}
 };
 
-const deleteNotifications = async (req, res) => {
+const deleteAllNotifications = async (req, res) => {
 	try {
 		const userId = req.params._id;
 
@@ -28,6 +28,24 @@ const deleteNotifications = async (req, res) => {
 		res.status(500).json({ error: "Internal Server Error" });
 	}
 };
+
+const deleteNotifications = async (req, res) => {
+	try {
+	  const notificationId = req.params.id; // ID of the notification to delete
+  
+	  const deletedNotification = await Notification.findByIdAndDelete(notificationId);
+  
+	  if (!deletedNotification) {
+		return res.status(404).json({ error: "Notification not found" });
+	  }
+  
+	  res.status(200).json({ message: "Notification deleted successfully" });
+	} catch (error) {
+	  console.log("Error in deleteNotification function:", error.message);
+	  res.status(500).json({ error: "Internal Server Error" });
+	}
+  };
+  
 
 const getNotificationCount = async (req, res) => {
 	try {
@@ -59,5 +77,6 @@ const getNotificationCount = async (req, res) => {
 module.exports = {
 	getNotifications,
 	deleteNotifications,
-	getNotificationCount
+	getNotificationCount,
+	deleteAllNotifications
 }

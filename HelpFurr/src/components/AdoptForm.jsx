@@ -1,11 +1,68 @@
-import React, { useState } from "react";
-import "../index.css";
+import React, { Fragment, useState } from "react";
+import { Transition, Dialog } from "@headlessui/react";
 import { motion } from "framer-motion";
 import { Label } from "./label";
 import { Input } from "./input";
 import { useAuthStore } from "../store/authStore";
 import uploadImage from "../assets/upload (1).svg";
 import { styles } from "@/styles";
+
+function PopupModal({ isOpen, onClose, title, message }) {
+  return (
+    <Transition appear show={isOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={onClose}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black/25" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-medium leading-6 text-gray-900 quicksand-bold"
+                >
+                  {title}
+                </Dialog.Title>
+                <div className="mt-2">
+                  <p className="text-sm text-gray-500 quicksand-regular">
+                    {message}
+                  </p>
+                </div>
+                <div className="mt-4">
+                  <button
+                    type="button"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-orange-100 px-4 py-2 text-sm font-medium text-orange-400 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    onClick={onClose}
+                  >
+                    Got it, thanks!
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition>
+  );
+}
 
 function AdoptForm(props) {
   const { user } = useAuthStore();
@@ -23,12 +80,23 @@ function AdoptForm(props) {
   const [neutering, setNeutering] = useState("");
   const [formError, setFormError] = useState(false);
   const [emailError, setEmailError] = useState(false);
-  const [ErrPopup, setErrPopup] = useState(false);
-  const [SuccPopup, setSuccPopup] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [image1, setImage1] = useState(false);
   const [image2, setImage2] = useState(false);
+
+  const [modalInfo, setModalInfo] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+  });
+
+  const openModal = (title, message) => {
+    setModalInfo({ isOpen: true, title, message });
+  };
+
+  const closeModal = () => {
+    setModalInfo({ ...modalInfo, isOpen: false });
+  };
 
   const isEmailValid = (email) => {
     const emailPattern = /^[a-zA-Z0-9._-]+@gmail\.com$/;
@@ -40,8 +108,7 @@ function AdoptForm(props) {
     setEmailError(false);
 
     if (props.dog.email === user.email) {
-      setErrPopup(true);
-      // alert("you cannot adopt the dog the you've posted")
+      openModal("Error", "You cannot adopt the dog you've posted.");
       return;
     }
 
@@ -60,11 +127,13 @@ function AdoptForm(props) {
       !address
     ) {
       setFormError(true);
+      openModal("Error", "Please fill out all fields.");
       return;
     }
 
     if (!isEmailValid(email)) {
       setEmailError(true);
+      openModal("Error", "Please provide a valid email address.");
       return;
     }
 
@@ -98,15 +167,23 @@ function AdoptForm(props) {
       );
 
       if (!response.ok) {
-        setErrPopup(true);
+        openModal(
+          "Error",
+          "There was an issue connecting to the server. Please try again later."
+        );
         return;
       } else {
-        setSuccPopup(true);
+        openModal(
+          "Success",
+          `Adoption form for ${props.dog.name} has been submitted. We'll get in touch with you soon.`
+        );
       }
     } catch (err) {
-      setErrPopup(true);
+      openModal(
+        "Error",
+        "There was an issue connecting to the server. Please try again later."
+      );
       console.error(err);
-      return;
     } finally {
       setIsSubmitting(false);
     }
@@ -366,14 +443,15 @@ function AdoptForm(props) {
 
               <div className="">
                 <Label>Upload a copy of your valid ID</Label>
-                <p>
+                <p className="quicksand-regular mb-4">
                   Please upload a Government-issued ID or any Personal ID with
                   your picture and name. Make sure the name you indicated in
                   this application form matches the name on your ID. Please do
                   not upload personal photos.
                 </p>
-                <div className="flex gap-4 w-full justify-evenly border py-7">
-                  <div className="flex flex-col w-36 aspect-square overflow-hidden items-center justify-center ">
+                <div className="flex gap-4 w-full border p-7 rounded-md">
+                  <div className="flex flex-col w-full aspect-video overflow-hidden items-center justify-center border ">
+                    <Label>Front</Label>
                     <label
                       htmlFor="image1"
                       className="text-main-brown cursor-pointer"
@@ -382,7 +460,7 @@ function AdoptForm(props) {
                         src={
                           !image1 ? uploadImage : URL.createObjectURL(image1)
                         }
-                        className="w-36 object-cover  "
+                        className="w-full object-cover  "
                         alt=""
                       />
                       <input
@@ -394,7 +472,8 @@ function AdoptForm(props) {
                       />
                     </label>
                   </div>
-                  <div className="flex flex-col w-36 overflow-hidden aspect-square justify-center ">
+                  <div className="flex flex-col w-full overflow-hidden aspect-video  items-center justify-center border">
+                    <Label>Back</Label>
                     <label
                       htmlFor="image2"
                       className="text-main-brown cursor-pointer"
@@ -403,7 +482,7 @@ function AdoptForm(props) {
                         src={
                           !image2 ? uploadImage : URL.createObjectURL(image2)
                         }
-                        className="w-36 object-cover"
+                        className="w-full object-cover"
                         alt=""
                       />
                       <input
@@ -429,43 +508,17 @@ function AdoptForm(props) {
               >
                 {isSubmitting ? "Submitting" : "Submit"}
               </motion.button>
-
-              {ErrPopup && (
-                <div className="popup">
-                  <div className="popup-content">
-                    <h4>Oops!... Connection Error.</h4>
-                  </div>
-                  <button
-                    onClick={(e) => setErrPopup(!ErrPopup)}
-                    className="close-btn"
-                  >
-                    Close <i className="fa fa-times"></i>
-                  </button>
-                </div>
-              )}
-              {SuccPopup && (
-                <div className="popup">
-                  <div className="popup-content">
-                    <h4>
-                      Adoption Form of {props.dog.name} is Submitted; we'll get
-                      in touch with you soon for further process.
-                    </h4>
-                  </div>
-                  <button
-                    onClick={(e) => {
-                      setSuccPopup(!SuccPopup);
-                      props.closeForm();
-                    }}
-                    className="close-btn"
-                  >
-                    Close <i className="fa fa-times"></i>
-                  </button>
-                </div>
-              )}
             </form>
+            <PopupModal
+              isOpen={modalInfo.isOpen}
+              onClose={closeModal}
+              title={modalInfo.title}
+              message={modalInfo.message}
+            />
           </div>
         </div>
       </div>
+      {/* Popups */}
     </section>
   );
 }

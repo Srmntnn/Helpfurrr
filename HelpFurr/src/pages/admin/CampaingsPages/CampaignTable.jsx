@@ -41,7 +41,7 @@ function CampaignTable(props) {
     setIsApproving(true);
     try {
       const response = await fetch(
-        `http://localhost:8080/campaigns/approving-campaign/${props.campaign._id}`,
+        `${import.meta.env.VITE_BASE_URL}/campaigns/approving-campaign/${props.campaign._id}`,
         {
           method: "PUT",
           body: JSON.stringify({

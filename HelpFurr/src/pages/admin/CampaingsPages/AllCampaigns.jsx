@@ -13,13 +13,12 @@ import {
 import { AvatarImage, Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Modal from "@/components/Modal";
 import { format } from "date-fns";
-import { toast } from "@/components/use-toast";
 import { Label } from "@/components/label";
 import { Input } from "@/components/input";
 import { Button } from "@/components/button";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { SlOptionsVertical } from "react-icons/sl";
-
+import { ToastContainer, toast } from "react-toastify";
 
 const AllCampaigns = () => {
   const { isCheckingAuth, checkAuth } = useAuthStore();
@@ -95,6 +94,15 @@ const AllCampaigns = () => {
   };
 
   const handleAddCost = async () => {
+    if (selectedCampaign.totalDonation === 0) {
+      toast({
+        title: "Error",
+        description: "Cannot add costs as the total donation is 0.",
+        status: "error",
+      });
+      return;
+    }
+
     try {
       await axios.patch(
         `${import.meta.env.VITE_BASE_URL}/campaigns/${
@@ -110,7 +118,11 @@ const AllCampaigns = () => {
       closeModal();
     } catch (err) {
       console.error(err);
-      alert("Error adding budget usage");
+      toast({
+        title: "Error",
+        description: "Error adding budget usage.",
+        status: "error",
+      });
     }
   };
 
@@ -155,8 +167,14 @@ const AllCampaigns = () => {
                   </TableCell>
                   <TableCell>{request.campaignName}</TableCell>
                   <TableCell>{formatDate(request.campDeadline)}</TableCell>
-                  <TableCell>{request.maxDonation}</TableCell>
-                  <TableCell>{request.totalDonations}</TableCell>
+                  <TableCell>
+                    <span>&#8369; </span>
+                    {request.maxDonation}
+                  </TableCell>
+                  <TableCell>
+                    <span>&#8369; </span>
+                    {request.totalDonations}
+                  </TableCell>
                   <TableCell>{request.campaignCategory}</TableCell>
                   <TableCell>
                     {request.longDescription.length > 30
@@ -295,6 +313,7 @@ const AllCampaigns = () => {
       ) : (
         <p>No requests available</p>
       )}
+      <ToastContainer />
     </div>
   );
 };

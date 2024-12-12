@@ -123,7 +123,7 @@ function AdminAddDogs() {
     image4 && formData.append("image4", image4);
 
     try {
-      const response = await fetch("http://localhost:8080/dogs/admin-addDog", {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/dogs/admin-addDog`, {
         method: "POST",
         body: formData,
       });

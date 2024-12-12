@@ -16,8 +16,17 @@ const adoptFormSchema = new Schema({
     neutering: { type: String, required: true },
     address: { type: String, required: true },
     image: [{ type: String }],
-    status: { type: String, default: 'pending', enum: ['pending', 'approved', 'rejected'] },
-    remarks: { type: String, default: '' },  // Field to store rejection remarks
+    status: {
+        type: String,
+        default: 'pending',
+        enum: ['pending', 'approved', 'rejected', 'waiting for owner', 'adopted'],
+        required: true
+    },
+    remarks: { type: String, default: '' },
+    appointmentDate: {
+        type: Date, // Use Date type for storing dates
+        required: false, // Optional field
+    },
 }, { timestamps: true });
 
 const AdoptForm = mongoose.model('AdoptForm', adoptFormSchema);

@@ -29,7 +29,7 @@ function VolunteerCard(props) {
     setIsApproving(true);
     try {
         const response = await fetch(
-            `http://localhost:8080/volunteers/approving-volunteer/${props.volunteer._id}`,
+            `${import.meta.env.VITE_BASE_URL}/volunteers/approving-volunteer/${props.volunteer._id}`,
             {
                 method: "PUT",
                 body: JSON.stringify({
@@ -59,7 +59,7 @@ function VolunteerCard(props) {
     setIsRejecting(true);
     try {
       const response = await fetch(
-        `http://localhost:8080/volunteers/rejecting-campaign/${props.volunteer._id}`,
+        `${import.meta.env.VITE_BASE_URL}/volunteers/rejecting-campaign/${props.volunteer._id}`,
         {
           method: "PUT",
           body: JSON.stringify({
@@ -87,7 +87,7 @@ function VolunteerCard(props) {
     setIsDeleting(true);
     try {
       const deleteResponse = await fetch(
-        `http://localhost:8080/campaign/delete-campaign/${props.campaign._id}`,
+        `${import.meta.env.VITE_BASE_URL}/campaign/delete-campaign/${props.campaign._id}`,
         {
           method: "DELETE",
         }

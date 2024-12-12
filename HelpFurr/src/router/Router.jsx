@@ -44,6 +44,10 @@ import EditDogForm from "@/pages/Ownerpage/EditDogForm";
 import ScannedDogData from "@/pages/Ownerpage/ScannedData";
 import AdminAddDogs from "@/pages/admin/DogAdminPages/AdminAddDogs";
 import SetTotalDonation from "@/pages/admin/Donations/SetTotalDonation";
+import Liquidation from "@/pages/Donation/Liquidation";
+import AdoptedDogs from "@/pages/Ownerpage/AdoptedDogs";
+import AdoptionPolicies from "@/pages/FAQ/AdoptionPolicies";
+import AdoptedDetails from "@/pages/Ownerpage/AdoptedDetails";
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
@@ -119,8 +123,12 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/donation",
+        path: "/campaigns",
         element: <DonationPage />,
+      },
+      {
+        path: "/donations",
+        element: <Liquidation />,
       },
       {
         path: "/location",
@@ -158,6 +166,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/adopted-details/:dogId",
+        element: (
+          <ProtectedRoute>
+            <AdoptedDetails />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "/campaigndetails/:campaignId",
         element: <CampaignDetails />,
       },
@@ -176,6 +192,18 @@ const router = createBrowserRouter([
             <RequestPage />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "/adopted-dogs",
+        element: (
+          <ProtectedRoute>
+            <AdoptedDogs />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/adoption-policy",
+        element: <AdoptionPolicies />,
       },
     ],
   },

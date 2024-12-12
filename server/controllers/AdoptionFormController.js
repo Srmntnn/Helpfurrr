@@ -86,7 +86,6 @@ const saveForm = async (req, res) => {
 };
 
 
-
 const getAdoptForms = async (req, res) => {
     try {
         const forms = await AdoptForm.find().sort({ createdAt: -1 });
@@ -98,38 +97,53 @@ const getAdoptForms = async (req, res) => {
 
 const approveRequest = async (req, res) => {
     try {
-        const id = req.params.id;
-        const { status } = req.body;
+        const id = req.params.id; // Adoption form ID
+        const { status, appointmentDate } = req.body;
 
-        // Update the form's status
-        const adoption = await AdoptForm.findByIdAndUpdate(id, { status }, { new: true });
+        // Validate status before proceeding
+        if (!['pending', 'approved', 'rejected', 'waiting for owner', 'adopted'].includes(status)) {
+            return res.status(400).json({ message: 'Invalid status value' });
+        }
 
+        // Find the adoption form by ID
+        const adoption = await AdoptForm.findById(id);
         if (!adoption) {
             return res.status(404).json({ message: 'Adoption Form not found' });
         }
 
-        let dog = null; // Ensure 'dog' is defined for later use
+        // Fetch the associated dog
+        const dog = await Dogs.findById(adoption.dogId);
+        if (!dog) {
+            return res.status(404).json({ message: 'Dog not found' });
+        }
 
-        // If the status is 'adopted', update the dog's details
-        if (status === 'adopted') {
-            dog = await Dogs.findById(adoption.dogId);
+        if (status === 'waiting for owner') {
+            // Set the adoption form and dog's status to 'waiting for owner'
+            adoption.status = 'waiting for owner';
+            adoption.appointmentDate = appointmentDate;
+            dog.status = 'waiting for owner';
 
-            if (!dog) {
-                return res.status(404).json({ message: 'Dog not found' });
+            // Send notification about the appointment
+            const user = await UserModel.findOne({ email: adoption.email });
+            if (user) {
+                await Notification.create({
+                    userId: user._id,
+                    message: `Your adoption application for ${dog.name} has been approved. Your appointment date is set for ${appointmentDate}.`,
+                });
             }
+        } else if (status === 'adopted') {
+            // Remove the appointmentDate when the status is 'adopted'
+            adoption.status = 'adopted';
+            adoption.appointmentDate = null; // Set to null or you can delete it entirely
 
-            // Update the dog's information
+            // Update the dog's details for adoption
             dog.currentOwner = adoption.adopterName;
             dog.email = adoption.email;
             dog.phone = adoption.phoneNo;
+            dog.shelter = adoption.address;
             dog.status = 'Adopted';
 
-            // Save updated dog data
-            await dog.save();
-
-            console.log("Dog updated:", dog);
-
-            // Prepare data for QR code
+            // Generate a QR code for the dog
             const qrCodeData = {
                 name: dog.name,
                 age: dog.age,
@@ -147,40 +161,35 @@ const approveRequest = async (req, res) => {
                 currentOwner: dog.currentOwner,
                 imageUrl: dog.image[0],
             };
-
-            // Generate QR code URL
             const qrCodeUrl = await QRCode.toDataURL(
                 `${process.env.CLIENT_URL}/scanned-data?data=${encodeURIComponent(
                     JSON.stringify(qrCodeData)
                 )}`
             );
-
-            // Save QR code URL in the dog's data
             dog.qrCodeUrl = qrCodeUrl;
-            await dog.save();
 
-            console.log("QR Code URL generated and saved:", qrCodeUrl);
+            // Notify the user about the successful adoption
+            const user = await UserModel.findOne({ email: adoption.email });
+            if (user) {
+                await Notification.create({
+                    userId: user._id,
+                    message: `Congratulations! You have officially adopted ${dog.name}.`,
+                });
+            }
+        } else {
+            return res.status(400).json({ message: 'Invalid status update' });
         }
 
-        const dogName = dog ? dog.name : "Unknown Dog";
+        // Save the updated form and dog
+        await adoption.save();
+        await dog.save();
 
-        // Send a notification to the user
-        const user = await UserModel.findOne({ email: adoption.email });
-        if (user) {
-            await Notification.create({
-                userId: user._id,
-                message: `Your adoption application for ${dogName} has been ${status}.`,
-            });
-        }
-
-        res.status(200).json({ message: `Adoption request ${status} successfully`, adoption });
+        res.status(200).json({ message: `Adoption status updated to ${status}` });
     } catch (err) {
         console.error("Error in approveRequest:", err);
         res.status(500).json({ message: err.message });
     }
 };
-
-
 
 const deleteForm = async (req, res) => {
     try {

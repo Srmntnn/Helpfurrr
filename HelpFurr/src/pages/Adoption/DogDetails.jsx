@@ -32,6 +32,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Dogviewer from "./Dogviewer";
 
 function DogDetails() {
   const { user } = useAuthStore();
@@ -40,6 +41,29 @@ function DogDetails() {
   const [error, setError] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [mainImage, setMainImage] = useState(""); // State for main image
+  const [dogsData, setDogsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_BASE_URL}/dogs/approvedPets`
+        );
+        if (!response.ok) {
+          throw new Error("An error occurred");
+        }
+        const data = await response.json();
+        setDogsData(data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRequests();
+  }, []);
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -49,7 +73,7 @@ function DogDetails() {
     const fetchDog = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/dogs/getdogbyId/${dogId}`
+          `${import.meta.env.VITE_BASE_URL}/dogs/getdogbyId/${dogId}`
         );
 
         // Set the first image as the main image initially
@@ -76,7 +100,7 @@ function DogDetails() {
       </div>
       <div className="max-w-screen-xl mx-auto">
         <Helmet>
-          <title>HelpFur | {`${dog?.name}`}</title>
+          <title>HelpFurr | {`${dog?.name}`}</title>
         </Helmet>
         {error ? (
           <p>Error fetching dog data: {error.message}</p>
@@ -245,6 +269,47 @@ function DogDetails() {
             </div>
           )
         )}
+      </div>
+      <div className="mx-auto max-w-screen-2xl mt-32">
+        <div className="flex gap-2 items-center mt-10 mb-4">
+          <h1 className="fredoka-bold tracking-wider md:text-3xl text-lg text-main-orange">
+            More Dogs
+          </h1>
+          <div className="flex max-w-40 w-full h-0.5 mt-2 rounded-full bg-secondary-brown"></div>
+        </div>
+        <div
+          className={`flex flex-wrap justify-center md:gap-6 gap-9 items-center `}
+        >
+          <div className="flex gap-6 w-full sm:flex-row flex-col">
+            {loading ? (
+              <p>Loading</p>
+            ) : dogsData.length > 0 ? (
+              dogsData.slice(0, 3).map((dogDetail, index) => (
+                <div>
+                  <Link
+                    to={`/dogdetails/${dogDetail._id}`}
+                    onClick={() => {
+                      setActive("");
+                      window.scrollTo(0, 0);
+                    }}
+                  >
+                    <div className="aspect-video overflow-hidden sm:max-w-80 max-w-full w-full rounded-xl">
+                      <img
+                        src={dogDetail.image[0]}
+                        alt=""
+                        className="w-full object-cover bg-center hover:scale-125 transition duration-300"
+                      />
+                    </div>{" "}
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <p className="oops-msg quicksand-semi-bold p-4">
+                Oops!... No Dogs available
+              </p>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );

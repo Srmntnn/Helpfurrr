@@ -3,6 +3,11 @@ import { styles } from "../../styles";
 import { useState, useEffect } from "react";
 import { GrPowerReset } from "react-icons/gr";
 import CampaignViewer from "./CampaignViewer";
+import { Button } from "@/components/button";
+import { Link } from "react-router-dom";
+import { MdOutlineOpenInNew } from "react-icons/md";
+import { IoPawOutline } from "react-icons/io5";
+import { MdOutlineVolunteerActivism } from "react-icons/md";
 
 const CampaignComponent = () => {
   const [campaignData, setCampaignData] = useState([]);
@@ -16,7 +21,7 @@ const CampaignComponent = () => {
     const fetchRequests = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/campaigns/get-all-campaigns"
+          `${import.meta.env.VITE_BASE_URL}/campaigns/get-all-campaigns`
         );
         if (!response.ok) {
           throw new Error("An error occurred while fetching campaigns.");
@@ -85,7 +90,7 @@ const CampaignComponent = () => {
     <section className="w-full items-center justify-center gap-10 flex">
       <div className={`${styles.paddingX} max-w-screen-2xl justify-center`}>
         <Helmet>
-          <title>HelpFur | Campaigns</title>
+          <title>HelpFurr | Campaigns</title>
           <meta
             name="description"
             content="Browse available donation campaigns."
@@ -137,11 +142,79 @@ const CampaignComponent = () => {
                 <CampaignViewer campaign={campaign} key={index} />
               ))
             ) : (
-              <p className="oops-msg">Oops!... No campaigns available</p>
+              <p className="text-center flex justify-center quicksand-semi-bold text-secondary-brown">Oops!... No campaigns available</p>
             )}
           </div>
-        </div>{" "}
-        <div className="mt-8">
+        </div>
+        <div className="w-full mx-auto mt-12 flex flex-col">
+          <p className="fredoka-bold tracking-wider text-3xl text-secondary-brown text-center">
+            Don't want to donate but still want to{" "}
+            <span className="text-main-orange">Help</span>?
+          </p>
+          <div className="flex justify-center mt-6 gap-3">
+            <div className="w-full">
+              <div className="flex gap-4 justify-center">
+                <div className="w-full border max-w-sm hover:border-main-orange rounded-md transition duration-300 cursor-pointer px-6 py-4">
+                  <div className="flex items-center gap-3 justify-between">
+                    <div className="p-4 bg-light-orange w-fit rounded-lg">
+                      <IoPawOutline className="text-main-orange" />
+                    </div>
+
+                    <div>
+                      <p className="flex quicksand-semi-bold text-secondary-brown">
+                        Adopt
+                      </p>
+                    </div>
+                    <div>
+                      <Link
+                        to="/adoption"
+                        onClick={() => {
+                          setActive("");
+                          window.scrollTo(0, 0);
+                        }}
+                      >
+                        <MdOutlineOpenInNew className="hover:text-main-orange transition duration-300" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full border max-w-sm hover:border-main-orange rounded-md transition duration-300 cursor-pointer px-6 py-4">
+                  <div className="flex items-center gap-3 justify-between">
+                    <div className="p-4 bg-light-orange w-fit rounded-lg">
+                      <MdOutlineVolunteerActivism className="text-main-orange" />
+                    </div>
+
+                    <div>
+                      <p className="flex quicksand-semi-bold text-secondary-brown">
+                        Volunteer
+                      </p>
+                    </div>
+                    <div>
+                      <Link
+                        to="/volunteer"
+                        onClick={() => {
+                          setActive("");
+                          window.scrollTo(0, 0);
+                        }}
+                      >
+                        <MdOutlineOpenInNew className="hover:text-main-orange transition duration-300" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default CampaignComponent;
+
+{
+  /* <div className="mt-8">
           <h1>Donations</h1>
           <div className="rounded-md border my-12">
             {loading ? (
@@ -192,7 +265,7 @@ const CampaignComponent = () => {
                       >
                         <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted hover: ">
                           <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0 ">
-                            {index + 1} {/* Display index + 1 */}
+                            {index + 1} {/* Display index + 1 
                           </td>
 
                           <td className="">
@@ -225,7 +298,7 @@ const CampaignComponent = () => {
                             {Array.isArray(campaignData.budgetUsage) &&
                             campaignData.budgetUsage.length > 0 ? (
                               <div>
-                                {/* Calculate the total cost */}
+                               
                                 <p>
                                   Total Cost:
                                   {campaignData.budgetUsage.reduce(
@@ -234,7 +307,7 @@ const CampaignComponent = () => {
                                     0
                                   )}
                                 </p>
-                                {/* Optional: display individual items and costs */}
+                             
                                 {campaignData.budgetUsage.map(
                                   (usage, index) => (
                                     <div key={index}>
@@ -275,10 +348,5 @@ const CampaignComponent = () => {
               </div>
             )}
           </div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-export default CampaignComponent;
+        </div>  */
+}

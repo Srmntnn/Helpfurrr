@@ -8,6 +8,14 @@ import { styles } from "../../styles";
 import { motion } from "framer-motion";
 import { Loader } from "lucide-react";
 import { format } from "date-fns"; // Import the date formatting function
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const UserRequestedDogs = () => {
   const { user } = useAuthStore();
@@ -24,7 +32,7 @@ const UserRequestedDogs = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:8080/volunteers/visit-request/${user.email}`
+        `${import.meta.env.VITE_BASE_URL}/volunteers/visit-request/${user.email}`
       );
       setVolunteers(response.data);
     } catch (error) {
@@ -44,18 +52,18 @@ const UserRequestedDogs = () => {
   return (
     <section>
       <motion.div
-        className=" w-full  h-screen max-w-screen-2xl mx-auto"
+        className=" w-full max-w-screen-2xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="rounded-md border my-12">
+        <div className="rounded-md border my-12 text-center p-5 quicksand-semi-bold">
           {isLoading ? (
-            <Loader className="mx-auto">Loading volunteers...</Loader>
+            <Loader className="mx-auto p-6">Loading volunteers...</Loader>
           ) : error ? (
             <p>Error: {error}</p>
           ) : volunteers.length === 0 ? (
-            <p>No volunteers found for this user.</p>
+            <p>No volunteer request found for this user.</p>
           ) : (
             <div>
               <div className="relative w-full overflow-auto">
@@ -134,9 +142,29 @@ const UserRequestedDogs = () => {
                           <p>{volunteers.questions}</p>
                         </td>
                         <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0">
-                          <Button className="hover:text-light-orange">
-                            <SlOptionsVertical className=" " />
-                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger>
+                              <SlOptionsVertical />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <DropdownMenuLabel className="quicksand-regular">
+                                Action
+                              </DropdownMenuLabel>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem>
+                                <button
+                                  className=" text-main-brown px-4 py-2 rounded-lg  quicksand-regular"
+                                  onClick={() =>
+                                    window.confirm(
+                                      "Are you sure you want to delete this form?"
+                                    ) && handleDelete(form._id)
+                                  }
+                                >
+                                  Delete
+                                </button>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </td>
                       </tr>
                     </tbody>

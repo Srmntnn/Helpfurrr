@@ -3,7 +3,7 @@ import axios from "axios";
 
 const API_URL =
   import.meta.env.MODE === "development"
-    ? "http://localhost:8080/auth"
+    ? `${import.meta.env.VITE_BASE_URL}/auth`
     : "/auth";
 
 axios.defaults.withCredentials = true;

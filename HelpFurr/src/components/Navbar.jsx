@@ -16,6 +16,7 @@ import { IoMdHeartHalf } from "react-icons/io";
 import { BiLogOutCircle } from "react-icons/bi";
 import { FaRegUser } from "react-icons/fa";
 import { FaRegFileAlt } from "react-icons/fa";
+import { LuDog } from "react-icons/lu";
 
 import {
   Disclosure,
@@ -117,6 +118,17 @@ function Navbar(props) {
         </Link>
 
         <ul className="list-none hidden md:flex flex-row gap-8 items-center">
+          <li className="hover:text-[#F69946]  quicksand-semi-bold text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
+            <Link
+              to="/"
+              onClick={() => {
+                setActive("");
+                window.scrollTo(0, 0);
+              }}
+            >
+              Home
+            </Link>
+          </li>
           <div className="dropdown">
             <div
               tabIndex={0}
@@ -211,13 +223,13 @@ function Navbar(props) {
           </div>
           <li className="hover:text-[#F69946]  quicksand-semi-bold text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
             <Link
-              to="/donation"
+              to="/campaigns"
               onClick={() => {
                 setActive("");
                 window.scrollTo(0, 0);
               }}
             >
-              Donation
+              Campaigns
             </Link>
           </li>
           {/* <li className="hover:text-[#F69946]  quicksand-semi-bold text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
@@ -268,7 +280,7 @@ function Navbar(props) {
           <div className="">
             {user ? (
               <>
-                <div className="dropdown dropdown-end">
+                <div className="dropdown dropdown-end ">
                   <div
                     tabIndex={0}
                     role="button"
@@ -283,7 +295,7 @@ function Navbar(props) {
                   </div>
                   <ul
                     tabIndex={0}
-                    className=" dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 px-4 py-6 flex flex-col gap-2  quicksand-regular"
+                    className="border dropdown-content bg-base-100 rounded-md z-[1] mt-3 w-52 px-4 py-6 flex flex-col gap-3 quicksand-regular"
                   >
                     <li>
                       <Sheet>
@@ -327,7 +339,7 @@ function Navbar(props) {
                                 className="bg-main-orange hover:text-main-brown hover:bg-light-orange quicksand-regular hover:outline outline-1 outline-main-orange"
                                 type="submit"
                               >
-                                Edit Profile
+                                Close
                               </Button>
                             </SheetClose>
                           </SheetFooter>
@@ -337,6 +349,10 @@ function Navbar(props) {
                     <li className="flex items-center gap-2">
                       <FaRegFileAlt />
                       <Link to="/myrequest">My Requests</Link>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <LuDog  />
+                      <Link to="/adopted-dogs">Adopted Dogs</Link>
                     </li>
                     <li className="flex items-center gap-2">
                       <BiLogOutCircle />
@@ -438,26 +454,15 @@ function Navbar(props) {
                         </DisclosurePanel>
                       </Disclosure>
                       <ul className="flex flex-col gap-3 mt-3">
-                        <li className="text-main-brown  transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
+                        <li className="hover:text-[#F69946]  quicksand-semi-bold text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
                           <Link
-                            to="/donation"
+                            to="/campaigns"
                             onClick={() => {
                               setActive("");
                               window.scrollTo(0, 0);
                             }}
                           >
-                            Donation
-                          </Link>
-                        </li>
-                        <li className="text-main-brown nransition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
-                          <Link
-                            to="/location"
-                            onClick={() => {
-                              setActive("");
-                              window.scrollTo(0, 0);
-                            }}
-                          >
-                            Location
+                            Campaigns
                           </Link>
                         </li>
                         <li className="text-main-brown transition-colors paragraphFont duration-300 text-[16px] font-[400] cursor-pointer">
@@ -546,6 +551,12 @@ function Navbar(props) {
                                     <li className="flex items-center gap-2">
                                       <FaRegFileAlt />
                                       <Link to="/myrequest">My Requests</Link>
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                      <LuDog  />
+                                      <Link to="/adopted-dogs">
+                                        Adopted Dogs
+                                      </Link>
                                     </li>
                                     <li className="flex items-center gap-2">
                                       <BiLogOutCircle />

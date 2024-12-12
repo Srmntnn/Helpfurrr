@@ -29,8 +29,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
-const UserRequestedDogs = () => {
+function AdoptedDogs() {
   const { user } = useAuthStore();
   const [dogs, setDogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,7 +46,7 @@ const UserRequestedDogs = () => {
 
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/dogs/mydogs/${user.email}`
+        `${import.meta.env.VITE_BASE_URL}/dogs/adopted-email/${user.email}`
       );
       setDogs(response.data);
     } catch (error) {
@@ -71,21 +72,28 @@ const UserRequestedDogs = () => {
     document.body.removeChild(link);
   };
   return (
-    <section>
+    <section className={`${styles.paddingX}  `}>
+      <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
+        <div className="absolute left-0 right-0 top-0 -z-10 m-auto max-h-[310px] h-full w-full max-w-[310px] rounded-full bg-main-orange opacity-30 blur-[100px]"></div>
+      </div>
       <motion.div
-        className=" w-full  max-w-screen-2xl mx-auto"
+        className=" w-full min-h-[400px] max-w-screen-2xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
+        <div className="mt-[128px]">
+          <h1 className="text-center sm:text-4xl fredoka-bold tracking-wider text-main-orange">
+            Adopted Dogs
+          </h1>
+        </div>
         <div className="rounded-md border my-12 text-center p-5 quicksand-semi-bold ">
           {isLoading ? (
-            <Loader className="mx-auto p-6"></Loader>
+            <Loader className="mx-auto"></Loader>
           ) : error ? (
-            
-            <p>No dogs available.</p>
+            <p>Error: {error}</p>
           ) : dogs.length === 0 ? (
-            <p className="flex justify-center w-full items-center mx-auto">No dogs found for this user.</p>
+            <p>No dogs found for this user.</p>
           ) : (
             <div>
               <div className="relative w-full overflow-auto quicksand-regular">
@@ -215,7 +223,7 @@ const UserRequestedDogs = () => {
                             <DropdownMenuContent>
                               <DropdownMenuLabel>Action</DropdownMenuLabel>
                               <DropdownMenuSeparator />
-                              {/* <DropdownMenuItem>
+                              <DropdownMenuItem>
                                 <Link to={`/edit-dog/${dog._id}`}>
                                   <button>Edit</button>
                                 </Link>
@@ -226,24 +234,13 @@ const UserRequestedDogs = () => {
                                   className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:bg-gray-400 w-full"
                                 >
                                   {isApproving ? "Approving..." : "Approve"}
-                                </button>{" "} 
-                              </DropdownMenuItem> */}
-                              <DropdownMenuItem>
-                                <button className=" text-main-brown px-4 py-2 rounded-lg  quicksand-regular">
-                                  <Link to={`/dogdetails/${dog._id}`}>
-                                    View Details
-                                  </Link>
-                                </button>
+                                </button>{" "} */}
                               </DropdownMenuItem>
-                              {/* <DropdownMenuItem>
-                                {/* <button
-                                  disabled={isApproving || isRejecting}
-                                  onClick={() => handleReject(request)}
-                                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 disabled:bg-gray-400 w-full"
-                                >
-                                  {isRejecting ? "Rejecting..." : "Reject"}
-                                </button>
-                              </DropdownMenuItem> */}
+                              <DropdownMenuItem>
+                                <Link to={`/adopted-details/${dog._id}`}>
+                                  View Details
+                                </Link>
+                              </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </td>
@@ -258,6 +255,6 @@ const UserRequestedDogs = () => {
       </motion.div>
     </section>
   );
-};
+}
 
-export default UserRequestedDogs;
+export default AdoptedDogs;

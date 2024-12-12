@@ -9,7 +9,7 @@ function Dogdisplay() {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await fetch("http://localhost:8080/dogs/approvedPets");
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/dogs/approvedPets`);
         if (!response.ok) {
           throw new Error("An error occurred");
         }
@@ -40,7 +40,7 @@ function Dogdisplay() {
         <option value="Other">Other</option>
       </select>
     </div> */}
-      <div className=" flex-col items-center justify-center sm:mt-40 mt-16 sm:mb-14 mb-8">
+      <div className=" flex-col items-center justify-center sm:mt-19 mt-16 sm:mb-14 mb-8">
         <h1
           className={`${styles.heroHeadText} text-5xl text-main-orange font-bold text-center fredoka-bold`}
         >
@@ -65,7 +65,7 @@ function Dogdisplay() {
                 <Dogviewer dog={dogDetail} key={index} />
               ))
           ) : (
-            <p className="oops-msg">Oops!... No Dogs available</p>
+            <p className="oops-msg quicksand-semi-bold p-4">Oops!... No Dogs available</p>
           )}
         </div>
       </div>

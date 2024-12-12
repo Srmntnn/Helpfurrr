@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+
 import { useAuthStore } from "../store/authStore";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { Footer } from "@/components/Footer";
 
 function Main() {
   const { isCheckingAuth, checkAuth, isAuthenticated, user, logout } =

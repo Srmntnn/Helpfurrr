@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { Dialog, Transition } from "@headlessui/react";
 import { ToastContainer, toast } from "react-toastify";
@@ -9,11 +9,10 @@ const FormCard = (props) => {
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [showApproved, setShowApproved] = useState(false);
   const [showDeletedSuccess, setShowDeletedSuccess] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isApproving, setIsApproving] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [isRejecting, setShowRejectPopup] = useState(false);
   const [showDetailsPopup, setShowDetailsPopup] = useState(false);
-  const [remarks, setRemarks] = useState(""); // New state for remarks
+  const [remarks, setRemarks] = useState("");
 
   const formatTimeAgo = (updatedAt) => {
     const date = new Date(updatedAt);
@@ -25,68 +24,66 @@ const FormCard = (props) => {
     setShowApproved(false);
     setShowDeletedSuccess(false);
     setShowDetailsPopup(false);
-    setShowRejectPopup(false); // Fix: closing the reject popup when closing modal
+    setShowRejectPopup(false);
   };
 
-  const handleApprove = async () => {
-    setIsApproving(true);
+  const updateStatus = async (status) => {
+    setIsUpdating(true);
     try {
+      const requestBody = { status };
+
+      if (status === "waiting for owner") {
+        const appointmentDate = prompt("Enter Appointment Date (YYYY-MM-DD):");
+        if (!appointmentDate) {
+          toast.error("Appointment date is required!");
+          setIsUpdating(false);
+          return;
+        }
+        requestBody.appointmentDate = appointmentDate;
+      }
+
       const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/form/approve/${props.form._id}`, // Make sure the correct endpoint is used for approval
+        `${import.meta.env.VITE_BASE_URL}/form/approve/${props.form._id}`,
         {
           method: "PUT",
-          body: JSON.stringify({
-            status: "adopted", // Mark as adopted
-          }),
+          body: JSON.stringify(requestBody),
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
 
+      // Check if the response is OK
       if (!response.ok) {
-        setShowErrorPopup(true);
+        const errorData = await response.json();
+        console.error("Error in approval:", errorData.message); // Log the error message from the backend
+        setShowErrorPopup(true); // Trigger the error popup if the status update fails
       } else {
-        setShowApproved(true);
+        setShowApproved(true); // Show success message if the status update is successful
       }
-    } catch {
-      setShowErrorPopup(true);
+    } catch (err) {
+      console.error("Error in updateStatus:", err);
+      setShowErrorPopup(true); // Show error popup if there is an issue in the request
     } finally {
-      setIsApproving(false);
-    }
-  };
-
-  const deleteFormAdoptedPet = async () => {
-    try {
-      const deleteResponse = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/form/delete/many/${props.form.dogId}`,
-        { method: "DELETE" }
-      );
-      if (!deleteResponse.ok) {
-        throw new Error("Failed to delete forms");
-      }
-    } catch {
-      // Handle errors silently if needed
-    } finally {
-      setIsApproving(false);
+      setIsUpdating(false);
     }
   };
 
   const handleReject = async () => {
     if (!remarks) {
-      toast.error("Please provide remarks for rejection."); // Display error if remarks are empty
+      toast.error("Please provide remarks for rejection.");
       return;
     }
 
-    setIsDeleting(true);
+    setIsUpdating(true);
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}/form/reject/${props.form._id}`,
         {
-          method: "PUT", // Changed to PUT to update status instead of DELETE
+          method: "PUT",
           body: JSON.stringify({
             status: "rejected",
-            remarks: remarks, // Sending remarks with the rejection request
+            remarks,
           }),
           headers: {
             "Content-Type": "application/json",
@@ -98,13 +95,14 @@ const FormCard = (props) => {
         setShowErrorPopup(true);
         throw new Error("Failed to reject form");
       } else {
+        props.fetchFormData(); // Fetch updated data after rejection
         setShowDeletedSuccess(true);
-        closeModal(); // Close the modal after successful rejection
+        closeModal();
       }
     } catch {
       setShowErrorPopup(true);
     } finally {
-      setIsDeleting(false);
+      setIsUpdating(false);
     }
   };
 
@@ -121,7 +119,6 @@ const FormCard = (props) => {
           <div className="flex flex-col w-full sm:w-1/2 lg:w-1/3">
             <b>Adoptor Phone Number:</b> {props.form.phoneNo}
           </div>
-          {/* Other Details */}
           <div className="flex flex-col w-full sm:w-1/2 lg:w-1/3">
             <b>Updated:</b> {formatTimeAgo(props.form.updatedAt)}
           </div>
@@ -130,10 +127,10 @@ const FormCard = (props) => {
         <div className="mt-4 flex flex-wrap gap-4">
           <button
             onClick={() => setShowRejectPopup(true)}
-            disabled={isDeleting || isApproving}
+            disabled={isUpdating}
             className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700"
           >
-            {isDeleting ? "Rejecting..." : "Reject"}
+            {isUpdating ? "Processing..." : "Reject"}
           </button>
           <button
             onClick={() => setShowDetailsPopup(true)}
@@ -141,18 +138,26 @@ const FormCard = (props) => {
           >
             View Full
           </button>
-          {props.approveBtn && (
+          {props.form.status === "pending" && (
             <button
-              onClick={handleApprove}
-              disabled={isDeleting || isApproving}
+              onClick={() => updateStatus("waiting for owner")}
+              disabled={isUpdating}
+              className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-700"
+            >
+              {isUpdating ? "Processing..." : "Set Appointment"}
+            </button>
+          )}
+          {props.form.status === "waiting for owner" && (
+            <button
+              onClick={() => updateStatus("adopted")}
+              disabled={isUpdating}
               className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-700"
             >
-              {isApproving ? "Approving..." : "Approve"}
+              {isUpdating ? "Processing..." : "Approve"}
             </button>
           )}
         </div>
 
-        {/* Popups */}
         <Transition
           appear
           show={
@@ -179,23 +184,7 @@ const FormCard = (props) => {
             <div className="fixed inset-0 flex items-center justify-center p-4">
               <Dialog.Panel className="w-full max-w-md bg-white p-6 rounded-lg shadow-md quicksand-regular">
                 {showErrorPopup && <p>Oops! Connection Error.</p>}
-                {showApproved && (
-                  <div>
-                    <p>Pet is Adopted Successfully...</p>
-                    <p>
-                      Please contact the Adopter at{" "}
-                      <a href={`mailto:${props.form.email}`}>
-                        {props.form.email}
-                      </a>{" "}
-                      or{" "}
-                      <a href={`tel:${props.form.phoneNo}`}>
-                        {props.form.phoneNo}
-                      </a>{" "}
-                      to arrange the transfer of the pet from our adoption
-                      center to their house.
-                    </p>
-                  </div>
-                )}
+                {showApproved && <p>Status Updated Successfully.</p>}
                 {showDeletedSuccess && <p>Request Rejected Successfully.</p>}
                 {showDetailsPopup && (
                   <div className="quicksand-regular">
@@ -267,7 +256,6 @@ const FormCard = (props) => {
                     </div>
                   </div>
                 )}
-
                 {isRejecting && (
                   <div>
                     <label htmlFor="remarks" className="font-bold">
@@ -283,10 +271,10 @@ const FormCard = (props) => {
                     <div className="flex justify-end mt-2">
                       <button
                         onClick={handleReject}
-                        disabled={isDeleting}
+                        disabled={isUpdating}
                         className="bg-red-500 text-white px-4 py-2 rounded-lg"
                       >
-                        {isDeleting ? "Rejecting..." : "Reject"}
+                        {isUpdating ? "Processing..." : "Reject"}
                       </button>
                     </div>
                   </div>
