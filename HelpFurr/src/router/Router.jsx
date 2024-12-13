@@ -1,5 +1,4 @@
 import { createBrowserRouter } from "react-router-dom";
-import App from "../App";
 import Main from "../layout/Main";
 import DashboardLayout from "../layout/DashboardPageLayout";
 import Home from "../pages/homepage/Home";
@@ -15,19 +14,14 @@ import ApprovedDogs from "../pages/admin/DogAdminPages/ApprovedDogs";
 import AdoptionRequest from "../pages/admin/DogAdminPages/AdoptionRequest";
 import AdoptedHistory from "../pages/admin/DogAdminPages/AdoptedHistory";
 import EmailVerificationPage from "../pages/EmailVerificationPage";
-import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "../store/authStore";
 import { Navigate } from "react-router-dom";
-import AdoptForm from "../components/AdoptForm";
 import DogDetails from "../pages/Adoption/DogDetails";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import ForgotPasswordPage from "../pages/ForgotPasswordPage";
 import AdoptionFormPage from "../pages/AdoptionFormPage.jsx/AdoptionFormPage";
-import UserRequestedDogs from "../pages/Ownerpage/UserRequestedDogs";
 import DonationCampaign from "../pages/Donation/DonationCampaign";
 import DonationPage from "../pages/Donation/CampaignPage";
-import CampaignRequest from "../pages/admin/CampaingsPages/CampaignRequest";
-import ApprovedCampaign from "../pages/admin/CampaingsPages/ApprovedCampaign";
 import RequestPage from "../pages/Ownerpage/RequestPage";
 import NotificationPage from "../pages/Notification/NotificationPage";
 import Volunteer from "../pages/Volunteer/Volunteer";
@@ -48,42 +42,9 @@ import Liquidation from "@/pages/Donation/Liquidation";
 import AdoptedDogs from "@/pages/Ownerpage/AdoptedDogs";
 import AdoptionPolicies from "@/pages/FAQ/AdoptionPolicies";
 import AdoptedDetails from "@/pages/Ownerpage/AdoptedDetails";
-
-// protect routes that require authentication
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, user } = useAuthStore();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!user.emailVerified) {
-    return <Navigate to="/email-verification" replace />;
-  }
-
-  return children;
-};
-
-// redirect authenticated users to the home page
-const RedirectAuthenticatedUser = ({ children }) => {
-  const { isAuthenticated, user } = useAuthStore();
-
-  if (isAuthenticated && user.emailVerified) {
-    return <Navigate to="/" replace />;
-  }
-
-  return children;
-};
-
-const AdminRoute = ({ children }) => {
-  const { user } = useAuthStore();
-
-  if (!user || user.role !== "admin") {
-    return <Navigate to="/admin-login" replace />;
-  }
-
-  return children;
-};
+import RedirectAuthenticatedUser from "./RedirectAuthenticatedUser";
+import ProtectedRoute from "./ProtectedRoute";
+import AdminRoute from "./AdminRoute";
 
 const router = createBrowserRouter([
   {

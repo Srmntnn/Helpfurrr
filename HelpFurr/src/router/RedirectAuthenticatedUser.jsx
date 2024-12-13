@@ -3,17 +3,11 @@ import { useAuthStore } from "../store/authStore";
 
 // redirect authenticated users to the home page
 const RedirectAuthenticatedUser = ({ children }) => {
-  const { isAuthenticated, user, loading } = useAuthStore();
-  const location = useLocation();
-  if (loading) {
-    return <loadingSpinner />;
-  }
+  const { isAuthenticated, user } = useAuthStore();
   if (isAuthenticated && user.emailVerified) {
-    return children
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
-  return (
-     <Navigate to="/login" state={{ from: location }} replace></Navigate>
-  )
+  return children;
 };
 
 export default RedirectAuthenticatedUser;
